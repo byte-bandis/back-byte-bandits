@@ -6,7 +6,8 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-const postsRoutes = require('./routes/postsRoutes');
+const adsRoutes = require('./routes/adsRoutes');
+
 const commentsRoutes = require('./routes/commentsRoutes');
 const middlewares = require('./middleware/middlewares');
 
@@ -39,7 +40,7 @@ const startServer = async () => {
   app.use(ErrorResponse);
   app.use('/user', userRoutes);
   app.use('/admin', adminRoutes);
-  app.use('/posts', postsRoutes);
+  app.use('/ads', adsRoutes);
   app.use('/comments', commentsRoutes);
 
   app.listen({ port }, () =>

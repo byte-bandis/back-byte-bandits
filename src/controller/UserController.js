@@ -7,13 +7,28 @@ exports.getUsers = tryCatch(async (req, res) => {
 });
 
 exports.register = tryCatch(async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const {
+    name,
+    email,
+    password,
+    role,
+    username,
+    lastname,
+    birthdate,
+    address,
+    creditCard
+  } = req.body;
 
   const user = await User.create({
     name,
     email,
     password,
-    role
+    role,
+    username,
+    lastname,
+    birthdate,
+    address,
+    creditCard
   });
 
   const token = user.getSignedJwt();
@@ -28,7 +43,7 @@ exports.register = tryCatch(async (req, res) => {
 exports.login = tryCatch(async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
+  if (!email ||!password) {
     return next({
       message: 'Please provide valid email and password.'
     });
