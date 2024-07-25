@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 
-const LikesSchema = new mongoose.Schema({
-  usuario: {
+const LikeSchema = new mongoose.Schema({
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Please add a user']
   },
-  anuncio: {
+  ad: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Anuncio',
+    ref: 'Ad',
     required: [true, 'Please add an anuncio']
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Likes', LikesSchema);
+module.exports = mongoose.model('Like', LikeSchema);

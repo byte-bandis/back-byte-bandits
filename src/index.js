@@ -7,7 +7,7 @@ import helmet from 'helmet';
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const adsRoutes = require('./routes/adsRoutes');
-
+const likeRouter = require('./routes/likesRouter');
 const commentsRoutes = require('./routes/commentsRoutes');
 const middlewares = require('./middleware/middlewares');
 
@@ -42,6 +42,7 @@ const startServer = async () => {
   app.use('/admin', adminRoutes);
   app.use('/ads', adsRoutes);
   app.use('/comments', commentsRoutes);
+  app.use('/likes', likeRouter);
 
   app.listen({ port }, () =>
     console.log(`🚀 Server ready at http://localhost:${port}`)
