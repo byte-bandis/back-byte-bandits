@@ -18,11 +18,10 @@ const ErrorResponse = require('./middleware/ErrorResponse');
 dotenv.config();
 
 const port = process.env.PORT || 4000;
-
 const startServer = async () => {
   const app = express();
 
-  await mongoose.connect(process.env.MONGO_URI);
+  require('./utils/connectMogoose');
 
   app.use(morgan('dev'));
   app.use(helmet());

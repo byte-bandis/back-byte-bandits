@@ -58,16 +58,12 @@ async function initUsers() {
     console.log(`Se han creado ${inserted.length} users.`);
     }
 async function initAd() {
-    /* The line `const del = await Ad.deleteMany();` is deleting all documents from the Ad collection
-    in the database. */
+
     const del = await Ad.deleteMany();
     console.log(`Se han borrado ${del.deletedCount} anuncios.`);
     const users = await User.find();
     console.log(users)
     // Añade anuncios
-
-    /* The line `const insertAds = await Ad.insertMany(data);` is inserting multiple documents into the
-    Ad collection in the database. */
     let userIndex = 0;
     const updatedData = data.map(item => {
         item.user = users[userIndex]._id;
@@ -79,10 +75,6 @@ async function initAd() {
 }
 
 
-
-/**
- * The main function asynchronously initializes an ad and then closes the connection.
- */
 async function main() {
     await new Promise(resolve => connection.once('open', resolve));
 
@@ -90,12 +82,6 @@ async function main() {
 
     if (!deleleAll) {
 
-        /* The line `process.exit();` is a Node.js method that terminates the current process with an exit code
-        of 0. This means that it will stop the execution of the program and exit the Node.js process. In
-        this specific context within the code snippet provided, if the user does not confirm the deletion of
-        all content in the database by entering 'si', the program will exit without further execution. 
-        you can use it directly since process is a global object in Node.js and is available in all JavaScript 
-        files running in the Node.js environment.*/
         process.exit();
 
     } else {
@@ -105,7 +91,4 @@ async function main() {
 
     }
 }
-
-/* The line `main().catch((err) => console.log(`Hubo un error `));` is handling any errors that
-occur during the execution of the `main()` function.*/
 main().catch((err) => console.log(`Hubo un error ${err}`));
