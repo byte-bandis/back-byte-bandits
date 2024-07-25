@@ -1,0 +1,34 @@
+[
+    {
+    "adTitle": "Moto - Harley-Davidson Sportster",
+    "adBody": "Descripcion de la moto...",
+    "sell": true,
+    "price": 12000,
+    "photo": "harley_davidson_sportster.jpg",
+    "tags": ["motor", "lifestyle"]
+    },
+    {
+    "adTitle": "Consola clásica Nintendo (NES)",
+    "adBody": "Descripcion de la consola...",
+    "sell": true,
+    "price": 200,
+    "photo": "nes.jpg",
+    "tags": ["lifestyle"]
+    },
+    {
+    "adTitle": "Coche clásico - Volkswagen Beetle",
+    "adBody": "Descripcion del coche...",
+    "sell": true,
+    "price": 15000,
+    "photo": "volkswagen_beetle.jpg",
+    "tags": ["motor", "lifestyle"]
+    },
+    {
+    "adTitle": "Juego Super Mario Bros",
+    "adBody": "Descripcion del juego...",
+    "sell": true,
+    "price": 30,
+    "photo": "super_mario_bros.jpg",
+    "tags": ["lifestyle"]
+    }
+    ]
