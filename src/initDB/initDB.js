@@ -5,7 +5,7 @@
 'use strict';
 
 require('dotenv').config();
-const connection = require('/home/santiagomadaw/proyectofinalbootcamp/back-byte-bandits/src/utils/connectMogoose.js');
+const connection = require('../utils/connectMogoose');
 
 const readline = require('node:readline');
 
