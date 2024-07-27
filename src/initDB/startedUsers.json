@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Fernando",
+        "lastname": "Esteso",
+        "email": "FernandoE@example.com",
+        "password": "123123",
+        "role": "user",
+        "username": "FerEsteso",
+        "birthdate": "1945-02-16",
+        "address": "Calle Roque III, 3, 28001 Madrid, Spain",
+        "creditCard": "4242 4242 4242 4242"
+    },
+    {
+        "name": "Andres",
+        "lastname": "Pajares",
+        "email": "APajares@example.com",
+        "password": "123123",
+        "role": "user",
+        "username": "APajares",
+        "birthdate": "1940-04-06",
+        "address": "Calle Roque III, 5, 28001 Madrid, Spain",
+        "creditCard": "4242 4242 4242 4242"
+    },
+    {
+        "name": "Jose Luis",
+        "lastname": "Lopez Vazquez",
+        "email": "JLLopez@example.com",
+        "password": "123123",
+        "role": "user",
+        "username": "JLLopez",
+        "birthdate": "1922-03-11",
+        "address": "Calle Roque III, 7, 28001 Madrid, Spain",
+        "creditCard": "4242 4242 4242 4242"
+    },
+    {
+        "name": "Gracita",
+        "lastname": "Morales",
+        "email": "GMorales@example.com",
+        "password": "123123",
+        "role": "user",
+        "username": "GMorales",
+        "birthdate": "1928-11-11",
+        "address": "Calle Roque III, 9, 28001 Madrid, Spain",
+        "creditCard": "4242 4242 4242 4242"
+    }
+]
