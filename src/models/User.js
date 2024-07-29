@@ -11,11 +11,9 @@ const UserSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: [true, 'Please add a name']
     },
     lastname: {
       type: String,
-      required: [true, 'Please add a name']
     },
     email: {
       type: String,
@@ -36,15 +34,13 @@ const UserSchema = new mongoose.Schema(
     },
     birthdate: {
       type: Date,
-      required: [true, 'Please add a birthdate']
+      required: [true, 'Please add your birthdate'],
     },
     address: {
       type: String,
-      required: [true, 'Please add an address']
     },
     creditCard: {
       type: String,
-      required: [true, 'Please add a credit card number']
     }
   },
   { timestamps: true }
