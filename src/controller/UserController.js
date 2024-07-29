@@ -7,10 +7,12 @@ exports.getUsers = tryCatch(async (req, res) => {
 });
 
 exports.register = tryCatch(async (req, res) => {
-  const {
+
+ const {
     name,
     email,
     password,
+    passwordConfirmation,
     role,
     username,
     lastname,
@@ -18,6 +20,10 @@ exports.register = tryCatch(async (req, res) => {
     address,
     creditCard
   } = req.body;
+
+  if(password !== passwordConfirmation){
+    return res.status(400).json({message: "Passwords do not match."})
+  }
 
   const user = await User.create({
     name,
@@ -49,7 +55,7 @@ exports.login = tryCatch(async (req, res, next) => {
     });
   }
 
-  const user = await User.findOne({ email }).select('+password');
+   const user = await User.findOne({ email }).select('+password');
 
   if (!user) {
     return next({
@@ -72,4 +78,4 @@ exports.login = tryCatch(async (req, res, next) => {
     token,
     userId: user._id
   });
-});
+ });
