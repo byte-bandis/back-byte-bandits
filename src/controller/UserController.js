@@ -31,13 +31,12 @@ exports.register = tryCatch(async (req, res) => {
     return res.status(400).json({ message: `${username} already exists. Try a different username as ${username}_1 or ${username}2024` });
   }
 
-  const existemail = await User.find({email})
+  const existemail = await User.findOne({email})
+  console.log(existemail)
 
   if (existemail){
     return res.status(400).json({message : `${email} is already registered.`})
   }
-
-
 
   const user = await User.create({
     name,
