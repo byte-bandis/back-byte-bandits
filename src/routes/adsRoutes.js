@@ -19,4 +19,5 @@ router.delete('/:id', authenticate, deleteAd);
 router.post('/:id/reserve', authenticate, reserveAd);
 router.post('/:id/buy', authenticate, buyAd);
 
+
 module.exports = router;

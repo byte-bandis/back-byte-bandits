@@ -1,4 +1,5 @@
 const Ad = require('../models/Ad');
+const User = require("../models/User")
 const { tryCatch } = require('../utils/tryCatch');
 
 const APIFeatures = require('../utils/ApiFeature');
@@ -54,29 +55,59 @@ exports.updateAd = tryCatch(async (req, res, next) => {
     data: ad
   });
 });
-/* Reservar un anuncio */
+/* Reserve an ad */
 exports.reserveAd = tryCatch(async (req, res, next) => {
   let ad = await Ad.findById(req.params.id);
   if (!ad) {
     return next({
-      message: 'Ad not found'
+      message: 'Ad not found',
+      statusCode: 404
     });
   }
 
-  if (ad.reservedBy) {
+  const user = await user.findById(req.user._id);
+  if (!user){
     return next({
-      message: 'Ad already reserved'
-    });
+      message: "User does not exist",
+      statusCode: 404
+    })
   }
 
-  ad.reservedBy = req.user._id;
-  await ad.save();
+  if (user.reserved.some(reservedAd => reservedAd.products.equals(ad._id)))
+    return next({
+  message: "Ad already reserved by this user",
+  statusCode: 400
+})
+
+  user.reserved.push({product: ad._id})
+  await user.save()
 
   res.status(200).json({
     success: true,
-    data: ad
+    data: user
   });
 });
+
+/* List all ads reserved by an user */
+exports.allReservedAds = tryCatch(async (req, res, next) =>{
+
+  const userId = req.user.id;
+
+  let user = await User.findById(userId).populate("reserved")
+  
+  if(!user || user.reserved.length===0){
+    return next ({
+      message: "There is no ads reserved"
+    })
+  }
+
+
+  res.status(200).json({
+    success: true,
+    data: user
+  })
+})
+
 /* Comprar un anuncio */
 exports.buyAd = tryCatch(async (req, res, next) => {
   let ad = await Ad.findById(req.params.id);

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const {Schema} = mongoose;
 
-const AdSchema = new mongoose.Schema(
+const AdSchema = Schema(
   {
     adTitle: {
       type: String,
@@ -33,23 +34,10 @@ const AdSchema = new mongoose.Schema(
       },
       default: 'others'
     },
-    user: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [true, 'Please add author id']
-    },
-    reserverBy: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [false, 'Please add reserver id']
-    },
-    buyer: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [false, 'Please add buyer id']
-    },
-    duration: {
-      type: Number
+    owner:{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
     }
   },
   { timestamps: true }
