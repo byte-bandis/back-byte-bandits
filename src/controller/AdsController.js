@@ -1,8 +1,8 @@
-const Ad = require('../models/Ad');
-const User = require("../models/User")
-const { tryCatch } = require('../utils/tryCatch');
+const Ad = require("../models/Ad");
+const User = require("../models/User");
+const { tryCatch } = require("../utils/tryCatch");
 
-const APIFeatures = require('../utils/ApiFeature');
+const APIFeatures = require("../utils/ApiFeature");
 /* Obtener anuncios */
 exports.getAds = tryCatch(async (req, res) => {
   const advancedQuery = new APIFeatures(Ad.find({}), req.query)
@@ -20,15 +20,23 @@ exports.getAd = tryCatch(async (req, res) => {
 });
 /* crear un anuncio */
 exports.createAd = tryCatch(async (req, res) => {
-  const user = req.user._id;
+  const owner = req.user._id;
   let { adTitle, adBody, sell, price, photo, tags } = req.body;
-   tags = tags.replace(' ', '').split(',')
-  console.log(tags);
-  const ad = await Ad.create({ adTitle, adBody, sell, price, photo, tags, user });
+  tags = tags.replace(" ", "").split(",");
+
+  const ad = await Ad.create({
+    adTitle,
+    adBody,
+    sell,
+    price,
+    photo,
+    tags,
+    owner,
+  });
 
   res.status(201).json({
     success: true,
-    data: ad
+    data: ad,
   });
 });
 /* actualizar un anuncio */
@@ -36,23 +44,23 @@ exports.updateAd = tryCatch(async (req, res, next) => {
   let ad = await Ad.findById(req.params.id);
   if (!ad) {
     return next({
-      message: 'Ad not found'
+      message: "Ad not found",
     });
   }
 
   if (ad.user.toString() !== req.user._id) {
     return next({
-      message: 'Not authorized to update this ad'
+      message: "Not authorized to update this ad",
     });
   }
 
   ad = await Ad.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true
+    runValidators: true,
   });
   res.status(200).json({
     success: true,
-    data: ad
+    data: ad,
   });
 });
 /* Reserve an ad */
@@ -60,72 +68,70 @@ exports.reserveAd = tryCatch(async (req, res, next) => {
   let ad = await Ad.findById(req.params.id);
   if (!ad) {
     return next({
-      message: 'Ad not found',
-      statusCode: 404
+      message: "Ad not found",
+      statusCode: 404,
     });
   }
 
   const user = await user.findById(req.user._id);
-  if (!user){
+  if (!user) {
     return next({
       message: "User does not exist",
-      statusCode: 404
-    })
+      statusCode: 404,
+    });
   }
 
-  if (user.reserved.some(reservedAd => reservedAd.products.equals(ad._id)))
+  if (user.reserved.some((reservedAd) => reservedAd.products.equals(ad._id)))
     return next({
-  message: "Ad already reserved by this user",
-  statusCode: 400
-})
+      message: "Ad already reserved by this user",
+      statusCode: 400,
+    });
 
-  user.reserved.push({product: ad._id})
-  await user.save()
+  user.reserved.push({ product: ad._id });
+  await user.save();
 
   res.status(200).json({
     success: true,
-    data: user
+    data: user,
   });
 });
 
 /* List all ads reserved by an user */
-exports.allReservedAds = tryCatch(async (req, res, next) =>{
-
+exports.allReservedAds = tryCatch(async (req, res, next) => {
   const userId = req.user.id;
 
-  let user = await User.findById(userId).populate("reserved")
-  
-  if(!user || user.reserved.length===0){
-    return next ({
-      message: "There is no ads reserved"
-    })
-  }
+  let user = await User.findById(userId).populate("reserved");
 
+  if (!user || user.reserved.length === 0) {
+    return next({
+      message: "There is no ads reserved",
+    });
+  }
 
   res.status(200).json({
     success: true,
-    data: user
-  })
-})
+    data: user,
+  });
+});
 
 /* Comprar un anuncio */
 exports.buyAd = tryCatch(async (req, res, next) => {
   let ad = await Ad.findById(req.params.id);
   if (!ad) {
     return next({
-      message: 'Ad not found'
+      message: "Ad not found",
     });
   }
 
   if (ad.buyer) {
     return next({
-      message: 'Ad already sold'
+      message: "Ad already sold",
     });
   }
 
   if (ad.reservedBy && ad.reservedBy.toString() !== req.user._id) {
     return next({
-      message: 'Ad is reserved by another user'
+      message: "Ad is reserved by another user",
     });
   }
 
@@ -134,7 +140,7 @@ exports.buyAd = tryCatch(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: ad
+    data: ad,
   });
 });
 /* eliminar un anuncio */
@@ -142,19 +148,19 @@ exports.deleteAd = tryCatch(async (req, res, next) => {
   let ad = await Ad.findById(req.params.id);
   if (!ad) {
     return next({
-      message: 'Ad not found'
+      message: "Ad not found",
     });
   }
 
   if (ad.user.toString() !== req.user._id) {
     return next({
-      message: 'Not authorized to delete this ad'
+      message: "Not authorized to delete this ad",
     });
   }
 
   await ad.remove();
   res.status(200).json({
     success: true,
-    data: {}
+    data: {},
   });
 });
