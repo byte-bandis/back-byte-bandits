@@ -20,7 +20,7 @@ exports.getAd = tryCatch(async (req, res) => {
 });
 /* crear un anuncio */
 exports.createAd = tryCatch(async (req, res) => {
-  const owner = req.user._id;
+  const user = req.user._id;
   let { adTitle, adBody, sell, price, photo, tags } = req.body;
   tags = tags.replace(" ", "").split(",");
 
@@ -31,7 +31,7 @@ exports.createAd = tryCatch(async (req, res) => {
     price,
     photo,
     tags,
-    owner,
+    user,
   });
 
   res.status(201).json({
