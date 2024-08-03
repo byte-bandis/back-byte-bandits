@@ -12,7 +12,16 @@ const commentsRoutes = require('./routes/commentsRoutes');
 const middlewares = require('./middleware/middlewares');
 
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
+let swaggerDocument;
+
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    swaggerDocument = require('./swagger.json');
+  } catch (error) {
+    console.error('Error loading swagger.json:', error.message);
+  }
+}
+
 const ErrorResponse = require('./middleware/ErrorResponse');
 
 dotenv.config();
@@ -35,8 +44,9 @@ const startServer = async () => {
       message: 'Hello World'
     });
   });
-
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  if (process.env.NODE_ENV !== 'production' && swaggerDocument) {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  }
   app.use(ErrorResponse);
   app.use('/user', userRoutes);
   app.use('/admin', adminRoutes);
