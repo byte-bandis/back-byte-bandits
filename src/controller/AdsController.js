@@ -5,11 +5,19 @@ const APIFeatures = require('../utils/ApiFeature');
 /* Obtener anuncios */
 exports.getAds = tryCatch(async (req, res) => {
   const advancedQuery = new APIFeatures(Ad.find({}), req.query)
-    .sort()
-    .paginate()
-    .fields()
-    .filter();
-  const ads = await advancedQuery.query;
+   .sort()
+   .paginate()
+   .fields()
+   .filter();
+
+  let ads = await advancedQuery.query;
+  const publicFolder = 'public/images';
+
+  ads = ads.map(({ _doc: { photo,...ad } }) => ({
+    ...ad,
+    photo: `http://${req.headers.host}/${publicFolder}/${photo}`,
+  }));
+  console.log(ads);
   res.status(200).json({ ads });
 });
 /* obtener un anuncio */

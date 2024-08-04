@@ -36,11 +36,16 @@ const startServer = async () => {
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-
+  app.use(express.static('public'));
+  
   app.get('/', (req, res) => {
     res.json({
       message: 'Hello World'
     });
+  });
+  app.get('/public/images/:image', (req, res) => {
+    const image = req.params.image;
+    res.sendFile(`${__dirname}/public/images/${image}`);
   });
   if (process.env.NODE_ENV !== 'production' && swaggerDocument) {
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -55,7 +60,7 @@ const startServer = async () => {
   app.listen({ port }, () =>
     console.log(`🚀 Server ready at http://localhost:${port}`)
   );
-
+  
   app.use(middlewares.notFound);
   app.use(middlewares.errorHandler);
 };
