@@ -22,7 +22,14 @@ exports.getAds = tryCatch(async (req, res) => {
 });
 /* obtener un anuncio */
 exports.getAd = tryCatch(async (req, res) => {
-  const ad = await Ad.findById(req.params.id);
+  let ad = await Ad.findById(req.params.id);
+  ad = [{
+    ...ad._doc,
+    photo: `http://${req.headers.host}/public/images/${ad.photo}`,
+  }];
+
+  console.log(ad);
+
   res.status(200).json({ ad });
 });
 /* crear un anuncio */
