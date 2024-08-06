@@ -3,6 +3,10 @@ const { tryCatch } = require('../utils/tryCatch');
 
 const APIFeatures = require('../utils/ApiFeature');
 /* Obtener anuncios */
+exports.adsAccount = tryCatch(async (req, res) => {
+  const count = await Ad.countDocuments();
+  res.status(200).json({ count });
+})
 exports.getAds = tryCatch(async (req, res) => {
   const advancedQuery = new APIFeatures(Ad.find({}), req.query)
    .sort()

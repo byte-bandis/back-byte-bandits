@@ -8,11 +8,13 @@ createAd,
 updateAd,
 deleteAd,
 reserveAd,
-buyAd
+buyAd,
+adsAccount
 } = require('../controller/AdsController');
 const { authenticate } = require('../middleware/auth');
 
 router.get('/', getAds);
+router.get('/count', adsAccount);
 router.get('/:id', getAd);
 router.post('/', authenticate, upload.single('photo'), createAd);
 router.put('/:id', authenticate, updateAd);
