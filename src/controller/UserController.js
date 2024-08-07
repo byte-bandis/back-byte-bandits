@@ -5,6 +5,16 @@ exports.getUsers = tryCatch(async (req, res) => {
   const users = await User.find();
   res.status(200).json({ users });
 });
+exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
+  const users = await User.find();
+  const usersPublicProfiles = users.map((user) => {
+    return {
+      username: user.username,
+      _id: user._id,
+    };
+  });
+  res.status(200).json({ usersPublicProfiles });
+});
 
 exports.register = tryCatch(async (req, res) => {
   const {
@@ -27,11 +37,9 @@ exports.register = tryCatch(async (req, res) => {
   const existingUser = await User.findOne({ username });
 
   if (existingUser) {
-    return res
-      .status(400)
-      .json({
-        message: `${username} already exists. Try a different username as ${username}_1 or ${username}2024`,
-      });
+    return res.status(400).json({
+      message: `${username} already exists. Try a different username as ${username}_1 or ${username}2024`,
+    });
   }
 
   const existemail = await User.findOne({ email });
