@@ -4,26 +4,48 @@ const { tryCatch } = require("../utils/tryCatch");
 
 const APIFeatures = require("../utils/ApiFeature");
 /* Obtener anuncios */
+exports.adsAccount = tryCatch(async (req, res) => {
+  const count = await Ad.countDocuments();
+  res.status(200).json({ count });
+});
 exports.getAds = tryCatch(async (req, res) => {
   const advancedQuery = new APIFeatures(Ad.find({}), req.query)
     .sort()
     .paginate()
     .fields()
     .filter();
-  const ads = await advancedQuery.query;
+
+  let ads = await advancedQuery.query;
+  const publicFolder = "public/images";
+
+  ads = ads.map(({ _doc: { photo, ...ad } }) => ({
+    ...ad,
+    photo: `http://${req.headers.host}/${publicFolder}/${photo}`,
+  }));
+  console.log(ads);
   res.status(200).json({ ads });
 });
 /* obtener un anuncio */
 exports.getAd = tryCatch(async (req, res) => {
-  const ad = await Ad.findById(req.params.id);
+  let ad = await Ad.findById(req.params.id);
+  ad = [
+    {
+      ...ad._doc,
+      photo: `http://${req.headers.host}/public/images/${ad.photo}`,
+    },
+  ];
+
+  console.log(ad);
+
   res.status(200).json({ ad });
 });
 /* crear un anuncio */
 exports.createAd = tryCatch(async (req, res) => {
   const user = req.user._id;
-  let { adTitle, adBody, sell, price, photo, tags } = req.body;
+  let { adTitle, adBody, sell, price, tags } = req.body;
+  let photo = req.file.filename;
   tags = tags.replace(" ", "").split(",");
-
+  console.log(tags);
   const ad = await Ad.create({
     adTitle,
     adBody,

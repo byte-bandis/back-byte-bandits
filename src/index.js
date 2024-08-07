@@ -11,7 +11,16 @@ const commentsRoutes = require('./routes/commentsRoutes');
 const middlewares = require('./middleware/middlewares');
 
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
+let swaggerDocument;
+
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    swaggerDocument = require('./swagger.json');
+  } catch (error) {
+    console.error('Error loading swagger.json:', error.message);
+  }
+}
+
 const ErrorResponse = require('./middleware/ErrorResponse');
 
 dotenv.config();
@@ -27,14 +36,20 @@ const startServer = async () => {
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-
+  app.use(express.static('public'));
+  
   app.get('/', (req, res) => {
     res.json({
       message: 'Hello World'
     });
   });
-
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.get('/public/images/:image', (req, res) => {
+    const image = req.params.image;
+    res.sendFile(`${__dirname}/public/images/${image}`);
+  });
+  if (process.env.NODE_ENV !== 'production' && swaggerDocument) {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  }
   app.use(ErrorResponse);
   app.use('/user', userRoutes);
   app.use('/admin', adminRoutes);
@@ -45,7 +60,7 @@ const startServer = async () => {
   app.listen({ port }, () =>
     console.log(`🚀 Server ready at http://localhost:${port}`)
   );
-
+  
   app.use(middlewares.notFound);
   app.use(middlewares.errorHandler);
 };
