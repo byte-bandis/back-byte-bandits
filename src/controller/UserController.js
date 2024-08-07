@@ -1,5 +1,5 @@
-const User = require('../models/User');
-const { tryCatch } = require('../utils/tryCatch');
+const User = require("../models/User");
+const { tryCatch } = require("../utils/tryCatch");
 
 exports.getUsers = tryCatch(async (req, res) => {
   const users = await User.find();
@@ -7,8 +7,7 @@ exports.getUsers = tryCatch(async (req, res) => {
 });
 
 exports.register = tryCatch(async (req, res) => {
-
- const {
+  const {
     name,
     email,
     password,
@@ -18,24 +17,28 @@ exports.register = tryCatch(async (req, res) => {
     lastname,
     birthdate,
     address,
-    creditCard
+    creditCard,
   } = req.body;
 
-  if(password !== passwordConfirmation){
-    return res.status(400).json({message: "Passwords do not match."})
+  if (password !== passwordConfirmation) {
+    return res.status(400).json({ message: "Passwords do not match." });
   }
 
   const existingUser = await User.findOne({ username });
 
   if (existingUser) {
-    return res.status(400).json({ message: `${username} already exists. Try a different username as ${username}_1 or ${username}2024` });
+    return res
+      .status(400)
+      .json({
+        message: `${username} already exists. Try a different username as ${username}_1 or ${username}2024`,
+      });
   }
 
-  const existemail = await User.findOne({email})
-  console.log(existemail)
+  const existemail = await User.findOne({ email });
+  console.log(existemail);
 
-  if (existemail){
-    return res.status(400).json({message : `${email} is already registered.`})
+  if (existemail) {
+    return res.status(400).json({ message: `${email} is already registered.` });
   }
 
   const user = await User.create({
@@ -47,7 +50,7 @@ exports.register = tryCatch(async (req, res) => {
     lastname,
     birthdate,
     address,
-    creditCard
+    creditCard,
   });
 
   const token = user.getSignedJwt();
@@ -55,24 +58,24 @@ exports.register = tryCatch(async (req, res) => {
   res.status(201).json({
     success: true,
     token,
-    user
+    user,
   });
 });
 
 exports.login = tryCatch(async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email ||!password) {
+  if (!email || !password) {
     return next({
-      message: 'Please provide valid email and password.'
+      message: "Please provide valid email and password.",
     });
   }
 
-   const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
     return next({
-      message: 'Invalid Credentials'
+      message: "Invalid Credentials",
     });
   }
 
@@ -80,7 +83,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!isMatch) {
     return next({
-      message: 'Invalid Credentials'
+      message: "Invalid Credentials",
     });
   }
 
@@ -89,6 +92,7 @@ exports.login = tryCatch(async (req, res, next) => {
   res.status(201).json({
     success: true,
     token,
-    userId: user._id
+    userId: user._id,
+    userName: user.username,
   });
- });
+});
