@@ -7,6 +7,9 @@ class APIFeatures {
   sort() {
     if (this.queryString.sort) {
       this.query.sort(this.queryString.sort);
+    }else{
+      this.query.sort('-createdAt');
+
     }
     return this;
   }
