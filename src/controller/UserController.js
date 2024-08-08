@@ -5,6 +5,27 @@ exports.getUsers = tryCatch(async (req, res) => {
   const users = await User.find();
   res.status(200).json({ users });
 });
+
+exports.getMyProfile = tryCatch(async (req, res) => {
+  const loggedUser = req.params.username;
+  const retrievedProfile = await User.findOne({ username: loggedUser });
+  const myProfile = {
+    username: retrievedProfile.username,
+    _id: retrievedProfile._id,
+    name: retrievedProfile.name,
+    lastname: retrievedProfile.lastname,
+    email: retrievedProfile.email,
+    address: retrievedProfile.address,
+    createdAt: retrievedProfile.createdAt,
+    whishlist:
+      retrievedProfile.whishList.length > 0
+        ? retrievedProfile.whishList
+        : "Your whishlist is empty so far...",
+  };
+
+  console.log("Este es myProfile: ", myProfile);
+  res.status(200).json({ myProfile });
+});
 exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
   const users = await User.find();
   const usersPublicProfiles = users.map((user) => {
