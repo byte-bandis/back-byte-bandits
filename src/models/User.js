@@ -1,19 +1,78 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const {Schema} = mongoose;
 
-const UserSchema = new mongoose.Schema(
+const AddressSchema = new Schema({
+    country: {
+      type: String,
+      required: [true, "Please add a country"]
+    },
+    nameAndLastName: {
+      type: String,
+      required: [true, "Please add your name and last name"]
+    },
+    streetAndNumber:{
+      type: String,
+      required: [true, "Add street name and number"]
+    },
+    flatAndDoor:{
+      type: String,
+      required: [true, "Add flat and Door"]
+    },
+    postalCode:{
+      type: Number,
+      required: [true, "Add a postal code"]
+    },
+    mobilePhoneNumber:{
+      type: Number,
+      required:[true, "Add a phone number. Example 123 123 123"],
+      match:[/^\d{3}\s\d{3}\s\d{3}$/, "Please ad a valid mobile phone number with format 123 123 123"]
+    },
+  }
+)
+
+const WhishlistSchema = new Schema({
+  product:{
+    type: Schema.Types.ObjectId,
+    ref: "Ad",
+    required: true,
+  }
+})
+
+const PurchaseSchema = new Schema({
+  product:{
+    type: Schema.Types.ObjectId,
+    ref: "Ad",
+    required: true
+  },
+  sale:{
+    type: Boolean,
+  }
+})
+
+const SaleSchema =new Schema({
+  product:{
+    type: Schema.Types.ObjectId,
+    ref: "Ad",
+    required: true,
+  }
+})
+
+const ReservedSchema = new Schema({
+  product:{
+    type: Schema.Types.ObjectId,
+    ref: "Ad",
+    required: true,
+  }
+})
+
+const UserSchema = new Schema(
   {
     username: {
       type: String,
       required: [true, 'Please add a username'],
       unique: true,
-    },
-    name: {
-      type: String,
-    },
-    lastname: {
-      type: String,
     },
     email: {
       type: String,
@@ -37,11 +96,15 @@ const UserSchema = new mongoose.Schema(
       required: [true, 'Please add your birthdate'],
     },
     address: {
-      type: String,
+      type: AddressSchema,
     },
     creditCard: {
       type: String,
-    }
+    },
+    whishList: [WhishlistSchema],
+    purchases: [PurchaseSchema],
+    sales: [SaleSchema],
+    reserved:  [ReservedSchema],
   },
   { timestamps: true }
 );

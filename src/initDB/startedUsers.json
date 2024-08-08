@@ -1,0 +1,63 @@
+[
+  {
+    "_id": "66b36fef5b3294487d2bb593",
+    "username": "AlfredoLanda",
+    "name": "Alfredo",
+    "lastname": "Landa",
+    "email": "alfredoL@example.com",
+    "role": "admin",
+    "birthdate": "1946-03-10T00:00:00.000Z",
+    "creditCard": "4242 4242 4242 4242",
+    "createdAt": "2024-08-07T13:00:31.266Z",
+    "updatedAt": "2024-08-07T13:00:31.266Z",
+    "__v": 0,
+    "whishList": [],
+    "purchases": [],
+    "sales": [],
+    "reserved": []
+  },
+  {
+    "name": "Fernando",
+    "lastname": "Esteso",
+    "email": "FernandoE@example.com",
+    "password": "123123",
+    "role": "user",
+    "username": "FerEsteso",
+    "birthdate": "1945-02-16",
+    "address": "Calle Roque III, 3, 28001 Madrid, Spain",
+    "creditCard": "4242 4242 4242 4242"
+  },
+  {
+    "name": "Andres",
+    "lastname": "Pajares",
+    "email": "APajares@example.com",
+    "password": "123123",
+    "role": "user",
+    "username": "APajares",
+    "birthdate": "1940-04-06",
+    "address": "Calle Roque III, 5, 28001 Madrid, Spain",
+    "creditCard": "4242 4242 4242 4242"
+  },
+  {
+    "name": "Jose Luis",
+    "lastname": "Lopez Vazquez",
+    "email": "JLLopez@example.com",
+    "password": "123123",
+    "role": "user",
+    "username": "JLLopez",
+    "birthdate": "1922-03-11",
+    "address": "Calle Roque III, 7, 28001 Madrid, Spain",
+    "creditCard": "4242 4242 4242 4242"
+  },
+  {
+    "name": "Gracita",
+    "lastname": "Morales",
+    "email": "GMorales@example.com",
+    "password": "123123",
+    "role": "user",
+    "username": "GMorales",
+    "birthdate": "1928-11-11",
+    "address": "Calle Roque III, 9, 28001 Madrid, Spain",
+    "creditCard": "4242 4242 4242 4242"
+  }
+]
