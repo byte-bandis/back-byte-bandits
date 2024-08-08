@@ -12,10 +12,16 @@ exports.getMyProfile = tryCatch(async (req, res) => {
   const myProfile = {
     username: retrievedProfile.username,
     _id: retrievedProfile._id,
-    name: retrievedProfile.name,
-    lastname: retrievedProfile.lastname,
+    name: retrievedProfile.name
+      ? retrievedProfile.name
+      : "You don't have a name yet...",
+    lastname: retrievedProfile.lastname
+      ? retrievedProfile.lastname
+      : "You don't have a lastname yet...",
     email: retrievedProfile.email,
-    address: retrievedProfile.address,
+    address: retrievedProfile.address
+      ? retrievedProfile.address
+      : "You don't have an address yet...",
     createdAt: retrievedProfile.createdAt,
     whishlist:
       retrievedProfile.whishList.length > 0
