@@ -9,7 +9,7 @@ exports.adsAccount = tryCatch(async (req, res) => {
 })
 exports.getAds = tryCatch(async (req, res) => {
   const advancedQuery = new APIFeatures(Ad.find({}), req.query)
-   .sort()
+   .sort({createdAt: 1})
    .paginate()
    .fields()
    .filter();
