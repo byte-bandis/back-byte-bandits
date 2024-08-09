@@ -22,11 +22,11 @@ exports.countLikes = tryCatch(async (req, res) => {
   const adId = req.params.id;
   console.log(adId);
   const count = await Like.countDocuments({ ad: adId });
-  res.status(200).json({ count });
+  res.status(200).json({ adId, count });
 });
 
 exports.getUserLikes = tryCatch(async (req, res) => {
-  const userId = req.user._id;
+  const userId =req.params.id;
   console.log(req.user)
   const likes = await Like.find({ user: userId }).populate('ad');
   res.status(200).json({ likes });
