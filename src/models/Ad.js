@@ -23,8 +23,7 @@ const AdSchema = Schema(
       index: true,
     },
     photo: {
-      type: String,
-      required: true,
+      type: String
     },
     tags: {
       type: [String],

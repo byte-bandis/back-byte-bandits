@@ -43,7 +43,10 @@ exports.getAd = tryCatch(async (req, res) => {
 exports.createAd = tryCatch(async (req, res) => {
   const user = req.user._id;
   let { adTitle, adBody, sell, price, tags } = req.body;
-  let photo = req.file.filename;
+  let photo = "";
+  if(req.file){
+    photo = req.file.filename;
+  }
   tags = tags.replace(" ", "").split(",");
   console.log(tags);
   const ad = await Ad.create({
