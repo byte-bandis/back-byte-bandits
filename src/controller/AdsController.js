@@ -199,7 +199,7 @@ exports.buyAd = tryCatch(async (req, res, next) => {
 });
 /* eliminar un anuncio */
 exports.deleteAd = tryCatch(async (req, res, next) => {
-  let ad = await Ad.findById(req.params.id);
+  let ad = await Ad.findById();
   if (!ad) {
     return next({
       message: "Ad not found",
@@ -212,7 +212,7 @@ exports.deleteAd = tryCatch(async (req, res, next) => {
     });
   }
 
-  await ad.remove();
+  await ad.deleteOne(req.params.id);
   res.status(200).json({
     success: true,
     data: {},
