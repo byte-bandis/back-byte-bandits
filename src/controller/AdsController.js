@@ -86,16 +86,14 @@ exports.updateAd = tryCatch(async (req, res, next) => {
   let photo = ad.photo;
   if(req.file){
     photo = req.file.filename;
-    if(ad.photo && ad.photo !== ""){
-      const oldPhotoPath = path.join(__dirname, '..', 'public', 'images', ad.photo);
-      fs.unlink(oldPhotoPath, (err) => {
-        if (err) {
-          console.error("Error al eliminar la foto anterior: ", err);
-        } else {
-          console.log("Foto anterior eliminada con éxito");
-        }
-      });     
+    if(req.body.deletePhoto){
+      const oldPhotoPath = path.join(__dirname, '..', 'public', 'images', req.body.deletePhoto);
+      deletePhoto(oldPhotoPath);     
     }
+  } else if (req.body.deletePhoto) {
+    const oldPhotoPath = path.join(__dirname, '..', 'public', 'images', req.body.deletePhoto);
+    deletePhoto(oldPhotoPath);
+    photo = "";
   }
 
   if (tags) {
@@ -220,3 +218,13 @@ exports.deleteAd = tryCatch(async (req, res, next) => {
     data: {},
   });
 });
+
+function deletePhoto(photoPath) {
+  fs.unlink(photoPath, (err) => {
+    if (err) {
+      console.error("Error al eliminar la foto anterior: ", err);
+    } else {
+      console.log("Foto anterior eliminada con éxito");
+    }
+  });
+}
