@@ -1,6 +1,8 @@
 const Ad = require("../models/Ad");
 const User = require("../models/User");
 const { tryCatch } = require("../utils/tryCatch");
+const fs = require('fs');
+const path = require('path');
 
 const APIFeatures = require("../utils/ApiFeature");
 /* Obtener anuncios */
@@ -67,6 +69,7 @@ exports.createAd = tryCatch(async (req, res) => {
 /* actualizar un anuncio */
 exports.updateAd = tryCatch(async (req, res, next) => {
   let ad = await Ad.findById(req.params.id);
+
   if (!ad) {
     return next({
       message: "Ad not found",
@@ -79,10 +82,38 @@ exports.updateAd = tryCatch(async (req, res, next) => {
     });
   }
 
-  ad = await Ad.findByIdAndUpdate(req.params.id, req.body, {
+  let { adTitle, adBody, sell, price, tags } = req.body;
+  let photo = ad.photo;
+  if(req.file){
+    photo = req.file.filename;
+    if(ad.photo && ad.photo !== ""){
+      const oldPhotoPath = path.join(__dirname, '..', 'public', 'images', ad.photo);
+      fs.unlink(oldPhotoPath, (err) => {
+        if (err) {
+          console.error("Error al eliminar la foto anterior: ", err);
+        } else {
+          console.log("Foto anterior eliminada con éxito");
+        }
+      });     
+    }
+  }
+
+  if (tags) {
+    tags = req.body.tags.replace(" ", "").split(",");
+  }
+
+  ad = await Ad.findByIdAndUpdate(req.params.id, {
+    adTitle,
+    adBody,
+    sell,
+    price,
+    tags,
+    photo,
+  }, {
     new: true,
     runValidators: true,
   });
+
   res.status(200).json({
     success: true,
     data: ad,
