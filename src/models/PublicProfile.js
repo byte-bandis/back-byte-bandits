@@ -8,6 +8,10 @@ const PublicProfileSchema = Schema(
       ref: "User",
       required: true,
     },
+    userName: {
+      type: String,
+      ref: "User",
+    },
     userPhoto: {
       type: String,
     },
