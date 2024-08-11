@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const publicProfileSchema = Schema(
+const PublicProfileSchema = Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
@@ -10,18 +10,15 @@ const publicProfileSchema = Schema(
     },
     userPhoto: {
       type: String,
-      required: false,
     },
     headerPhoto: {
       type: String,
-      required: false,
     },
     userDescription: {
       type: String,
-      required: false,
     },
   },
-  { timestamps }
+  { timestamps: true }
 );
 
-module.exports = mongoose.model("UserPublicProfile", publicProfileSchema);
+module.exports = mongoose.model("PublicProfile", PublicProfileSchema);

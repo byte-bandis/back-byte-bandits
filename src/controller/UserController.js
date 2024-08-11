@@ -31,6 +31,20 @@ exports.getMyProfile = tryCatch(async (req, res) => {
 
   res.status(200).json({ myProfile });
 });
+
+exports.getMyPublicProfile = tryCatch(async (req, res) => {
+  const user = req.params.username;
+  const myPublicProfile = await User.findOne(user).populate("publicProfile");
+
+  if (!myPublicProfile) {
+    res.status(404).json({
+      message: `Public profile not found for user ${user}`,
+    });
+  }
+
+  res.status(200).json({ myPublicProfile });
+});
+
 exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
   const users = await User.find();
   const usersPublicProfiles = users.map((user) => {
