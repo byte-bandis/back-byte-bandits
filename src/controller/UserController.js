@@ -29,7 +29,6 @@ exports.getMyProfile = tryCatch(async (req, res) => {
         : "Your whishlist is empty so far...",
   };
 
-  console.log("Este es myProfile: ", myProfile);
   res.status(200).json({ myProfile });
 });
 exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
