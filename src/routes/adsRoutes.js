@@ -17,7 +17,7 @@ router.get('/', getAds);
 router.get('/count', adsAccount);
 router.get('/:id', getAd);
 router.post('/', authenticate, upload.single('photo'), createAd);
-router.put('/:id', authenticate, updateAd);
+router.put('/:id', authenticate, upload.single('photo'), updateAd);
 router.delete('/:id', authenticate, deleteAd);
 router.post('/:id/reserve', authenticate, reserveAd);
 router.post('/:id/buy', authenticate, buyAd);
