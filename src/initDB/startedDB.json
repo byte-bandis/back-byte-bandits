@@ -1,34 +1,114 @@
 [
     {
-    "adTitle": "Moto - Harley-Davidson Sportster",
-    "adBody": "Descripcion de la moto...",
-    "sell": true,
-    "price": 12000,
-    "photo": "harley_davidson_sportster.jpg",
-    "tags": ["motor", "lifestyle"]
+        "adTitle": "Moto - Harley-Davidson Sportster",
+        "adBody": "Descripcion de la moto...",
+        "sell": true,
+        "price": 12000,
+        "photo": "harley_davidson_sportster.jpg",
+        "tags": ["motor", "lifestyle"]
     },
     {
-    "adTitle": "Consola clásica Nintendo (NES)",
-    "adBody": "Descripcion de la consola...",
-    "sell": true,
-    "price": 200,
-    "photo": "nes.jpg",
-    "tags": ["lifestyle"]
+        "adTitle": "Consola clásica Nintendo (NES)",
+        "adBody": "Descripcion de la consola...",
+        "sell": true,
+        "price": 200,
+        "photo": "nes.jpg",
+        "tags": ["lifestyle"]
     },
     {
-    "adTitle": "Coche clásico - Volkswagen Beetle",
-    "adBody": "Descripcion del coche...",
-    "sell": true,
-    "price": 15000,
-    "photo": "volkswagen_beetle.jpg",
-    "tags": ["motor", "lifestyle"]
+        "adTitle": "Coche clásico - Volkswagen Beetle",
+        "adBody": "Descripcion del coche...",
+        "sell": true,
+        "price": 15000,
+        "photo": "volkswagen_beetle.jpg",
+        "tags": ["motor", "lifestyle"]
     },
     {
-    "adTitle": "Juego Super Mario Bros",
-    "adBody": "Descripcion del juego...",
-    "sell": true,
-    "price": 30,
-    "photo": "super_mario_bros.jpg",
-    "tags": ["lifestyle"]
+        "adTitle": "Juego Super Mario Bros",
+        "adBody": "Descripcion del juego...",
+        "sell": true,
+        "price": 30,
+        "photo": "super_mario_bros.jpg",
+        "tags": ["lifestyle"]
+    },
+    {
+        "adTitle": "Bicicleta de montaña",
+        "adBody": "Descripcion de la bicicleta...",
+        "sell": true,
+        "price": 500,
+        "photo": "mountain_bike.jpg",
+        "tags": ["lifestyle"]
+    },
+    {
+        "adTitle": "Libro - El Señor de los Anillos",
+        "adBody": "Descripcion del libro...",
+        "sell": true,
+        "price": 20,
+        "photo": "lord_of_the_rings.jpg",
+        "tags": ["lifestyle"]
+    },
+    {
+        "adTitle": "Televisor Samsung 4K",
+        "adBody": "Descripcion del televisor...",
+        "sell": true,
+        "price": 800,
+        "photo": "samsung_4k_tv.jpg",
+        "tags": ["lifestyle"]
+    },
+    {
+        "adTitle": "Smartphone - iPhone 12",
+        "adBody": "Descripcion del smartphone...",
+        "sell": true,
+        "price": 1000,
+        "photo": "iphone_12.jpg",
+        "tags": ["mobile", "lifestyle"]
+    },
+    {
+        "adTitle": "Tablet - iPad Pro",
+        "adBody": "Descripcion del tablet...",
+        "sell": true,
+        "price": 1200,
+        "photo": "ipad_pro.jpg",
+        "tags": ["mobile", "lifestyle"]
+    },
+    {
+        "adTitle": "Reloj inteligente - Apple Watch",
+        "adBody": "Descripcion del reloj...",
+        "sell": true,
+        "price": 400,
+        "photo": "apple_watch.jpg",
+        "tags": ["mobile", "lifestyle"]
+    },
+    {
+        "adTitle": "Auriculares - Bose QC35",
+        "adBody": "Descripcion de los auriculares...",
+        "sell": true,
+        "price": 300,
+        "photo": "bose_qc35.jpg",
+        "tags": ["mobile", "lifestyle"]
+    },
+    {
+        "adTitle": "Cámara fotográfica - Canon EOS 5D",
+        "adBody": "Descripcion de la cámara...",
+        "sell": true,
+        "price": 2500,
+        "photo": "canon_eos_5d.jpg",
+        "tags": ["others", "lifestyle"]
+    },
+    {
+        "adTitle": "Guitarra eléctrica - Fender Stratocaster",
+        "adBody": "Descripcion de la guitarra...",
+        "sell": true,
+        "price": 1200,
+        "photo": "fender_stratocaster.jpg",
+        "tags": ["lifestyle"]
+    },
+    {
+        "adTitle": "Juego de mesa - Catan",
+        "adBody": "Descripcion del juego de mesa...",
+        "sell": true,
+        "price": 45,
+        "photo": "catan.jpg",
+        "tags": ["lifestyle"]
     }
-    ]
+]
