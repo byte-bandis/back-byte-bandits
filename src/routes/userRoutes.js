@@ -30,7 +30,15 @@ router.post(
   ]),
   createPublicProfile
 );
-router.put("/:username", authenticate, updatePublicProfile);
+router.put(
+  "/:username",
+  authenticate,
+  upload.fields([
+    { name: "userPhoto", maxCount: 1 },
+    { name: "headerPhoto", maxCount: 1 },
+  ]),
+  updatePublicProfile
+);
 router.delete("/:username", authenticate, deletePublicProfile);
 
 module.exports = router;

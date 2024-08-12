@@ -3,7 +3,9 @@ const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
 
 exports.createPublicProfile = tryCatch(async (req, res) => {
-  const { user, username, userDescription } = req.body;
+  const { requesterId, userDescription } = req.body;
+  const username = req.params.username;
+
   const userPhoto = req.files["userPhoto"]
     ? req.files["userPhoto"][0].filename
     : "";
@@ -11,11 +13,19 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
     ? req.files["headerPhoto"][0].filename
     : "";
 
-  const linkedUser = await User.findById(user);
+  const linkedUser = await User.findOne({ username });
 
   if (!linkedUser) {
     return res.status(404).json({
-      message: `User with ID ${user} not found`,
+      message: `User ${username} not found`,
+    });
+  }
+
+  const user = linkedUser._id;
+
+  if (requesterId !== user.toString()) {
+    return res.status(401).json({
+      message: `Forbidden, you are not ${username}`,
     });
   }
 
@@ -27,7 +37,10 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
     userDescription,
   });
 
-  res.status(200).json(newPublicProfile);
+  res.status(200).json({
+    newPublicProfile,
+    message: `Public profile created for user ${username}!`,
+  });
 });
 
 exports.getSinglePublicProfile = tryCatch(async (req, res) => {
@@ -58,19 +71,22 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
     userName: singlePublicProfile.user.username,
     headerPhoto: singlePublicProfile.headerPhoto,
     userDescription: singlePublicProfile.userDescription,
+    message: `Public profile for ${username} loaded successfully!`,
   });
 });
 
 exports.updatePublicProfile = tryCatch(async (req, res) => {
-  const { requesterId, userPhoto, headerPhoto, userDescription } = req.body;
+  const { requesterId, userDescription } = req.body;
+  const incomingUserDescription = userDescription;
+
+  const incomingUserPhoto = req.files["userPhoto"]
+    ? req.files["userPhoto"][0].filename
+    : "";
+  const incomingHeaderPhoto = req.files["headerPhoto"]
+    ? req.files["headerPhoto"][0].filename
+    : "";
 
   const username = req.params.username;
-
-  const data = {
-    userPhoto,
-    headerPhoto,
-    userDescription,
-  };
 
   const retrievedUser = await User.findOne({ username });
 
@@ -96,6 +112,23 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
     });
   }
 
+  const data = {
+    userPhoto:
+      incomingUserPhoto && retrievedProfile.userPhoto !== incomingUserPhoto
+        ? incomingUserPhoto
+        : retrievedProfile.userPhoto,
+    headerPhoto:
+      incomingHeaderPhoto &&
+      retrievedProfile.headerPhoto !== incomingHeaderPhoto
+        ? incomingHeaderPhoto
+        : retrievedProfile.headerPhoto,
+    userDescription:
+      incomingUserDescription &&
+      retrievedProfile.userDescription !== incomingUserDescription
+        ? incomingUserDescription
+        : retrievedProfile.userDescription,
+  };
+
   const updatedPublicProfile = await PublicProfile.findByIdAndUpdate(
     retrievedProfile._id,
     data,
@@ -104,6 +137,7 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
 
   res.status(200).json({
     updatedPublicProfile,
+    message: `${username}'s profile updated successfully!!`,
   });
 });
 
