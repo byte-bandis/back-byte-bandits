@@ -73,21 +73,16 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
 
 exports.updatePublicProfile = tryCatch(async (req, res) => {
   const { requesterId, userDescription } = req.body;
+  const incomingUserDescription = userDescription;
 
-  const userPhoto = req.files["userPhoto"]
+  const incomingUserPhoto = req.files["userPhoto"]
     ? req.files["userPhoto"][0].filename
     : "";
-  const headerPhoto = req.files["headerPhoto"]
+  const incomingHeaderPhoto = req.files["headerPhoto"]
     ? req.files["headerPhoto"][0].filename
     : "";
 
   const username = req.params.username;
-
-  const data = {
-    userPhoto,
-    headerPhoto,
-    userDescription,
-  };
 
   const retrievedUser = await User.findOne({ username });
 
@@ -113,6 +108,23 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
     });
   }
 
+  const data = {
+    userPhoto:
+      incomingUserPhoto && retrievedProfile.userPhoto !== incomingUserPhoto
+        ? incomingUserPhoto
+        : retrievedProfile.userPhoto,
+    headerPhoto:
+      incomingHeaderPhoto &&
+      retrievedProfile.headerPhoto !== incomingHeaderPhoto
+        ? incomingHeaderPhoto
+        : retrievedProfile.headerPhoto,
+    userDescription:
+      incomingUserDescription &&
+      retrievedProfile.userDescription !== incomingUserDescription
+        ? incomingUserDescription
+        : retrievedProfile.userDescription,
+  };
+
   const updatedPublicProfile = await PublicProfile.findByIdAndUpdate(
     retrievedProfile._id,
     data,
@@ -121,6 +133,7 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
 
   res.status(200).json({
     updatedPublicProfile,
+    message: `${username}'s profile updated successfully!!`,
   });
 });
 
