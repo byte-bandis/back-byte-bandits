@@ -3,7 +3,9 @@ const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
 
 exports.createPublicProfile = tryCatch(async (req, res) => {
-  const { user, username, userDescription } = req.body;
+  const { requesterId, userDescription } = req.body;
+  const username = req.params.username;
+
   const userPhoto = req.files["userPhoto"]
     ? req.files["userPhoto"][0].filename
     : "";
@@ -11,11 +13,19 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
     ? req.files["headerPhoto"][0].filename
     : "";
 
-  const linkedUser = await User.findById(user);
+  const linkedUser = await User.findOne({ username });
 
   if (!linkedUser) {
     return res.status(404).json({
-      message: `User with ID ${user} not found`,
+      message: `User ${username} not found`,
+    });
+  }
+
+  const user = linkedUser._id;
+
+  if (requesterId !== user.toString()) {
+    return res.status(401).json({
+      message: `Forbidden, you are not ${username}`,
     });
   }
 
