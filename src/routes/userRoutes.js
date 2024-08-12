@@ -12,6 +12,7 @@ const {
   getSinglePublicProfile,
   createPublicProfile,
   updatePublicProfile,
+  deletePublicProfile,
 } = require("../controller/PublicProfileController");
 
 router.post("/register", register);
@@ -21,5 +22,6 @@ router.get("/:username/myaccount", authenticate, getMyAccount);
 router.get("/:username", authenticate, getSinglePublicProfile);
 router.post("/:username", authenticate, createPublicProfile);
 router.put("/:username", authenticate, updatePublicProfile);
+router.delete("/:username", authenticate, deletePublicProfile);
 
 module.exports = router;

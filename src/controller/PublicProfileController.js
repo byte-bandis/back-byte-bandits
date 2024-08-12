@@ -99,3 +99,37 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
     updatedPublicProfile,
   });
 });
+
+exports.deletePublicProfile = tryCatch(async (req, res) => {
+  const username = req.params.username;
+  const { requesterId } = req.body;
+  const retrievedUser = await User.findOne({ username });
+
+  if (!retrievedUser) {
+    return res.status(404).json({
+      message: `User ${username} not found`,
+    });
+  }
+
+  const user = retrievedUser._id;
+
+  if (requesterId !== user.toString()) {
+    return res.status(401).json({
+      message: "Forbidden, you are not the owner of this profile",
+    });
+  }
+
+  const retrievedProfile = await PublicProfile.findOne({ user });
+
+  if (!retrievedProfile) {
+    return res.status(404).json({
+      message: `User ${username} doesn't have a public profile`,
+    });
+  }
+
+  await PublicProfile.deleteOne({ user });
+
+  res.status(200).json({
+    message: `Public profile deleted for user ${username}`,
+  });
+});
