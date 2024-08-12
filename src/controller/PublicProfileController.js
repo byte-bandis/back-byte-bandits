@@ -62,7 +62,14 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
 });
 
 exports.updatePublicProfile = tryCatch(async (req, res) => {
-  const { requesterId, userPhoto, headerPhoto, userDescription } = req.body;
+  const { requesterId, userDescription } = req.body;
+
+  const userPhoto = req.files["userPhoto"]
+    ? req.files["userPhoto"][0].filename
+    : "";
+  const headerPhoto = req.files["headerPhoto"]
+    ? req.files["headerPhoto"][0].filename
+    : "";
 
   const username = req.params.username;
 
