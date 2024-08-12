@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const APIFeatures = require("../utils/ApiFeature");
+const { cursorTo } = require("readline");
 /* Obtener anuncios */
 exports.adsAccount = tryCatch(async (req, res) => {
   const count = await Ad.countDocuments();
@@ -199,20 +200,24 @@ exports.buyAd = tryCatch(async (req, res, next) => {
 });
 /* eliminar un anuncio */
 exports.deleteAd = tryCatch(async (req, res, next) => {
-  let ad = await Ad.findById();
+  const toDeleteId = req.params.id;
+  let ad = await Ad.findById(toDeleteId);
   if (!ad) {
     return next({
       message: "Ad not found",
     });
   }
-
-  if (ad.user.toString() !== req.user._id) {
+console.log(toDeleteId, ad.user.toString()); 
+console.log(ad.user.toString() !== req.user.id);
+  const currentUser = req.user._id;
+  console.log(currentUser)
+  if (ad.user.toString() !== currentUser) {
     return next({
       message: "Not authorized to delete this ad",
     });
   }
 
-  await ad.deleteOne(req.params.id);
+  await ad.deleteOne({_id:toDeleteId});
   res.status(200).json({
     success: true,
     data: {},
@@ -228,3 +233,4 @@ function deletePhoto(photoPath) {
     }
   });
 }
+
