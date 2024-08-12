@@ -37,7 +37,10 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
     userDescription,
   });
 
-  res.status(200).json(newPublicProfile);
+  res.status(200).json({
+    newPublicProfile,
+    message: `Public profile created for user ${username}!`,
+  });
 });
 
 exports.getSinglePublicProfile = tryCatch(async (req, res) => {
@@ -68,6 +71,7 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
     userName: singlePublicProfile.user.username,
     headerPhoto: singlePublicProfile.headerPhoto,
     userDescription: singlePublicProfile.userDescription,
+    message: `Public profile for ${username} loaded successfully!`,
   });
 });
 
