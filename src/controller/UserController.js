@@ -1,5 +1,4 @@
 const User = require("../models/User");
-const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
 
 exports.getUsers = tryCatch(async (req, res) => {
@@ -7,10 +6,11 @@ exports.getUsers = tryCatch(async (req, res) => {
   res.status(200).json({ users });
 });
 
-exports.getMyProfile = tryCatch(async (req, res) => {
+// Cambiar a getMyAccount
+exports.getMyAccount = tryCatch(async (req, res) => {
   const loggedUser = req.params.username;
   const retrievedProfile = await User.findOne({ username: loggedUser });
-  const myProfile = {
+  const myAccount = {
     username: retrievedProfile.username,
     _id: retrievedProfile._id,
     name: retrievedProfile.name
@@ -30,80 +30,10 @@ exports.getMyProfile = tryCatch(async (req, res) => {
         : "Your whishlist is empty so far...",
   };
 
-  res.status(200).json({ myProfile });
+  res.status(200).json({ myAccount: myAccount });
 });
 
-/* exports.getMyPublicProfile = tryCatch(async (req, res) => {
-  const user = req.params.username;
-  const myPublicProfile = await User.findOne({ username: user }).populate({
-    path: "publicProfile",
-    populate: "userPhoto",
-  });
-
-  if (!myPublicProfile) {
-    res.status(404).json({
-      message: `Public profile not found for user ${user}`,
-    });
-  }
-
-  res.status(200).json({ myPublicProfile });
-});
- */
-
-exports.createPublicProfile = tryCatch(async (req, res) => {
-  const { user, username, userPhoto, headerPhoto, userDescription } = req.body;
-  const linkedUser = await User.findById(user);
-
-  if (!linkedUser) {
-    return res.status(404).json({
-      message: `User with ID ${user} not found`,
-    });
-  }
-
-  const newPublicProfile = await PublicProfile.create({
-    user,
-    username,
-    userPhoto,
-    headerPhoto,
-    userDescription,
-  });
-
-  res.status(200).json(newPublicProfile);
-});
-
-exports.getMyPublicProfile = tryCatch(async (req, res) => {
-  const username = req.params.username;
-  const retrievedUser = await User.findOne({ username });
-
-  if (!retrievedUser) {
-    return res.status(404).json({
-      message: `User ${username} not found`,
-    });
-  }
-
-  const myPublicProfile = await PublicProfile.findOne({
-    user: retrievedUser._id,
-  }).populate({
-    path: "user",
-    select: "username",
-  });
-  console.log("Esto es myPublicProfile: ", myPublicProfile);
-  if (!myPublicProfile) {
-    //console.log("esto es user: ", user);
-
-    return res.status(404).json({
-      message: `Profile not found for user ${username}`,
-    });
-  }
-
-  res.status(200).json({
-    userPhoto: myPublicProfile.userPhoto,
-    userName: myPublicProfile.user.username,
-    headerPhoto: myPublicProfile.headerPhoto,
-    userDescription: myPublicProfile.userDescription,
-  });
-});
-
+// Esto está a medias
 exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
   const users = await User.find();
   const usersPublicProfiles = users.map((user) => {

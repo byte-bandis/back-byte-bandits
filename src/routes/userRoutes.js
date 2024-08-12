@@ -5,15 +5,19 @@ const {
   register,
   login,
   getUsersPublicProfiles,
-  getMyProfile,
-  getMyPublicProfile,
-  createPublicProfile,
+  getMyAccount,
 } = require("../controller/UserController");
+
+const {
+  getSinglePublicProfile,
+  createPublicProfile,
+} = require("../controller/PublicProfileController");
 
 router.post("/register", register);
 router.post("/login", login);
 router.get("/usersprofiles", getUsersPublicProfiles);
-router.get("/:username", authenticate, getMyPublicProfile);
-router.post("/:username", createPublicProfile);
+router.get("/:username/myaccount", authenticate, getMyAccount);
+router.get("/:username", authenticate, getSinglePublicProfile);
+router.post("/:username", authenticate, createPublicProfile);
 
 module.exports = router;
