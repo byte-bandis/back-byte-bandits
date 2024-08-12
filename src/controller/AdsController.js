@@ -142,13 +142,13 @@ exports.reserveAd = tryCatch(async (req, res, next) => {
       statusCode: 400,
     });
 
-  user.reserved.push({ product: ad._id });
-  await user.save();
+    ad.reservedBy = req.user._id;
+    await ad.save();
 
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
+    res.status(200).json({
+      success: true,
+      data: ad
+    });
 });
 
 /* List all ads reserved by an user */

@@ -34,13 +34,26 @@ const AdSchema = Schema(
       default: "others",
     },
     user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Please add author id']
     },
+    reserverBy: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [false, 'Please add reserver id']
+    },
+    buyer: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [false, 'Please add buyer id']
+    },
+    duration: {
+      type: Number
+    }
   },
   { timestamps: true }
-);
+)
 
 AdSchema.virtual("comments", {
   ref: "Comment",

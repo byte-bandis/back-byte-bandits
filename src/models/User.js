@@ -34,40 +34,6 @@ const AddressSchema = new Schema({
   },
 });
 
-const WhishlistSchema = new Schema({
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: "Ad",
-    required: true,
-  },
-});
-
-const PurchaseSchema = new Schema({
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: "Ad",
-    required: true,
-  },
-  sale: {
-    type: Boolean,
-  },
-});
-
-const SaleSchema = new Schema({
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: "Ad",
-    required: true,
-  },
-});
-
-const ReservedSchema = new Schema({
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: "Ad",
-    required: true,
-  },
-});
 
 const UserSchema = new Schema(
   {
@@ -103,10 +69,6 @@ const UserSchema = new Schema(
     creditCard: {
       type: String,
     },
-    whishList: [WhishlistSchema],
-    purchases: [PurchaseSchema],
-    sales: [SaleSchema],
-    reserved: [ReservedSchema],
   },
   { timestamps: true }
 );
