@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const upload = require("../utils/publicUploadConfigure");
 const { authenticate } = require("../middleware/auth");
 
 const {
@@ -20,7 +21,15 @@ router.post("/login", login);
 router.get("/usersprofiles", getUsersPublicProfiles);
 router.get("/:username/myaccount", authenticate, getMyAccount);
 router.get("/:username", authenticate, getSinglePublicProfile);
-router.post("/:username", authenticate, createPublicProfile);
+router.post(
+  "/:username",
+  authenticate,
+  upload.fields([
+    { name: "userPhoto", maxCount: 1 },
+    { name: "headerPhoto", maxCount: 1 },
+  ]),
+  createPublicProfile
+);
 router.put("/:username", authenticate, updatePublicProfile);
 router.delete("/:username", authenticate, deletePublicProfile);
 

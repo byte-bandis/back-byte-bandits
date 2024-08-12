@@ -3,7 +3,14 @@ const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
 
 exports.createPublicProfile = tryCatch(async (req, res) => {
-  const { user, username, userPhoto, headerPhoto, userDescription } = req.body;
+  const { user, username, userDescription } = req.body;
+  const userPhoto = req.files["userPhoto"]
+    ? req.files["userPhoto"][0].filename
+    : "";
+  const headerPhoto = req.files["headerPhoto"]
+    ? req.files["headerPhoto"][0].filename
+    : "";
+
   const linkedUser = await User.findById(user);
 
   if (!linkedUser) {
