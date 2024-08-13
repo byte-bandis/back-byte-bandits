@@ -53,12 +53,18 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
     });
   }
 
-  const singlePublicProfile = await PublicProfile.findOne({
+  let singlePublicProfile = await PublicProfile.findOne({
     user: retrievedUser._id,
   }).populate({
     path: "user",
     select: "username",
   });
+
+  singlePublicProfile = {
+    ...singlePublicProfile._doc,
+    userPhoto: `http://${req.headers.host}/public/images/${singlePublicProfile.userPhoto}`,
+    headerPhoto: `http://${req.headers.host}/public/images/${singlePublicProfile.headerPhoto}`,
+  };
 
   if (!singlePublicProfile) {
     return res.status(404).json({
@@ -67,10 +73,12 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
   }
 
   res.status(200).json({
-    userPhoto: singlePublicProfile.userPhoto,
-    userName: singlePublicProfile.user.username,
-    headerPhoto: singlePublicProfile.headerPhoto,
-    userDescription: singlePublicProfile.userDescription,
+    publicProfileLoaded: {
+      userPhoto: singlePublicProfile.userPhoto,
+      userName: singlePublicProfile.user.username,
+      headerPhoto: singlePublicProfile.headerPhoto,
+      userDescription: singlePublicProfile.userDescription,
+    },
     message: `Public profile for ${username} loaded successfully!`,
   });
 });
