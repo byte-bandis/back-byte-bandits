@@ -24,10 +24,6 @@ exports.getMyAccount = tryCatch(async (req, res) => {
       ? retrievedProfile.address
       : "You don't have an address yet...",
     createdAt: retrievedProfile.createdAt,
-    whishlist:
-      retrievedProfile.whishList.length > 0
-        ? retrievedProfile.whishList
-        : "Your whishlist is empty so far...",
   };
 
   res.status(200).json({ myAccount: myAccount });
