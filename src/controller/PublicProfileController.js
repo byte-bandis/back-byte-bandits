@@ -60,10 +60,11 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
     select: "username",
   });
 
+  const imagesFolder = "public/images/profiles";
   singlePublicProfile = {
     ...singlePublicProfile._doc,
-    userPhoto: `http://${req.headers.host}/public/images/${singlePublicProfile.userPhoto}`,
-    headerPhoto: `http://${req.headers.host}/public/images/${singlePublicProfile.headerPhoto}`,
+    userPhoto: `http://${req.headers.host}/${imagesFolder}/${singlePublicProfile.userPhoto}`,
+    headerPhoto: `http://${req.headers.host}/${imagesFolder}/${singlePublicProfile.headerPhoto}`,
   };
 
   if (!singlePublicProfile) {
