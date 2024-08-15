@@ -1,11 +1,13 @@
+
+const path = require('path');
 const Ad = require("../models/Ad");
 const User = require("../models/User");
 const { tryCatch } = require("../utils/tryCatch");
-const fs = require('fs');
-const path = require('path');
+const deletePhoto = require("../utils/deletePhoto");
 
 const APIFeatures = require("../utils/ApiFeature");
 const { cursorTo } = require("readline");
+const publicFolder = "public/images";
 /* Obtener anuncios */
 exports.adsAccount = tryCatch(async (req, res) => {
   const count = await Ad.countDocuments();
@@ -19,11 +21,10 @@ exports.getAds = tryCatch(async (req, res) => {
     .filter();
 
   let ads = await advancedQuery.query;
-  const publicFolder = "public/images";
 
   ads = ads.map(({ _doc: { photo, ...ad } }) => ({
     ...ad,
-    photo: `http://${req.headers.host}/${publicFolder}/${photo}`,
+    photo: `${req.protocol}://${req.headers.host}/${process.env.NODE_ENV !== 'production' ? publicFolder : `api/${publicFolder}`}/${photo}`,
   }));
   console.log(ads);
   res.status(200).json({ ads });
@@ -33,10 +34,10 @@ exports.getAd = tryCatch(async (req, res) => {
   let ad = await Ad.findById(req.params.id);
   ad = [
     {
-      ...ad._doc,
-      photo: `http://${req.headers.host}/public/images/${ad.photo}`,
-    },
-  ];
+    ...ad._doc,
+    photo: `${req.protocol}://${req.headers.host}/${process.env.NODE_ENV !== 'production' ? publicFolder : `api/${publicFolder}`}/${ad.photo}`,
+  }
+];
 
   console.log(ad);
 
@@ -218,19 +219,15 @@ console.log(ad.user.toString() !== req.user.id);
   }
 
   await ad.deleteOne({_id:toDeleteId});
+
+  if( ad.photo !== ""){
+    const photoPath = path.join(__dirname, '..', 'public', 'images', ad.photo);
+    deletePhoto(photoPath);
+  }
+
   res.status(200).json({
     success: true,
     data: {},
   });
 });
-
-function deletePhoto(photoPath) {
-  fs.unlink(photoPath, (err) => {
-    if (err) {
-      console.error("Error al eliminar la foto anterior: ", err);
-    } else {
-      console.log("Foto anterior eliminada con éxito");
-    }
-  });
-}
 
