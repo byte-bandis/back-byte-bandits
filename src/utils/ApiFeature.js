@@ -45,6 +45,54 @@ class APIFeatures {
 
     return this;
   }
+
+  searchByTitle() {
+    if (this.queryString.adTitle) {
+      this.query = this.query.find({
+        $text: { $search: this.queryString.adTitle }
+      });
+      console.log("Search by title:", this.queryString.adTitle);
+    }
+    return this;
+  }
+
+  filterByTags() {
+    if (this.queryString.tags) {
+      const tags = this.queryString.tags.split(",");
+      this.query = this.query.find({ tags: { $in: tags } });
+      console.log("Filter by tags:", tags);
+    }
+    return this;
+  }
+
+  filterByPriceRange() {
+    const { minPrice, maxPrice } = this.queryString;
+
+    if (minPrice || maxPrice) {
+      const priceFilter = {};
+
+      if (minPrice) {
+        priceFilter.$gte = parseFloat(minPrice);
+      }
+
+      if (maxPrice) {
+        priceFilter.$lte = parseFloat(maxPrice);
+      }
+
+      // Aplicar el filtro directamente al campo price
+      this.query = this.query.find({ price: priceFilter });
+    }
+    return this;
+  }
+
+  filterByIsBuy() {
+    if (this.queryString.isBuy !== undefined) {
+      const isBuy = this.queryString.isBuy === "true";
+      this.query = this.query.find({ sell: isBuy });
+      console.log("Filter by isBuy:", isBuy);
+    }
+    return this;
+  }
 }
 
 module.exports = APIFeatures;
