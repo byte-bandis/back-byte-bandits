@@ -20,7 +20,7 @@ router.post("/register", register);
 router.post("/login", login);
 router.get("/usersprofiles", getUsersPublicProfiles);
 router.get("/:username/myaccount", authenticate, getMyAccount);
-router.get("/:username", authenticate, getSinglePublicProfile);
+router.get("/:username", getSinglePublicProfile);
 router.post(
   "/:username",
   authenticate,
