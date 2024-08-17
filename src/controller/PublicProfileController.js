@@ -60,6 +60,18 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
     select: "username",
   });
 
+  /*   if (!singlePublicProfile) {
+    const error = new Error(`Profile not found for user ${username}`);
+    error.status = 404;
+    throw error;
+  } */
+
+  if (!singlePublicProfile) {
+    return res.status(404).json({
+      message: `Profile not found for user ${username}`,
+    });
+  }
+
   const imagesFolder = "public/images/profiles";
   singlePublicProfile = {
     ...singlePublicProfile._doc,
@@ -67,11 +79,11 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
     headerPhoto: `http://${req.headers.host}/${imagesFolder}/${singlePublicProfile.headerPhoto}`,
   };
 
-  if (!singlePublicProfile) {
+  /*  if (!singlePublicProfile) {
     return res.status(404).json({
       message: `Profile not found for user ${username}`,
     });
-  }
+  } */
 
   res.status(200).json({
     publicProfileLoaded: {
