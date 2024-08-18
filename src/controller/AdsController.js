@@ -17,7 +17,10 @@ exports.getAds = tryCatch(async (req, res) => {
     .paginate()
     .fields()
     .filter()
+    .searchByTitle()
     .filterByTags()
+    .filterByPriceRange()
+    .filterByIsBuy();
 
   let ads = await advancedQuery.query;
   const publicFolder = "public/images";
@@ -235,33 +238,4 @@ function deletePhoto(photoPath) {
   });
 }
 
-exports.getAdsFiltered = tryCatch(async (req, res) => {
-  // Imprime la consulta recibida
-  console.log("Request query:", req.query);
-  
-  const filterQuery = new APIFeatures(Ad.find(), req.query)
-.searchByTitle()
-.filterByTags()
-.filterByPriceRange()
-.filterByIsBuy()
-.sort()
-.paginate()
-.fields();
-
-// Imprime el filtro final aplicado
-console.log("Final query:", filterQuery.query.getFilter());
-
-let ads = await filterQuery.query;
-
-// Imprime los anuncios obtenidos
-console.log("Filtered ads:", ads);
-
-const publicFolder = "public/images";
-ads = ads.map(({ _doc: { photo, ...ad } }) => ({
-...ad,
-photo: `http://${req.headers.host}/${publicFolder}/${photo}`,
-}));
-
-res.status(200).json({ ads });
-});
 

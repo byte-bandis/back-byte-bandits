@@ -36,21 +36,24 @@ class APIFeatures {
 
   filter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'minPrice', 'maxPrice'];
     excludedFields.forEach((excFields) => delete queryObj[excFields]);
     let queryStr = JSON.stringify(queryObj);
 
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
+    console.log("filter")
     this.query = this.query.find(JSON.parse(queryStr));
+
+    console.log("Final Query:", this.query.getQuery())
 
     return this;
   }
 
   searchByTitle() {
+    console.log("searchByTitle")
     if (this.queryString.adTitle) {
-      this.query = this.query.find({
-        $text: { $search: this.queryString.adTitle }
-      });
+      const regex = new RegExp(this.queryString.adTitle, 'i'); 
+      this.query = this.query.find({ adTitle: regex });
       console.log("Search by title:", this.queryString.adTitle);
     }
     return this;
@@ -66,24 +69,26 @@ class APIFeatures {
   }
 
   filterByPriceRange() {
+    console.log("filterByPriceRange");
     const { minPrice, maxPrice } = this.queryString;
-
+  
     if (minPrice || maxPrice) {
       const priceFilter = {};
-
+  
       if (minPrice) {
         priceFilter.$gte = parseFloat(minPrice);
       }
-
+  
       if (maxPrice) {
         priceFilter.$lte = parseFloat(maxPrice);
       }
-
-      // Aplicar el filtro directamente al campo price
+  
       this.query = this.query.find({ price: priceFilter });
+      console.log("Filter by price:", priceFilter);
     }
     return this;
   }
+  
 
   filterByIsBuy() {
     if (this.queryString.isBuy !== undefined) {
