@@ -1,9 +1,26 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
 
 exports.createPublicProfile = tryCatch(async (req, res) => {
-  const { requesterId, userDescription } = req.body;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+
+  const requesterId = decodedToken.user._id;
+  const { userDescription } = req.body;
   const username = req.params.username;
 
   const userPhoto = req.files["userPhoto"]
@@ -85,8 +102,23 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
 });
 
 exports.updatePublicProfile = tryCatch(async (req, res) => {
-  const { requesterId, userDescription } = req.body;
-  const incomingUserDescription = userDescription;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+
+  const requesterId = decodedToken.user._id;
+  const incomingUserDescription = req.body.userDescription;
 
   const incomingUserPhoto = req.files["userPhoto"]
     ? req.files["userPhoto"][0].filename
@@ -152,7 +184,27 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
 
 exports.deletePublicProfile = tryCatch(async (req, res) => {
   const username = req.params.username;
-  const { requesterId } = req.body;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      message: "Authorization token is missing or invalid",
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(401).json({
+      message: "Token verification failed",
+    });
+  }
+
+  const requesterId = decodedToken.user._id;
+
   const retrievedUser = await User.findOne({ username });
 
   if (!retrievedUser) {
@@ -164,7 +216,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
   const user = retrievedUser._id;
 
   if (requesterId !== user.toString()) {
-    return res.status(401).json({
+    return res.status(403).json({
       message: "Forbidden, you are not the owner of this profile",
     });
   }
