@@ -4,7 +4,23 @@ const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
 
 exports.createPublicProfile = tryCatch(async (req, res) => {
-  const { requesterId, userDescription } = req.body;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+
+  const requesterId = decodedToken.user._id;
+  const { userDescription } = req.body;
   const username = req.params.username;
 
   const userPhoto = req.files["userPhoto"]
@@ -85,7 +101,7 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
   });
 });
 
-exports.updatePublicProfile = tryCatch(async (req, res) => {
+/* exports.updatePublicProfile = tryCatch(async (req, res) => {
   const { requesterId, userDescription } = req.body;
   const incomingUserDescription = userDescription;
 
@@ -149,11 +165,36 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
     updatedPublicProfile,
     message: `${username}'s profile updated successfully!!`,
   });
-});
+}); */
 
-/* exports.deletePublicProfile = tryCatch(async (req, res) => {
+exports.updatePublicProfile = tryCatch(async (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+
+  const requesterId = decodedToken.user._id;
+  const incomingUserDescription = req.body.userDescription;
+
+  const incomingUserPhoto = req.files["userPhoto"]
+    ? req.files["userPhoto"][0].filename
+    : "";
+  const incomingHeaderPhoto = req.files["headerPhoto"]
+    ? req.files["headerPhoto"][0].filename
+    : "";
+
   const username = req.params.username;
-  const requesterId = req.query.requesterId;
+
   const retrievedUser = await User.findOne({ username });
 
   if (!retrievedUser) {
@@ -162,28 +203,50 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
     });
   }
 
-  const user = retrievedUser._id;
+  const retrievedProfile = await PublicProfile.findOne({
+    user: retrievedUser._id,
+  });
 
-  if (requesterId !== user.toString()) {
+  if (!retrievedProfile) {
+    return res.status(404).json({
+      message: `Profile not found for ${username}`,
+    });
+  }
+
+  if (requesterId !== retrievedProfile.user.toString()) {
     return res.status(401).json({
       message: "Forbidden, you are not the owner of this profile",
     });
   }
 
-  const retrievedProfile = await PublicProfile.findOne({ user });
+  const data = {
+    userPhoto:
+      incomingUserPhoto && retrievedProfile.userPhoto !== incomingUserPhoto
+        ? incomingUserPhoto
+        : retrievedProfile.userPhoto,
+    headerPhoto:
+      incomingHeaderPhoto &&
+      retrievedProfile.headerPhoto !== incomingHeaderPhoto
+        ? incomingHeaderPhoto
+        : retrievedProfile.headerPhoto,
+    userDescription:
+      incomingUserDescription &&
+      retrievedProfile.userDescription !== incomingUserDescription
+        ? incomingUserDescription
+        : retrievedProfile.userDescription,
+  };
 
-  if (!retrievedProfile) {
-    return res.status(404).json({
-      message: `User ${username} doesn't have a public profile`,
-    });
-  }
-
-  await PublicProfile.deleteOne({ user });
+  const updatedPublicProfile = await PublicProfile.findByIdAndUpdate(
+    retrievedProfile._id,
+    data,
+    { new: true }
+  );
 
   res.status(200).json({
-    message: `Public profile deleted for user ${username}`,
+    updatedPublicProfile,
+    message: `${username}'s profile updated successfully!!`,
   });
-}); */
+});
 
 exports.deletePublicProfile = tryCatch(async (req, res) => {
   const username = req.params.username;
@@ -206,7 +269,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
     });
   }
 
-  const requesterId = decodedToken.user._id; // Asume que el `requesterId` está en el campo `id` del payload del token
+  const requesterId = decodedToken.user._id;
 
   const retrievedUser = await User.findOne({ username });
 
