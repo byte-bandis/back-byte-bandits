@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
@@ -150,9 +151,9 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   });
 });
 
-exports.deletePublicProfile = tryCatch(async (req, res) => {
+/* exports.deletePublicProfile = tryCatch(async (req, res) => {
   const username = req.params.username;
-  const { requesterId } = req.body;
+  const requesterId = req.query.requesterId;
   const retrievedUser = await User.findOne({ username });
 
   if (!retrievedUser) {
@@ -165,6 +166,60 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
 
   if (requesterId !== user.toString()) {
     return res.status(401).json({
+      message: "Forbidden, you are not the owner of this profile",
+    });
+  }
+
+  const retrievedProfile = await PublicProfile.findOne({ user });
+
+  if (!retrievedProfile) {
+    return res.status(404).json({
+      message: `User ${username} doesn't have a public profile`,
+    });
+  }
+
+  await PublicProfile.deleteOne({ user });
+
+  res.status(200).json({
+    message: `Public profile deleted for user ${username}`,
+  });
+}); */
+
+exports.deletePublicProfile = tryCatch(async (req, res) => {
+  const username = req.params.username;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      message: "Authorization token is missing or invalid",
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(401).json({
+      message: "Token verification failed",
+    });
+  }
+
+  const requesterId = decodedToken.user._id; // Asume que el `requesterId` está en el campo `id` del payload del token
+
+  const retrievedUser = await User.findOne({ username });
+
+  if (!retrievedUser) {
+    return res.status(404).json({
+      message: `User ${username} not found`,
+    });
+  }
+
+  const user = retrievedUser._id;
+
+  if (requesterId !== user.toString()) {
+    return res.status(403).json({
       message: "Forbidden, you are not the owner of this profile",
     });
   }
