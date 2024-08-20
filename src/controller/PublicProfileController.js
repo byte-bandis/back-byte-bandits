@@ -164,8 +164,9 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
         ? incomingHeaderPhoto
         : retrievedProfile.headerPhoto,
     userDescription:
-      incomingUserDescription &&
-      retrievedProfile.userDescription !== incomingUserDescription
+      (incomingUserDescription &&
+        retrievedProfile.userDescription !== incomingUserDescription) ||
+      incomingUserDescription === ""
         ? incomingUserDescription
         : retrievedProfile.userDescription,
   };
