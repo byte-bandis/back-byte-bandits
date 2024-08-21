@@ -1,18 +1,20 @@
 const Comment = require('../models/Comment');
-const Post = require('../models/Post');
 const { tryCatch } = require('../utils/tryCatch');
+import Ad from '../models/Ad';
 
 exports.getComments = tryCatch(async (req, res, next) => {
-  const { fatherId } = req.body;
+  const fatherId  = req.params.id;
+  console.log(fatherId);
 
   if (!fatherId) {
     return next({
       message: 'Father id not given'
     });
   }
-
-  const comments = await Comment.find({ fatherId });
-
+  const comments = await Comment.find({ fatherId }).populate({
+    path: 'user'
+  });
+  console.log(comments[0].user.username);
   if (!comments) {
     return next({
       message: 'Comments not found'
@@ -52,19 +54,18 @@ exports.getComment = tryCatch(async (req, res, next) => {
 }); */
 
 exports.addComment = tryCatch(async (req, res, next) => {
-  const { fatherId } = req.body;
+  const fatherId  = req.params.id;
   const user = req.user._id;
 
-  const Ad = await Ad.findById(fatherId);
-
-  if (!Ad) {
+  const currentAd = await Ad.findById(fatherId);
+ 
+  if (!currentAd) {
     return next({
       message: 'Ad not found'
     });
   }
 
   const comment = await Comment.create({ ...req.body, user, fatherId });
-
   res.status(200).json({
     success: true,
     data: comment
