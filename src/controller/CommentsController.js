@@ -13,7 +13,7 @@ exports.getComments = tryCatch(async (req, res, next) => {
   }
   const comments = await Comment.find({ fatherId }).populate({
     path: 'user'
-  });
+  }).sort('-createdAt');
   console.log(comments[0].user.username);
   if (!comments) {
     return next({
