@@ -3,7 +3,7 @@ const { tryCatch } = require('../utils/tryCatch');
 import Ad from '../models/Ad';
 
 exports.getComments = tryCatch(async (req, res, next) => {
-  const fatherId  = req.params.id;
+  const fatherId = req.params.id;
   console.log(fatherId);
 
   if (!fatherId) {
@@ -54,21 +54,22 @@ exports.getComment = tryCatch(async (req, res, next) => {
 }); */
 
 exports.addComment = tryCatch(async (req, res, next) => {
-  const fatherId  = req.params.id;
-  const user = req.user._id;
+  const fatherId = req.params.id;
+  const user = req.user;
 
   const currentAd = await Ad.findById(fatherId);
- 
+
   if (!currentAd) {
     return next({
       message: 'Ad not found'
     });
   }
 
-  const comment = await Comment.create({ ...req.body, user, fatherId });
+  const comment = (await Comment.create({ ...req.body, user, fatherId }));
+  const populatedComment = await Comment.findById(comment._id).populate('user', '-password');
   res.status(200).json({
     success: true,
-    data: comment
+    data: populatedComment
   });
 });
 
