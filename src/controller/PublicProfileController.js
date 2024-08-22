@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
+const fs = require("fs").promises;
+const path = require("node:path");
 
 exports.createPublicProfile = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
@@ -25,10 +27,10 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
 
   const userPhoto = req.files["userPhoto"]
     ? req.files["userPhoto"][0].filename
-    : "";
+    : "UserTemplate.jpg";
   const headerPhoto = req.files["headerPhoto"]
     ? req.files["headerPhoto"][0].filename
-    : "";
+    : "UserHeader.jpg";
 
   const linkedUser = await User.findOne({ username });
 
@@ -154,15 +156,9 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   }
 
   const data = {
-    userPhoto:
-      incomingUserPhoto && retrievedProfile.userPhoto !== incomingUserPhoto
-        ? incomingUserPhoto
-        : retrievedProfile.userPhoto,
-    headerPhoto:
-      incomingHeaderPhoto &&
-      retrievedProfile.headerPhoto !== incomingHeaderPhoto
-        ? incomingHeaderPhoto
-        : retrievedProfile.headerPhoto,
+    userPhoto: incomingUserPhoto || retrievedProfile.userPhoto,
+    headerPhoto: incomingHeaderPhoto || retrievedProfile.headerPhoto,
+
     userDescription:
       (incomingUserDescription &&
         retrievedProfile.userDescription !== incomingUserDescription) ||
@@ -194,8 +190,8 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
   }
 
   const token = authHeader.split(" ")[1];
-
   let decodedToken;
+
   try {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
@@ -205,7 +201,6 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
   }
 
   const requesterId = decodedToken.user._id;
-
   const retrievedUser = await User.findOne({ username });
 
   if (!retrievedUser) {
@@ -228,6 +223,42 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
     return res.status(404).json({
       message: `User ${username} doesn't have a public profile`,
     });
+  }
+
+  try {
+    if (
+      retrievedProfile.userPhoto &&
+      retrievedProfile.userPhoto !== "UserTemplate.jpg"
+    ) {
+      const userPhotoPath = path.join(
+        __dirname,
+        "..",
+        "public",
+        "images",
+        "profiles",
+        retrievedProfile.userPhoto
+      );
+      await fs.unlink(userPhotoPath);
+      console.log(`${username}'s image deleted successfully now!`);
+    }
+
+    if (
+      retrievedProfile.headerPhoto &&
+      retrievedProfile.headerPhoto !== "UserHeader.jpg"
+    ) {
+      const headerPhotoPath = path.join(
+        __dirname,
+        "..",
+        "public",
+        "images",
+        "profiles",
+        retrievedProfile.headerPhoto
+      );
+      await fs.unlink(headerPhotoPath);
+      console.log(`${username}'s header image deleted successfully now!`);
+    }
+  } catch (error) {
+    console.error("Error deleting image files:", error.message);
   }
 
   await PublicProfile.deleteOne({ user });
