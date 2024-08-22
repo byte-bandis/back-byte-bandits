@@ -25,10 +25,10 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
 
   const userPhoto = req.files["userPhoto"]
     ? req.files["userPhoto"][0].filename
-    : "";
+    : "UserTemplate.jpg";
   const headerPhoto = req.files["headerPhoto"]
     ? req.files["headerPhoto"][0].filename
-    : "";
+    : "UserHeader.jpg";
 
   const linkedUser = await User.findOne({ username });
 
