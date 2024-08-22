@@ -55,6 +55,8 @@ const AdSchema = Schema(
   { timestamps: true }
 )
 
+AdSchema.index({ adTitle: 'text' });
+
 AdSchema.virtual("comments", {
   ref: "Comment",
   localField: "_id",

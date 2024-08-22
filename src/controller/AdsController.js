@@ -18,7 +18,11 @@ exports.getAds = tryCatch(async (req, res) => {
     .sort()
     .paginate()
     .fields()
-    .filter();
+    .filter()
+    .searchByTitle()
+    .filterByTags()
+    .filterByPriceRange()
+    .filterByIsBuy();
 
   let ads = await advancedQuery.query;
 

@@ -154,15 +154,9 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   }
 
   const data = {
-    userPhoto:
-      incomingUserPhoto && retrievedProfile.userPhoto !== incomingUserPhoto
-        ? incomingUserPhoto
-        : retrievedProfile.userPhoto,
-    headerPhoto:
-      incomingHeaderPhoto &&
-      retrievedProfile.headerPhoto !== incomingHeaderPhoto
-        ? incomingHeaderPhoto
-        : retrievedProfile.headerPhoto,
+    userPhoto: incomingUserPhoto || retrievedProfile.userPhoto,
+    headerPhoto: incomingHeaderPhoto || retrievedProfile.headerPhoto,
+
     userDescription:
       (incomingUserDescription &&
         retrievedProfile.userDescription !== incomingUserDescription) ||

@@ -5,9 +5,16 @@ const CommentSchema = new mongoose.Schema({
     type: String,
     required: ['true', 'Please add comment text']
   },
-  post: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Post',
+  score: {
+    type: Number,
+    required: true,
+      enum: {
+        values: [0, 1, 2, 3, 4, 5],
+      },
+      default: 0,
+  },
+  fatherId: {
+    type: String,
     required: true
   },
   user: {
@@ -15,6 +22,6 @@ const CommentSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Comment', CommentSchema);
