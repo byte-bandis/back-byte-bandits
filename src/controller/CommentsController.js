@@ -65,9 +65,12 @@ exports.addComment = tryCatch(async (req, res, next) => {
   }
 
   const comment = await Comment.create({ ...req.body, user, fatherId });
+  const newComment = await Comment.findById(comment._id).populate({
+    path: 'user'
+  })
   res.status(200).json({
     success: true,
-    data: comment
+    data: newComment
   });
 });
 
