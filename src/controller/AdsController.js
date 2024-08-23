@@ -30,7 +30,6 @@ exports.getAds = tryCatch(async (req, res) => {
     ...ad,
     photo: `${req.protocol}://${req.headers.host}/${process.env.NODE_ENV !== 'production' ? publicFolder : `api/${publicFolder}`}/${photo}`,
   }));
-  console.log(ads);
   res.status(200).json({ ads });
 });
 /* obtener un anuncio */
@@ -43,7 +42,6 @@ exports.getAd = tryCatch(async (req, res) => {
   }
 ];
 
-  console.log(ad);
 
   res.status(200).json({ ad });
 });
@@ -56,7 +54,6 @@ exports.createAd = tryCatch(async (req, res) => {
     photo = req.file.filename;
   }
   tags = tags.replace(" ", "").split(",");
-  console.log(tags);
   const ad = await Ad.create({
     adTitle,
     adBody,
@@ -213,7 +210,6 @@ exports.deleteAd = tryCatch(async (req, res, next) => {
     });
   }
 console.log(toDeleteId, ad.user.toString()); 
-console.log(ad.user.toString() !== req.user.id);
   const currentUser = req.user._id;
   console.log(currentUser)
   if (ad.user.toString() !== currentUser) {
