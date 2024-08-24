@@ -1,33 +1,32 @@
 const User = require("../models/User");
 const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
+const MyAddress = require("../models/myPersonalData/MyAddress");
+const MyCreditCard = require("../models/myPersonalData/MyCreditCard");
 
 exports.getUsers = tryCatch(async (req, res) => {
   const users = await User.find();
   res.status(200).json({ users });
 });
-
 // Cambiar a getMyAccount
 exports.getMyAccount = tryCatch(async (req, res) => {
-  const loggedUser = req.params.username;
-  const retrievedProfile = await User.findOne({ username: loggedUser });
-  const myAccount = {
-    username: retrievedProfile.username,
-    _id: retrievedProfile._id,
-    name: retrievedProfile.name
-      ? retrievedProfile.name
-      : "You don't have a name yet...",
-    lastname: retrievedProfile.lastname
-      ? retrievedProfile.lastname
-      : "You don't have a lastname yet...",
-    email: retrievedProfile.email,
-    address: retrievedProfile.address
-      ? retrievedProfile.address
-      : "You don't have an address yet...",
-    createdAt: retrievedProfile.createdAt,
-  };
+  const username = req.params.username;
+  const retrievedUser = await User.findOne({ username });
 
-  res.status(200).json({ myAccount: myAccount });
+  if (!retrievedUser) {
+    return res.status(404).json({
+      message: `User ${username} not found`,
+    });
+  }
+
+  const address = await MyAddress.findOne({
+    user: retrievedUser._id,
+  }).populate({
+    path: "user",
+    select: "name lastname",
+  });
+
+  res.status(200).json({ address });
 });
 
 // Esto está a medias
@@ -101,12 +100,30 @@ exports.register = tryCatch(async (req, res) => {
       userDescription: "Your user description is empty",
     });
 
+    const userAddress = await MyAddress.create({
+      user: user._id,
+      country: "Please add a country",
+      streetName: "Add your street name",
+      streetNumber: "Add your street number",
+      flat: "Add your flat number",
+      door: "Add your flat door",
+      postalCode: "Add your postal code",
+      mobilePhoneNumber: "123 123 123",
+    });
+
+    const userCreditCard = await MyCreditCard.create({
+      user: user._id,
+      creditCard: "423442344234423442",
+    });
+
     const token = user.getSignedJwt();
 
     res.status(201).json({
       success: true,
       token,
       user,
+      userAddress,
+      userCreditCard,
       userPublicProfile,
     });
   } catch (error) {

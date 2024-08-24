@@ -15,11 +15,16 @@ const {
   updatePublicProfile,
   deletePublicProfile,
 } = require("../controller/PublicProfileController");
+const {
+  getMyAddress,
+  createMyAddress,
+} = require("../controller/myPersonalData/MyAddressController");
 
 router.post("/register", register);
 router.post("/login", login);
 router.get("/usersprofiles", getUsersPublicProfiles);
-router.get("/:username/myaccount", authenticate, getMyAccount);
+router.get("/:username/myaccount", authenticate, getMyAddress);
+router.post("/:username/myaccount", authenticate, createMyAddress);
 router.get("/:username", getSinglePublicProfile);
 router.post(
   "/:username",
