@@ -209,6 +209,7 @@ exports.deleteAd = tryCatch(async (req, res, next) => {
       message: "Ad not found",
     });
   }
+console.log(toDeleteId, ad.user.toString()); 
   const currentUser = req.user._id;
   if (ad.user.toString() !== currentUser) {
     return next({
