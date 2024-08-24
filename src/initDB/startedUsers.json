@@ -1,14 +1,12 @@
 [
   {
-    "_id": "66b36fef5b3294487d2bb593",
-    "username": "AlfredoLanda",
     "name": "Alfredo",
     "lastname": "Landa",
     "email": "alfredoL@example.com",
     "password": "123123",
     "role": "admin",
-    "birthdate": "1946-03-10T00:00:00.000Z",
-    "creditCard": "4242 4242 4242 4242"
+    "username": "AlfredoLanda",
+    "birthdate": "1946-03-10"
   },
   {
     "name": "Fernando",
