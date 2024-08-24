@@ -94,6 +94,7 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
 
   res.status(200).json({
     publicProfileLoaded: {
+      profileId: singlePublicProfile._id,
       userPhoto: singlePublicProfile.userPhoto,
       userName: singlePublicProfile.user.username,
       headerPhoto: singlePublicProfile.headerPhoto,

@@ -7,10 +7,7 @@ const PublicProfileSchema = Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
       required: true,
-    },
-    userName: {
-      type: String,
-      ref: "User",
+      index: true,
     },
     userPhoto: {
       type: String,

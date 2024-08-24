@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
 
 exports.getUsers = tryCatch(async (req, res) => {
@@ -74,25 +75,46 @@ exports.register = tryCatch(async (req, res) => {
     return res.status(400).json({ message: `${email} is already registered.` });
   }
 
-  const user = await User.create({
-    name,
-    email,
-    password,
-    role,
-    username,
-    lastname,
-    birthdate,
-    address,
-    creditCard,
-  });
+  let user;
 
-  const token = user.getSignedJwt();
+  try {
+    user = await User.create({
+      name,
+      email,
+      password,
+      role,
+      username,
+      lastname,
+      birthdate,
+      address,
+      creditCard,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to create user.", error });
+  }
 
-  res.status(201).json({
-    success: true,
-    token,
-    user,
-  });
+  try {
+    const userPublicProfile = await PublicProfile.create({
+      user: user._id,
+      userPhoto: "UserTemplate.jpg",
+      headerPhoto: "UserHeader.jpg",
+      userDescription: "Your user description is empty",
+    });
+
+    const token = user.getSignedJwt();
+
+    res.status(201).json({
+      success: true,
+      token,
+      user,
+      userPublicProfile,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Could not create ${user.username} public profile`,
+      error,
+    });
+  }
 });
 
 exports.login = tryCatch(async (req, res, next) => {
