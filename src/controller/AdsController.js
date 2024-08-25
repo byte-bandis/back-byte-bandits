@@ -3,7 +3,7 @@ const path = require('path');
 const Ad = require("../models/Ad");
 const User = require("../models/User");
 const { tryCatch } = require("../utils/tryCatch");
-const deletePhoto = require("../utils/deletePhoto");
+const removePhotoFile = require("../utils/removePhotoFile");
 
 const APIFeatures = require("../utils/ApiFeature");
 const { cursorTo } = require("readline");
@@ -91,11 +91,11 @@ exports.updateAd = tryCatch(async (req, res, next) => {
     photo = req.file.filename;
     if(req.body.deletePhoto){
       const oldPhotoPath = path.join(__dirname, '..', 'public', 'images', req.body.deletePhoto);
-      deletePhoto(oldPhotoPath);     
+      removePhotoFile(oldPhotoPath);     
     }
   } else if (req.body.deletePhoto) {
     const oldPhotoPath = path.join(__dirname, '..', 'public', 'images', req.body.deletePhoto);
-    deletePhoto(oldPhotoPath);
+    removePhotoFile(oldPhotoPath);
     photo = "";
   }
 
@@ -221,7 +221,7 @@ console.log(toDeleteId, ad.user.toString());
 
   if( ad.photo !== ""){
     const photoPath = path.join(__dirname, '..', 'public', 'images', ad.photo);
-    deletePhoto(photoPath);
+    removePhotoFile(photoPath);
   }
 
   res.status(200).json({

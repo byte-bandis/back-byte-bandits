@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, callback) {
     try {
-      const username = req.params.username;
+      const username = req.params.username || req.user.username;
 
       const filename = `${file.fieldname}-${username}-${Date.now()}-${
         file.originalname
