@@ -14,6 +14,7 @@ const PublicProfile = require("../models/PublicProfile");
 const data = require("./startedDB.json");
 const users = require("./startedUsers.json");
 const Ad = require("../models/Ad");
+const MyAddress = require("../models/myPersonalData/MyAddress");
 
 function secureQuestion(text) {
   return new Promise((resolve) => {
@@ -32,8 +33,10 @@ function secureQuestion(text) {
 async function initUsers() {
   const del = await User.deleteMany();
   const deleteProfiles = await PublicProfile.deleteMany();
-  console.log(`Se han borrado ${del.deletedCount} users.`);
+  const deleteAddresses = await MyAddress.deleteMany();
+  console.log(`Se han borrado ${del.deletedCount} usuarios.`);
   console.log(`Se han borrado ${deleteProfiles.deletedCount} perfiles.`);
+  console.log(`Se han borrado ${deleteAddresses.deletedCount} direcciones.`);
 
   for (const user of users) {
     const insertedUser = await User.create(user);
@@ -43,9 +46,28 @@ async function initUsers() {
       headerPhoto: "UserHeader.jpg",
       userDescription: "Your user description is empty",
     });
-    console.log(insertedUser);
+    const insertedAddress = await MyAddress.create({
+      user: insertedUser._id,
+      country: "Please add a country",
+      streetName: "Add your street name",
+      streetNumber: "Add your street number",
+      flat: "Add your flat number",
+      door: "Add your flat door",
+      postalCode: "Add your postal code",
+      mobilePhoneNumber: "123 123 123",
+    });
+    /* console.log(insertedUser);
     console.log(insertedProfile);
+    console.log(insertedAddress);  */
   }
+
+  const insertedUsers = await User.find();
+  const insertedProfiles = await PublicProfile.find();
+  const insertedAddresses = await MyAddress.find();
+
+  console.log(`Se han creado ${insertedUsers.length} usuarios.`);
+  console.log(`Se han creado ${insertedProfiles.length} perfiles.`);
+  console.log(`Se han creado ${insertedAddresses.length} direcciones.`);
 }
 
 async function initAd() {
@@ -67,11 +89,11 @@ async function initAd() {
 async function main() {
   await new Promise((resolve) => connection.once("open", resolve));
 
-  const deleleAll = await secureQuestion(
+  const deleteAll = await secureQuestion(
     "Estas seguro de que deseas borrar todo el contenido de la base de datos? (si/NO) "
   );
 
-  if (!deleleAll) {
+  if (!deleteAll) {
     process.exit();
   } else {
     await initUsers();
