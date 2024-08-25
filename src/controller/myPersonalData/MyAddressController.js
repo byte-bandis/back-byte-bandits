@@ -2,6 +2,11 @@ const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const { tryCatch } = require("../../utils/tryCatch");
 const MyAddress = require("../../models/myPersonalData/MyAddress");
+const {
+  UnauthorizedError,
+  NotFoundError,
+  ForbiddenError,
+} = require("../../middleware/errors");
 
 exports.createMyAddress = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
@@ -189,61 +194,38 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({
-      message: "Authorization token is missing or invalid",
-    });
+    throw new UnauthorizedError("Authorization token is missing or invalid");
   }
 
   const token = authHeader.split(" ")[1];
-  let decodedToken;
-
-  try {
-    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    return res.status(401).json({
-      message: "Token verification failed",
-    });
-  }
-
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   const requesterId = decodedToken.user._id;
   const retrievedUser = await User.findOne({ username });
 
   if (!retrievedUser) {
-    return res.status(404).json({
-      message: `User ${username} not found`,
-    });
+    throw new NotFoundError(`User ${username} not found`);
   }
 
   const user = retrievedUser._id;
 
   if (requesterId !== user.toString()) {
-    return res.status(403).json({
-      message: "Forbidden, you are not the owner of this address",
-    });
+    throw new ForbiddenError(
+      "Forbidden, you are not the owner of this address"
+    );
   }
 
   const retrievedAddress = await MyAddress.findOne({ user });
 
   if (!retrievedAddress) {
-    return res.status(404).json({
-      message: `User ${username} doesn't have an address`,
-    });
+    throw new NotFoundError(`User ${username} doesn't have an address`);
   }
 
   const addressId = retrievedAddress._id;
 
-  try {
-    await MyAddress.deleteOne({ _id: addressId });
+  await MyAddress.deleteOne({ _id: addressId });
 
-    res.status(200).json({
-      status: "success",
-      message: `Address deleted for user ${username}`,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: `Could not delete address for user ${username}`,
-      error: error.message,
-    });
-  }
+  res.status(200).json({
+    status: "success",
+    message: `Address deleted for user ${username}`,
+  });
 });
