@@ -18,13 +18,17 @@ const {
 const {
   getMyAddress,
   createMyAddress,
+  updateMyAddress,
+  deleteMyAddress,
 } = require("../controller/myPersonalData/MyAddressController");
 
 router.post("/register", register);
 router.post("/login", login);
 router.get("/usersprofiles", getUsersPublicProfiles);
-router.get("/:username/myaccount", authenticate, getMyAddress);
-router.post("/:username/myaccount", authenticate, createMyAddress);
+router.get("/:username/myaddress", authenticate, getMyAddress);
+router.post("/:username/myaddress", authenticate, createMyAddress);
+router.put("/:username/myaddress", authenticate, updateMyAddress);
+router.delete("/:username/myaddress", authenticate, deleteMyAddress);
 router.get("/:username", getSinglePublicProfile);
 router.post(
   "/:username",

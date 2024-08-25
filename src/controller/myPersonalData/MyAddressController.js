@@ -1,9 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
-const PublicProfile = require("../../models/PublicProfile");
 const { tryCatch } = require("../../utils/tryCatch");
-const fs = require("fs").promises;
-const path = require("node:path");
 const MyAddress = require("../../models/myPersonalData/MyAddress");
 
 exports.createMyAddress = tryCatch(async (req, res) => {
@@ -64,9 +61,11 @@ exports.createMyAddress = tryCatch(async (req, res) => {
     });
 
     res.status(200).json({
-      success: true,
-      data: newAddress,
+      status: "success",
       message: `New address created for user ${username}!`,
+      data: {
+        address: newAddress,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -99,21 +98,11 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   }
 
   res.status(200).json({
-    success: true,
-    data: {
-      addressId: myAddress._id,
-      userId: myAddress.user._id,
-      username: myAddress.user.username,
-      country: myAddress.country,
-      streetName: myAddress.streetName,
-      streetNumber: myAddress.streetNumber,
-      flat: myAddress.flat,
-      door: myAddress.door,
-      postalCode: myAddress.postalCode,
-      mobilePhoneNumber: myAddress.mobilePhoneNumber,
-      updatedAt: myAddress.updatedAt,
-    },
+    status: "success",
     message: `Registered address for ${username} loaded successfully!`,
+    data: {
+      address: myAddress,
+    },
   });
 });
 
@@ -134,14 +123,13 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   }
 
   const requesterId = decodedToken.user._id;
-  const incomingUserDescription = req.body.userDescription;
-
-  const incomingUserPhoto = req.files["userPhoto"]
-    ? req.files["userPhoto"][0].filename
-    : "";
-  const incomingHeaderPhoto = req.files["headerPhoto"]
-    ? req.files["headerPhoto"][0].filename
-    : "";
+  const incomingCountry = req.body.country;
+  const incomingStreetName = req.body.streetName;
+  const incomingStreetNumber = req.body.streetNumber;
+  const incomingFlat = req.body.flat;
+  const incomingDoor = req.body.door;
+  const incomingPostalCode = req.body.postalCode;
+  const incomingMobilePhoneNumber = req.body.mobilePhoneNumber;
 
   const username = req.params.username;
 
@@ -153,47 +141,50 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
     });
   }
 
-  const retrievedProfile = await PublicProfile.findOne({
+  const retrievedAddress = await MyAddress.findOne({
     user: retrievedUser._id,
   });
 
-  if (!retrievedProfile) {
+  console.log("Esto es retirevedAddress: ", retrievedAddress);
+
+  if (!retrievedAddress) {
     return res.status(404).json({
-      message: `Profile not found for ${username}`,
+      message: `Address not found for ${username}`,
     });
   }
 
-  if (requesterId !== retrievedProfile.user.toString()) {
+  if (requesterId !== retrievedAddress.user.toString()) {
     return res.status(401).json({
-      message: "Forbidden, you are not the owner of this profile",
+      message: "Forbidden, you are not the owner of this address",
     });
   }
 
   const data = {
-    userPhoto: incomingUserPhoto || retrievedProfile.userPhoto,
-    headerPhoto: incomingHeaderPhoto || retrievedProfile.headerPhoto,
-
-    userDescription:
-      (incomingUserDescription &&
-        retrievedProfile.userDescription !== incomingUserDescription) ||
-      incomingUserDescription === ""
-        ? incomingUserDescription
-        : retrievedProfile.userDescription,
+    country: incomingCountry,
+    streetName: incomingStreetName,
+    streetNumber: incomingStreetNumber,
+    flat: incomingFlat,
+    door: incomingDoor,
+    postalCode: incomingPostalCode,
+    mobilePhoneNumber: incomingMobilePhoneNumber,
   };
 
-  const updatedPublicProfile = await PublicProfile.findByIdAndUpdate(
-    retrievedProfile._id,
+  const updatedAddress = await MyAddress.findByIdAndUpdate(
+    retrievedAddress._id,
     data,
     { new: true }
   );
 
   res.status(200).json({
-    updatedPublicProfile,
-    message: `${username}'s profile updated successfully!!`,
+    status: "success",
+    message: `${username}'s address updated successfully!!`,
+    data: {
+      address: updatedAddress,
+    },
   });
 });
 
-exports.deletePublicProfile = tryCatch(async (req, res) => {
+exports.deleteMyAddress = tryCatch(async (req, res) => {
   const username = req.params.username;
   const authHeader = req.headers.authorization;
 
@@ -227,57 +218,32 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
 
   if (requesterId !== user.toString()) {
     return res.status(403).json({
-      message: "Forbidden, you are not the owner of this profile",
+      message: "Forbidden, you are not the owner of this address",
     });
   }
 
-  const retrievedProfile = await PublicProfile.findOne({ user });
+  const retrievedAddress = await MyAddress.findOne({ user });
 
-  if (!retrievedProfile) {
+  if (!retrievedAddress) {
     return res.status(404).json({
-      message: `User ${username} doesn't have a public profile`,
+      message: `User ${username} doesn't have an address`,
     });
   }
+
+  const addressId = retrievedAddress._id;
 
   try {
-    if (
-      retrievedProfile.userPhoto &&
-      retrievedProfile.userPhoto !== "UserTemplate.jpg"
-    ) {
-      const userPhotoPath = path.join(
-        __dirname,
-        "..",
-        "public",
-        "images",
-        "profiles",
-        retrievedProfile.userPhoto
-      );
-      await fs.unlink(userPhotoPath);
-      console.log(`${username}'s image deleted successfully now!`);
-    }
+    await MyAddress.deleteOne({ _id: addressId });
 
-    if (
-      retrievedProfile.headerPhoto &&
-      retrievedProfile.headerPhoto !== "UserHeader.jpg"
-    ) {
-      const headerPhotoPath = path.join(
-        __dirname,
-        "..",
-        "public",
-        "images",
-        "profiles",
-        retrievedProfile.headerPhoto
-      );
-      await fs.unlink(headerPhotoPath);
-      console.log(`${username}'s header image deleted successfully now!`);
-    }
+    res.status(200).json({
+      status: "success",
+      message: `Address deleted for user ${username}`,
+    });
   } catch (error) {
-    console.error("Error deleting image files:", error.message);
+    res.status(500).json({
+      status: "error",
+      message: `Could not delete address for user ${username}`,
+      error: error.message,
+    });
   }
-
-  await PublicProfile.deleteOne({ user });
-
-  res.status(200).json({
-    message: `Public profile deleted for user ${username}`,
-  });
 });
