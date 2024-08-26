@@ -4,12 +4,16 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
+import socketIo from "socket.io";
+import http from "http";
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const adsRoutes = require("./routes/adsRoutes");
 const likeRouter = require("./routes/likesRouter");
 const commentsRoutes = require("./routes/commentsRoutes");
+const chatRouter = require("./routes/chatRoutes");
 const middlewares = require("./middleware/middlewares");
+const Chat = require("./models/Chat");
 
 const swaggerUi = require("swagger-ui-express");
 let swaggerDocument;
@@ -30,6 +34,8 @@ const port = process.env.PORT || 4000;
 
 const startServer = async () => {
   const app = express();
+  const server = http.createServer(app);
+  const io = socketIo(server);
 
   await mongoose.connect(process.env.MONGO_URI);
 
@@ -63,10 +69,48 @@ const startServer = async () => {
   app.use("/ads", adsRoutes);
   app.use("/comments", commentsRoutes);
   app.use("/likes", likeRouter);
+  app.use("/chat",chatRouter);
 
-  app.listen({ port }, () =>
-    console.log(`🚀 Server ready at http://localhost:${port}`)
+  io.on("connection", (socket) => {
+    console.log("New user connection", socket.id);
+
+    // Unirse a un chat específico
+    socket.on('joinChat', async ({ chatId, userId }) => {
+      socket.join(chatId); // Unirse a la sala del chat
+      console.log(`${userId} se ha unido al chat: ${chatId}`);
+
+      // Enviar el historial de mensajes del chat
+      const chat = await Chat.findById(chatId).populate('messages.user');
+      
+      socket.emit('chatHistory', chat.messages);
+  });
+
+      // Manejar un nuevo mensaje
+    socket.on('sendMessage', async ({ chatId, senderId, content }) => {
+        const NewMessage = {
+            user: senderId,
+            content
+        };
+
+       await Chat.findByIdAndUpdate(chatId, {
+            $push: {
+                messages: NewMessage
+            }
+        });
+
+        // Emitir el mensaje a la sala del chat
+        io.to(chatId).emit('newMessage', NewMessage);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("User disconnected", socket.id);
+    });
+  }
   );
+
+  server.listen(port, () => {
+    console.log(`🚀 Server ready at http://localhost:${port}`)
+  });
 
   app.use(middlewares.notFound);
   app.use(middlewares.errorHandler);
