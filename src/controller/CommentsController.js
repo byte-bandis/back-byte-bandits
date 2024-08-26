@@ -4,7 +4,6 @@ import Ad from '../models/Ad';
 
 exports.getComments = tryCatch(async (req, res, next) => {
   const fatherId = req.params.id;
-  console.log(fatherId);
 
   if (!fatherId) {
     return next({
