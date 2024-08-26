@@ -39,6 +39,11 @@ const MyAddressSchema = Schema(
       index: true,
     },
 
+    city: {
+      type: String,
+      index: true,
+    },
+
     mobilePhoneNumber: {
       type: String,
       index: true,
