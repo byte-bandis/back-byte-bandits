@@ -73,14 +73,11 @@ async function initComments() {
     const del = await Comment.deleteMany();
     console.log(`Se han borrado ${del.deletedCount} comments.`);
 }
-
 async function main() {
     await new Promise((resolve) => connection.once("open", resolve));
-
     const deleleAll = await secureQuestion(
         "Estas seguro de que deseas borrar todo el contenido de la base de datos? (si/NO) "
     );
-
     if (!deleleAll) {
         process.exit();
     } else {
