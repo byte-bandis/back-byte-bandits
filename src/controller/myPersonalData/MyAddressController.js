@@ -121,6 +121,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   const incomingFlat = req.body.flat;
   const incomingDoor = req.body.door;
   const incomingPostalCode = req.body.postalCode;
+  const incomingCity = req.body.city;
   const incomingMobilePhoneNumber = req.body.mobilePhoneNumber;
 
   const username = req.params.username;
@@ -146,13 +147,14 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   }
 
   const data = {
-    country: incomingCountry,
-    streetName: incomingStreetName,
-    streetNumber: incomingStreetNumber,
-    flat: incomingFlat,
-    door: incomingDoor,
-    postalCode: incomingPostalCode,
-    mobilePhoneNumber: incomingMobilePhoneNumber,
+    country: incomingCountry || "Add your country",
+    streetName: incomingStreetName || "Add your street name",
+    streetNumber: incomingStreetNumber || "Add your street number",
+    flat: incomingFlat || "Add your flat",
+    door: incomingDoor || "Add your door",
+    postalCode: incomingPostalCode || "Add your zip code",
+    city: incomingCity || "Add your city",
+    mobilePhoneNumber: incomingMobilePhoneNumber || "Add your phone number",
   };
 
   const updatedAddress = await MyAddress.findByIdAndUpdate(
