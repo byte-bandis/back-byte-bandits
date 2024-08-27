@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
+import nodemailerRouter from "./routes/nodemailerRouter";
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const adsRoutes = require("./routes/adsRoutes");
@@ -39,6 +40,7 @@ const startServer = async () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(express.static("public"));
+  
 
   app.get("/", (req, res) => {
     res.json({
@@ -63,6 +65,7 @@ const startServer = async () => {
   app.use("/ads", adsRoutes);
   app.use("/comments", commentsRoutes);
   app.use("/likes", likeRouter);
+  app.use("/nodemailer", nodemailerRouter);
 
   app.listen({ port }, () =>
     console.log(`🚀 Server ready at http://localhost:${port}`)
