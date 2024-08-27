@@ -91,15 +91,20 @@ const startServer = async () => {
             user: senderId,
             content
         };
+        console.log('NewMessage', NewMessage);
+        console.log('chatId', chatId);
 
-       await Chat.findByIdAndUpdate(chatId, {
+       
+       const updatedChat =  await Chat.findByIdAndUpdate(chatId, {
             $push: {
                 messages: NewMessage
             }
-        });
+        }, { new: true }).populate('messages.user');
+
+        const lastMessage = updatedChat.messages[updatedChat.messages.length - 1];
 
         // Emitir el mensaje a la sala del chat
-        io.to(chatId).emit('newMessage', NewMessage);
+        io.to(chatId).emit('newMessage', lastMessage);
     });
 
     socket.on("disconnect", () => {
