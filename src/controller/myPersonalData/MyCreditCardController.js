@@ -103,6 +103,8 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
     message: `Registered credit card for user ${username} loaded successfully!`,
     data: {
       creditCard: formattedCreditCard,
+      updatedAt: retrievedCreditCard.updatedAt,
+      _id: retrievedCreditCard._id,
     },
   });
 });

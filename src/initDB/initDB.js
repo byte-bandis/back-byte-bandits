@@ -15,6 +15,7 @@ const data = require("./startedDB.json");
 const users = require("./startedUsers.json");
 const Ad = require("../models/Ad");
 const MyAddress = require("../models/myPersonalData/MyAddress");
+const MyCreditCard = require("../models/myPersonalData/MyCreditCard");
 
 function secureQuestion(text) {
   return new Promise((resolve) => {
@@ -34,9 +35,11 @@ async function initUsers() {
   const del = await User.deleteMany();
   const deleteProfiles = await PublicProfile.deleteMany();
   const deleteAddresses = await MyAddress.deleteMany();
+  const deleteCreditCards = await MyCreditCard.deleteMany();
   console.log(`Se han borrado ${del.deletedCount} usuarios.`);
   console.log(`Se han borrado ${deleteProfiles.deletedCount} perfiles.`);
   console.log(`Se han borrado ${deleteAddresses.deletedCount} direcciones.`);
+  console.log(`Se han borrado ${deleteCreditCards.deletedCount} tarjetas.`);
 
   for (const user of users) {
     const insertedUser = await User.create(user);
@@ -57,6 +60,12 @@ async function initUsers() {
       city: "Add your city",
       mobilePhoneNumber: "123 123 123",
     });
+
+    const insertedCreditCard = await MyCreditCard.create({
+      user: insertedUser._id,
+      creditCard: "1234123412341234",
+      last4Digits: "",
+    });
     /* console.log(insertedUser);
     console.log(insertedProfile);
     console.log(insertedAddress);  */
@@ -65,10 +74,12 @@ async function initUsers() {
   const insertedUsers = await User.find();
   const insertedProfiles = await PublicProfile.find();
   const insertedAddresses = await MyAddress.find();
+  const insertedCreditCards = await MyCreditCard.find();
 
   console.log(`Se han creado ${insertedUsers.length} usuarios.`);
   console.log(`Se han creado ${insertedProfiles.length} perfiles.`);
   console.log(`Se han creado ${insertedAddresses.length} direcciones.`);
+  console.log(`Se han creado ${insertedCreditCards.length} tarjetas.`);
 }
 
 async function initAd() {
