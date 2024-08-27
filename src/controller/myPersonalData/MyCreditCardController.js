@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const { tryCatch } = require("../../utils/tryCatch");
-const MyAddress = require("../../models/myPersonalData/MyAddress");
+const MyCreditCard = require("../../models/myPersonalData/MyCreditCard");
 const {
   UnauthorizedError,
   NotFoundError,
@@ -9,7 +9,7 @@ const {
   ServerError,
 } = require("../../middleware/errors");
 
-exports.createMyAddress = tryCatch(async (req, res) => {
+exports.createMyCreditCard = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -24,15 +24,8 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   }
 
   const requesterId = decodedToken.user._id;
-  const {
-    country,
-    streetName,
-    streetNumber,
-    flat,
-    door,
-    postalCode,
-    mobilePhoneNumber,
-  } = req.body;
+
+  const { creditCard } = req.body;
 
   const username = req.params.username;
 
@@ -48,31 +41,25 @@ exports.createMyAddress = tryCatch(async (req, res) => {
     throw new ForbiddenError(`Forbidden, you are not ${username}`);
   }
 
-  const newAddress = await MyAddress.create({
+  const newCreditCard = await MyCreditCard.create({
     user,
-    country,
-    streetName,
-    streetNumber,
-    flat,
-    door,
-    postalCode,
-    mobilePhoneNumber,
+    creditCard,
   });
 
-  if (!newAddress) {
-    throw new ServerError(`Error creating address for user ${username}`);
+  if (!newCreditCard) {
+    throw new ServerError(`Error creating credit card for user ${username}`);
   }
 
   res.status(200).json({
     status: "success",
-    message: `New address created for user ${username}!`,
+    message: `New credit card created for user ${username}!`,
     data: {
-      address: newAddress,
+      creditCard: newCreditCard,
     },
   });
 });
 
-exports.getMyAddress = tryCatch(async (req, res) => {
+exports.getMyCreditCard = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -89,39 +76,37 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   const requesterId = decodedToken.user._id;
 
   const username = req.params.username;
-  const retrievedUser = await User.findOne({ username });
 
-  if (!retrievedUser) {
+  const linkedUser = await User.findOne({ username });
+
+  if (!linkedUser) {
     throw new NotFoundError(`User ${username} not found`);
   }
 
-  const user = retrievedUser._id;
+  const user = linkedUser._id;
 
   if (requesterId !== user.toString()) {
     throw new ForbiddenError(`Forbidden, you are not ${username}`);
   }
 
-  const myAddress = await MyAddress.findOne({
-    user,
-  }).populate({
-    path: "user",
-    select: "username",
-  });
+  const retrievedCreditCard = await MyCreditCard.findOne({ user });
 
-  if (!myAddress) {
-    throw new NotFoundError(`Address not found for user ${username}`);
+  if (!retrievedCreditCard) {
+    throw new ServerError(`No credit card found for user ${username}`);
   }
+
+  const formattedCreditCard = await retrievedCreditCard.formatCreditCard();
 
   res.status(200).json({
     status: "success",
-    message: `Registered address for ${username} loaded successfully!`,
+    message: `Registered credit card for user ${username} loaded successfully!`,
     data: {
-      address: myAddress,
+      creditCard: formattedCreditCard,
     },
   });
 });
 
-exports.updateMyAddress = tryCatch(async (req, res) => {
+exports.updateMyCreditCard = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -136,14 +121,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   }
 
   const requesterId = decodedToken.user._id;
-  const incomingCountry = req.body.country;
-  const incomingStreetName = req.body.streetName;
-  const incomingStreetNumber = req.body.streetNumber;
-  const incomingFlat = req.body.flat;
-  const incomingDoor = req.body.door;
-  const incomingPostalCode = req.body.postalCode;
-  const incomingCity = req.body.city;
-  const incomingMobilePhoneNumber = req.body.mobilePhoneNumber;
+  const incomingCreditCard = req.body.creditCard;
 
   const username = req.params.username;
 
@@ -153,51 +131,44 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
     throw new NotFoundError(`User ${username} not found`);
   }
 
-  const retrievedAddress = await MyAddress.findOne({
+  const retrievedCreditCard = await MyCreditCard.findOne({
     user: retrievedUser._id,
   });
 
-  if (!retrievedAddress) {
-    throw new NotFoundError(`Address not found for ${username}`);
+  if (!retrievedCreditCard) {
+    throw new NotFoundError(`Credit card not found for ${username}`);
   }
 
-  if (requesterId !== retrievedAddress.user.toString()) {
+  if (requesterId !== retrievedCreditCard.user.toString()) {
     throw new ForbiddenError(
-      "Forbidden, you are not the owner of this address"
+      "Forbidden, you are not the owner of this credit card"
     );
   }
 
   const data = {
-    country: incomingCountry || "Add your country",
-    streetName: incomingStreetName || "Add your street name",
-    streetNumber: incomingStreetNumber || "Add your street number",
-    flat: incomingFlat || "Add your flat",
-    door: incomingDoor || "Add your door",
-    postalCode: incomingPostalCode || "Add your zip code",
-    city: incomingCity || "Add your city",
-    mobilePhoneNumber: incomingMobilePhoneNumber || "Add your phone number",
+    creditCard: incomingCreditCard || "Add your credit card",
   };
 
-  const updatedAddress = await MyAddress.findByIdAndUpdate(
-    retrievedAddress._id,
+  const updatedCreditcard = await MyCreditCard.findByIdAndUpdate(
+    retrievedCreditCard._id,
     data,
     { new: true }
   );
 
-  if (!updatedAddress) {
-    throw new ServerError(`Could not update ${username}'s address`);
+  if (!updatedCreditcard) {
+    throw new ServerError(`Could not update ${username}'s credit card`);
   }
 
   res.status(200).json({
     status: "success",
-    message: `${username}'s address updated successfully!!`,
+    message: `${username}'s credit card updated successfully!!`,
     data: {
-      address: updatedAddress,
+      creditCard: updatedCreditcard,
     },
   });
 });
 
-exports.deleteMyAddress = tryCatch(async (req, res) => {
+exports.deleteMyCreditCard = tryCatch(async (req, res) => {
   const username = req.params.username;
   const authHeader = req.headers.authorization;
 
@@ -218,28 +189,28 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
 
   if (requesterId !== user.toString()) {
     throw new ForbiddenError(
-      "Forbidden, you are not the owner of this address"
+      "Forbidden, you are not the owner of this credit card"
     );
   }
 
-  const retrievedAddress = await MyAddress.findOne({ user });
+  const retrievedCreditCard = await MyCreditCard.findOne({ user });
 
-  if (!retrievedAddress) {
-    throw new NotFoundError(`User ${username} doesn't have an address`);
+  if (!retrievedCreditCard) {
+    throw new NotFoundError(`User ${username} doesn't have a credit card`);
   }
 
-  const addressId = retrievedAddress._id;
+  const creditCardId = retrievedCreditCard._id;
 
-  const deletedAddress = await MyAddress.deleteOne({ _id: addressId });
+  const deletedCreditCard = await MyCreditCard.deleteOne({ _id: creditCardId });
 
-  if (deletedAddress.deletedCount === 0) {
+  if (deletedCreditCard.deletedCount === 0) {
     throw new ServerError(
-      `Something went wrong, could not delete address for user ${username}`
+      `Something went wrong, could not delete credit card for user ${username}`
     );
   }
 
   res.status(200).json({
     status: "success",
-    message: `Address deleted for user ${username}`,
+    message: `Credit card deleted for user ${username}`,
   });
 });

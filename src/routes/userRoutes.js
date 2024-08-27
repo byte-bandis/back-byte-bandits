@@ -6,7 +6,6 @@ const {
   register,
   login,
   getUsersPublicProfiles,
-  getMyAccount,
 } = require("../controller/UserController");
 
 const {
@@ -21,6 +20,12 @@ const {
   updateMyAddress,
   deleteMyAddress,
 } = require("../controller/myPersonalData/MyAddressController");
+const {
+  createMyCreditCard,
+  getMyCreditCard,
+  deleteMyCreditCard,
+  updateMyCreditCard,
+} = require("../controller/myPersonalData/MyCreditCardController");
 
 router.post("/register", register);
 router.post("/login", login);
@@ -29,6 +34,10 @@ router.get("/:username/myaddress", authenticate, getMyAddress);
 router.post("/:username/myaddress", authenticate, createMyAddress);
 router.put("/:username/myaddress", authenticate, updateMyAddress);
 router.delete("/:username/myaddress", authenticate, deleteMyAddress);
+router.post("/:username/mycreditcard", authenticate, createMyCreditCard);
+router.get("/:username/mycreditcard", authenticate, getMyCreditCard);
+router.put("/:username/mycreditcard", authenticate, updateMyCreditCard);
+router.delete("/:username/mycreditcard", authenticate, deleteMyCreditCard);
 router.get("/:username", getSinglePublicProfile);
 router.post(
   "/:username",
