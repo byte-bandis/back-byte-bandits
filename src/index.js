@@ -10,6 +10,7 @@ const adsRoutes = require("./routes/adsRoutes");
 const likeRouter = require("./routes/likesRouter");
 const commentsRoutes = require("./routes/commentsRoutes");
 const middlewares = require("./middleware/middlewares");
+const customErrorHandler = require("./middleware/CustomErrorsHandler");
 
 const swaggerUi = require("swagger-ui-express");
 let swaggerDocument;
@@ -57,7 +58,7 @@ const startServer = async () => {
   if (process.env.NODE_ENV !== "production" && swaggerDocument) {
     app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   }
-  app.use(ErrorResponse);
+  //app.use(ErrorResponse);
   app.use("/user", userRoutes);
   app.use("/admin", adminRoutes);
   app.use("/ads", adsRoutes);
@@ -68,8 +69,9 @@ const startServer = async () => {
     console.log(`🚀 Server ready at http://localhost:${port}`)
   );
 
-  app.use(middlewares.notFound);
-  app.use(middlewares.errorHandler);
+  app.use(customErrorHandler);
+  /*   app.use(middlewares.notFound);
+  app.use(middlewares.errorHandler); */
 };
 
 startServer();
