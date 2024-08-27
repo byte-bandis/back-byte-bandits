@@ -12,12 +12,15 @@ const MyCreditCardSchema = Schema(
 
     creditCard: {
       type: String,
-      required: true,
       index: true,
       match: [/^\d{13,18}$/, "Please, enter a valid card number"],
     },
   },
   { timestamps: true }
 );
+
+MyCreditCardSchema.methods.formatCreditCard = function () {
+  return this.creditCard.replace(/(.{4})/g, "$1 ").trim();
+};
 
 module.exports = mongoose.model("MyCreditCard", MyCreditCardSchema);
