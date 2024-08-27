@@ -123,11 +123,9 @@ exports.updateMyCreditCard = tryCatch(async (req, res) => {
 
   const requesterId = decodedToken.user._id;
   const incomingCreditCard = req.body.creditCard;
-
   const username = req.params.username;
 
   const retrievedUser = await User.findOne({ username });
-
   if (!retrievedUser) {
     throw new NotFoundError(`User ${username} not found`);
   }
@@ -146,25 +144,21 @@ exports.updateMyCreditCard = tryCatch(async (req, res) => {
     );
   }
 
-  const data = {
-    creditCard: incomingCreditCard || "Add your credit card",
-  };
+  if (incomingCreditCard) {
+    retrievedCreditCard.creditCard = incomingCreditCard;
+  }
 
-  const updatedCreditcard = await MyCreditCard.findByIdAndUpdate(
-    retrievedCreditCard._id,
-    data,
-    { new: true }
-  );
-
-  if (!updatedCreditcard) {
+  try {
+    await retrievedCreditCard.save();
+  } catch (error) {
     throw new ServerError(`Could not update ${username}'s credit card`);
   }
 
   res.status(200).json({
     status: "success",
-    message: `${username}'s credit card updated successfully!!`,
+    message: `${username}'s credit card updated successfully!`,
     data: {
-      creditCard: updatedCreditcard,
+      creditCard: retrievedCreditCard,
     },
   });
 });
