@@ -92,15 +92,25 @@ exports.register = tryCatch(async (req, res) => {
     return res.status(500).json({ message: "Failed to create user.", error });
   }
 
+  let userPublicProfile;
+
   try {
-    const userPublicProfile = await PublicProfile.create({
+    userPublicProfile = await PublicProfile.create({
       user: user._id,
       userPhoto: "UserTemplate.jpg",
       headerPhoto: "UserHeader.jpg",
       userDescription: "Your user description is empty",
     });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Could not create ${user.username} default public profile`,
+      error,
+    });
+  }
 
-    const userAddress = await MyAddress.create({
+  let userAddress;
+  try {
+    userAddress = await MyAddress.create({
       user: user._id,
       country: "Please add a country",
       streetName: "Add your street name",
@@ -110,28 +120,36 @@ exports.register = tryCatch(async (req, res) => {
       postalCode: "Add your postal code",
       mobilePhoneNumber: "123 123 123",
     });
-
-    const userCreditCard = await MyCreditCard.create({
-      user: user._id,
-      creditCard: "423442344234423442",
-    });
-
-    const token = user.getSignedJwt();
-
-    res.status(201).json({
-      success: true,
-      token,
-      user,
-      userAddress,
-      userCreditCard,
-      userPublicProfile,
-    });
   } catch (error) {
     return res.status(500).json({
-      message: `Could not create ${user.username} public profile`,
+      message: `Could not create ${user.username} default address`,
       error,
     });
   }
+
+  let userCreditCard;
+  try {
+    userCreditCard = await MyCreditCard.create({
+      user: user._id,
+      creditCard: "123456789112345678",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Could not create ${user.username} default credit card`,
+      error,
+    });
+  }
+
+  const token = user.getSignedJwt();
+
+  res.status(201).json({
+    success: true,
+    token,
+    user,
+    userAddress,
+    userCreditCard,
+    userPublicProfile,
+  });
 });
 
 exports.login = tryCatch(async (req, res, next) => {
