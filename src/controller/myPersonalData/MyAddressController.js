@@ -13,14 +13,20 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new UnauthorizedError("No token provided");
+    return res.status(401).json({
+      status: "error",
+      message: "No token provided",
+    });
   }
 
   const token = authHeader.split(" ")[1];
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
   if (!decodedToken) {
-    throw new UnauthorizedError("Invalid token");
+    return res.status(401).json({
+      status: "error",
+      message: "Invalid token",
+    });
   }
 
   const requesterId = decodedToken.user._id;
@@ -39,13 +45,19 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   const linkedUser = await User.findOne({ username });
 
   if (!linkedUser) {
-    throw new NotFoundError(`User ${username} not found`);
+    return res.status(404).json({
+      status: "error",
+      message: `User ${username} not found`,
+    });
   }
 
   const user = linkedUser._id;
 
   if (requesterId !== user.toString()) {
-    throw new ForbiddenError(`Forbidden, you are not ${username}`);
+    return res.status(403).json({
+      status: "error",
+      message: `Forbidden, you are not ${username}`,
+    });
   }
 
   const newAddress = await MyAddress.create({
@@ -60,7 +72,10 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   });
 
   if (!newAddress) {
-    throw new ServerError(`Error creating address for user ${username}`);
+    return res.status(500).json({
+      status: "error",
+      message: `Error creating address for user ${username}`,
+    });
   }
 
   res.status(200).json({
@@ -76,14 +91,20 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new UnauthorizedError("No token provided");
+    return res.status(401).json({
+      status: "error",
+      message: "No token provided",
+    });
   }
 
   const token = authHeader.split(" ")[1];
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
   if (!decodedToken) {
-    throw new UnauthorizedError("Invalid token");
+    return res.status(401).json({
+      status: "error",
+      message: "Invalid token",
+    });
   }
 
   const requesterId = decodedToken.user._id;
@@ -92,13 +113,19 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   const retrievedUser = await User.findOne({ username });
 
   if (!retrievedUser) {
-    throw new NotFoundError(`User ${username} not found`);
+    return res.status(404).json({
+      status: "error",
+      message: `User ${username} not found`,
+    });
   }
 
   const user = retrievedUser._id;
 
   if (requesterId !== user.toString()) {
-    throw new ForbiddenError(`Forbidden, you are not ${username}`);
+    return res.status(403).json({
+      status: "error",
+      message: `Forbidden, you are not ${username}`,
+    });
   }
 
   const myAddress = await MyAddress.findOne({
@@ -109,7 +136,10 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   });
 
   if (!myAddress) {
-    throw new NotFoundError(`Address not found for user ${username}`);
+    return res.status(404).json({
+      status: "error",
+      message: `No address found for user ${username}`,
+    });
   }
 
   res.status(200).json({
@@ -125,14 +155,20 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new UnauthorizedError("No token provided");
+    return res.status(401).json({
+      status: "error",
+      message: "No token provided",
+    });
   }
 
   const token = authHeader.split(" ")[1];
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
   if (!decodedToken) {
-    throw new UnauthorizedError("Invalid token");
+    return res.status(401).json({
+      status: "error",
+      message: "Invalid token",
+    });
   }
 
   const requesterId = decodedToken.user._id;
@@ -147,24 +183,34 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
 
   const username = req.params.username;
 
-  const retrievedUser = await User.findOne({ username });
+  const linkedUser = await User.findOne({ username });
 
-  if (!retrievedUser) {
-    throw new NotFoundError(`User ${username} not found`);
+  if (!linkedUser) {
+    return res.status(404).json({
+      status: "error",
+      message: `User ${username} not found`,
+    });
   }
 
+  const user = linkedUser._id;
   const retrievedAddress = await MyAddress.findOne({
-    user: retrievedUser._id,
+    user,
   });
 
   if (!retrievedAddress) {
-    throw new NotFoundError(`Address not found for ${username}`);
+    return res.status(404).json({
+      status: "error",
+      message: `No address found for user ${username}`,
+    });
   }
 
   if (requesterId !== retrievedAddress.user.toString()) {
-    throw new ForbiddenError(
-      "Forbidden, you are not the owner of this address"
-    );
+    if (requesterId !== user.toString()) {
+      return res.status(403).json({
+        status: "error",
+        message: `Forbidden, you are not ${username}`,
+      });
+    }
   }
 
   const data = {
@@ -185,7 +231,10 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   );
 
   if (!updatedAddress) {
-    throw new ServerError(`Could not update ${username}'s address`);
+    return res.status(500).json({
+      status: "error",
+      message: `Could not update ${username}'s address`,
+    });
   }
 
   res.status(200).json({
@@ -202,30 +251,50 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new UnauthorizedError("Authorization token is missing or invalid");
+    return res.status(401).json({
+      status: "error",
+      message: "No token provided",
+    });
   }
 
   const token = authHeader.split(" ")[1];
+
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  if (!decodedToken) {
+    return res.status(401).json({
+      status: "error",
+      message: "Invalid token",
+    });
+  }
+
   const requesterId = decodedToken.user._id;
   const retrievedUser = await User.findOne({ username });
 
   if (!retrievedUser) {
-    throw new NotFoundError(`User ${username} not found`);
+    return res.status(404).json({
+      status: "error",
+      message: `User ${username} not found`,
+    });
   }
 
   const user = retrievedUser._id;
 
   if (requesterId !== user.toString()) {
-    throw new ForbiddenError(
-      "Forbidden, you are not the owner of this address"
-    );
+    if (requesterId !== user.toString()) {
+      return res.status(403).json({
+        status: "error",
+        message: `Forbidden, you are not ${username}`,
+      });
+    }
   }
 
   const retrievedAddress = await MyAddress.findOne({ user });
 
   if (!retrievedAddress) {
-    throw new NotFoundError(`User ${username} doesn't have an address`);
+    return res.status(404).json({
+      status: "error",
+      message: `No address found for user ${username}`,
+    });
   }
 
   const addressId = retrievedAddress._id;
@@ -233,9 +302,10 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   const deletedAddress = await MyAddress.deleteOne({ _id: addressId });
 
   if (deletedAddress.deletedCount === 0) {
-    throw new ServerError(
-      `Something went wrong, could not delete address for user ${username}`
-    );
+    return res.status(500).json({
+      status: "error",
+      message: `Something went wrong, could not delete address for user ${username}`,
+    });
   }
 
   res.status(200).json({
