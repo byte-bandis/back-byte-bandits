@@ -20,6 +20,10 @@ const TransactionsSchema = new mongoose.Schema({
     type: String,
     enum: ['NoTrade', 'Ordered', 'Sold', 'Cancelled'],
     default: 'NoTrade'
+  },
+  price: {
+    type: Number,
+    required: true
   }
 }, { timestamps: true });
 
