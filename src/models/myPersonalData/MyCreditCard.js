@@ -8,7 +8,7 @@ const MyCreditCardSchema = Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: true,
+      //required: true,
       index: true,
     },
 
@@ -16,14 +16,14 @@ const MyCreditCardSchema = Schema(
       type: String,
       index: true,
       required: true,
-      minlength: [13, "Credit card number must be at least 13 digits"],
+      /*       minlength: [13, "Credit card number must be at least 13 digits"],
       maxlength: [18, "Credit card number cannot exceed 18 digits"],
       validate: {
         validator: function (val) {
           return /^\d+$/.test(val);
         },
         message: "Credit card number must only contain digits",
-      },
+      }, */
     },
 
     last4Digits: {
@@ -64,7 +64,7 @@ MyCreditCardSchema.methods.compareCreditCard = async function (
 };
 
 MyCreditCardSchema.methods.formatCreditCard = function () {
-  if (!this.last4Digits) {
+  if (!this.last4Digits || this.last4Digits === "card") {
     return "Enter your credit card number";
   }
 
