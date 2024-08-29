@@ -4,7 +4,6 @@ const Ad = require("../models/Ad");
 const User = require("../models/User");
 const { tryCatch } = require("../utils/tryCatch");
 const removePhotoFile = require("../utils/removePhotoFile");
-
 const APIFeatures = require("../utils/ApiFeature");
 const mongoose = require("mongoose");
 const publicFolder = "public/images";
@@ -15,7 +14,7 @@ exports.adsAccount = tryCatch(async (req, res) => {
 });
 exports.getAds = tryCatch(async (req, res) => {
     console.log('get ads');
-    const advancedQuery = new APIFeatures(Ad.find({}), req.query)
+    const advancedQuery = new APIFeatures(Ad.find({}).populate('user'), req.query)
         .sort()
         .paginate()
         .fields()
@@ -48,7 +47,7 @@ exports.getAd = tryCatch(async (req, res, next) => {
     } else {
 
         console.log('get ad', id);
-        let ad = await Ad.findById(id);
+        let ad = await Ad.findById(id).populate('user');
         if (!ad) {
             res.status(404).json({ message: "Ad not found", data: [] });
         }
