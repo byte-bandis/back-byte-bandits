@@ -6,6 +6,7 @@ const {
   register,
   login,
   getUsersPublicProfiles,
+  deleteUser,
 } = require("../controller/UserController");
 
 const {
@@ -70,6 +71,7 @@ router.put(
   ]),
   updatePublicProfile
 );
-router.delete("/:username", authenticate, deletePublicProfile);
+
+router.delete("/:username", authenticate, deleteUser);
 
 module.exports = router;

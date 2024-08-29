@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
@@ -8,26 +9,6 @@ exports.getUsers = tryCatch(async (req, res) => {
   const users = await User.find();
   res.status(200).json({ users });
 });
-// Cambiar a getMyAccount
-/* exports.getMyAccount = tryCatch(async (req, res) => {
-  const username = req.params.username;
-  const retrievedUser = await User.findOne({ username });
-
-  if (!retrievedUser) {
-    return res.status(404).json({
-      message: `User ${username} not found`,
-    });
-  }
-
-  const address = await MyAddress.findOne({
-    user: retrievedUser._id,
-  }).populate({
-    path: "user",
-    select: "name lastname",
-  });
-
-  res.status(200).json({ address });
-}); */
 
 // Esto está a medias
 exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
@@ -130,7 +111,7 @@ exports.register = tryCatch(async (req, res) => {
 
   let userCreditCard;
   try {
-    userCreditCard = await MyCreditCard.create({
+    userCreditCard = await User.create({
       user: user._id,
       creditCard: "card",
     });
@@ -184,5 +165,136 @@ exports.login = tryCatch(async (req, res, next) => {
     token,
     userId: user._id,
     userName: user.username,
+  });
+});
+
+exports.deleteUser = tryCatch(async (req, res) => {
+  //const username = req.params.username;
+  const username = req.user.username;
+
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      status: "error",
+      message: "No token provided",
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+  if (!decodedToken) {
+    return res.status(401).json({
+      status: "error",
+      message: "Invalid token",
+    });
+  }
+  const requesterId = decodedToken.user._id;
+  const account = await User.findOne({ username });
+
+  if (!account) {
+    return res.status(404).json({
+      status: "error",
+      message: `Account for ${username} not found`,
+    });
+  }
+
+  if (requesterId !== account._id.toString()) {
+    return res.status(403).json({
+      status: "error",
+      message: `Forbidden, you are not the owner of ${username}'s account`,
+    });
+  }
+
+  const deletedAddress = await MyAddress.deleteOne({ user: account._id });
+
+  if (deletedAddress.deletedCount === 0) {
+    return res.status(500).json({
+      status: "error",
+      message: `Something went wrong, could not delete address for user ${username}`,
+    });
+  } else {
+    console.log(`Address deleted for ${username}`);
+  }
+
+  const deletedCreditCard = await MyCreditCard.deleteOne({ user: account._id });
+
+  if (deletedCreditCard.deletedCount === 0) {
+    return res.status(500).json({
+      status: "error",
+      message: `Something went wrong, could not delete credit card for ${username}`,
+    });
+  } else {
+    console.log(`Credit card deleted for ${username}`);
+  }
+
+  const linkedPublicProfile = await PublicProfile.findOne({
+    user: account._id,
+  });
+
+  if (linkedPublicProfile) {
+    try {
+      if (
+        linkedPublicProfile.userPhoto &&
+        linkedPublicProfile.userPhoto !== "UserTemplate.jpg"
+      ) {
+        const userPhotoPath = path.join(
+          __dirname,
+          "..",
+          "public",
+          "images",
+          "profiles",
+          linkedPublicProfile.userPhoto
+        );
+        await fs.unlink(userPhotoPath);
+        console.log(`${username}'s image deleted successfully now!`);
+      }
+
+      if (
+        linkedPublicProfile.headerPhoto &&
+        linkedPublicProfile.headerPhoto !== "UserHeader.jpg"
+      ) {
+        const headerPhotoPath = path.join(
+          __dirname,
+          "..",
+          "public",
+          "images",
+          "profiles",
+          linkedPublicProfile.headerPhoto
+        );
+        await fs.unlink(headerPhotoPath);
+        console.log(`${username}'s header image deleted successfully now!`);
+      }
+    } catch (error) {
+      console.error("Error deleting image files:", error.message);
+    }
+  }
+
+  const deletedPublicProfile = await PublicProfile.deleteOne({
+    user: account._id,
+  });
+
+  if (deletedPublicProfile.deletedCount === 0) {
+    return res.status(500).json({
+      status: "error",
+      message: `Something went wrong, could not delete public profile for ${username}`,
+    });
+  } else {
+    console.log(`Public Profile deleted for ${username}`);
+  }
+
+  const deletedAccount = await User.deleteOne({ _id: account._id });
+
+  if (deletedAccount.deletedCount === 0) {
+    return res.status(500).json({
+      status: "error",
+      message: `Something went wrong, could not delete account for user ${username}`,
+    });
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: `Account deleted for user ${username}`,
   });
 });
