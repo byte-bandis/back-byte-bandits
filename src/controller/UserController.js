@@ -131,12 +131,11 @@ exports.register = tryCatch(async (req, res) => {
   try {
     userCreditCard = await MyCreditCard.create({
       user: user._id,
-      creditCard: "",
+      creditCard: "card",
     });
   } catch (error) {
     return res.status(500).json({
       message: `Could not create ${user.username} default credit card`,
-      error,
     });
   }
 
