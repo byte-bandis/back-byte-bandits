@@ -16,6 +16,7 @@ const MyCreditCardSchema = Schema(
       type: String,
       index: true,
       required: true,
+      select: false,
       /*       minlength: [13, "Credit card number must be at least 13 digits"],
       maxlength: [18, "Credit card number cannot exceed 18 digits"],
       validate: {

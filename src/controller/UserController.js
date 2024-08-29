@@ -9,7 +9,7 @@ exports.getUsers = tryCatch(async (req, res) => {
   res.status(200).json({ users });
 });
 // Cambiar a getMyAccount
-exports.getMyAccount = tryCatch(async (req, res) => {
+/* exports.getMyAccount = tryCatch(async (req, res) => {
   const username = req.params.username;
   const retrievedUser = await User.findOne({ username });
 
@@ -27,7 +27,7 @@ exports.getMyAccount = tryCatch(async (req, res) => {
   });
 
   res.status(200).json({ address });
-});
+}); */
 
 // Esto está a medias
 exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
@@ -118,6 +118,7 @@ exports.register = tryCatch(async (req, res) => {
       flat: "Add your flat number",
       door: "Add your flat door",
       postalCode: "Add your postal code",
+      city: "Add your city",
       mobilePhoneNumber: "123 123 123",
     });
   } catch (error) {

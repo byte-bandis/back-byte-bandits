@@ -2,12 +2,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const { tryCatch } = require("../../utils/tryCatch");
 const MyAddress = require("../../models/myPersonalData/MyAddress");
-const {
-  UnauthorizedError,
-  NotFoundError,
-  ForbiddenError,
-  ServerError,
-} = require("../../middleware/errors");
 
 exports.createMyAddress = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
@@ -181,7 +175,8 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   const incomingCity = req.body.city;
   const incomingMobilePhoneNumber = req.body.mobilePhoneNumber;
 
-  const username = req.params.username;
+  //const username = req.params.username;
+  const username = req.user.username;
 
   const linkedUser = await User.findOne({ username });
 
