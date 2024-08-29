@@ -36,11 +36,26 @@ const UserSchema = new Schema(
 );
 
 UserSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+  const password = this.password;
+
+  if (!this.isModified("password")) {
+    return next();
   }
-  next();
+  const isHashed = /^\$2[ayb]\$.{56}$/.test(this.password);
+  if (isHashed) {
+    return next();
+  }
+
+  try {
+    if (this.isModified("password")) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      this.password = hashedPassword;
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
 });
 
 UserSchema.methods.matchPassword = async function (enteredPassword) {
@@ -75,6 +90,12 @@ UserSchema.virtual("myAddress", {
   ref: "MyAddress",
   localField: "_id",
   foreignField: "myAddress",
+});
+
+UserSchema.virtual("myCreditCard", {
+  ref: "MyCreditcard",
+  localField: "_id",
+  foreignField: "myCreditCard",
 });
 
 module.exports = mongoose.model("User", UserSchema);
