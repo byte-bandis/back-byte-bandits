@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const { validate } = require("../User");
 const { Schema } = mongoose;
 
 const MyCreditCardSchema = Schema(
@@ -14,7 +15,15 @@ const MyCreditCardSchema = Schema(
     creditCard: {
       type: String,
       index: true,
-      match: [/^\d{13,18}$/, "Please, enter a valid card number"],
+      required: true,
+      minlength: [13, "Credit card number must be at least 13 digits"],
+      maxlength: [18, "Credit card number cannot exceed 18 digits"],
+      validate: {
+        validator: function (val) {
+          return /^\d+$/.test(val);
+        },
+        message: "Credit card number must only contain digits",
+      },
     },
 
     last4Digits: {
@@ -56,10 +65,10 @@ MyCreditCardSchema.methods.compareCreditCard = async function (
 
 MyCreditCardSchema.methods.formatCreditCard = function () {
   if (!this.last4Digits) {
-    throw new Error("Last 4 digits of the credit card are not available.");
+    return "Enter your credit card number";
   }
 
-  return `**** **** **** ${this.last4Digits}`;
+  return `****${this.last4Digits}`;
 };
 
 module.exports = mongoose.model("MyCreditCard", MyCreditCardSchema);
