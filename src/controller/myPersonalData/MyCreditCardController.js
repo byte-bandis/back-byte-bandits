@@ -133,12 +133,12 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
   });
 });
 
-exports.updateMyCreditCard = tryCatch(async (req, res) => {
+exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   // Verificación del token de autenticación
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({
-      status: "error",
+    return next({
+      statusCode: 401,
       message: "No token provided",
     });
   }
@@ -147,15 +147,13 @@ exports.updateMyCreditCard = tryCatch(async (req, res) => {
   const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
   if (!decodedToken) {
-    return res.status(401).json({
-      status: "error",
+    return next({
+      statusCode: 401,
       message: "Invalid token",
     });
   }
 
   const requesterId = decodedToken.user._id;
-
-  // Datos del cuerpo de la solicitud y parámetros
   const incomingCreditCard = req.body.creditCard;
   const username = req.params.username;
 
@@ -165,8 +163,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res) => {
   const linkedUser = await User.findOne({ username });
 
   if (!linkedUser) {
-    return res.status(404).json({
-      status: "error",
+    return next({
+      statusCode: 404,
       message: `User ${username} not found`,
     });
   }
@@ -175,8 +173,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res) => {
 
   // Verificar que el usuario autenticado es el mismo que el dueño de la tarjeta
   if (requesterId !== user.toString()) {
-    return res.status(403).json({
-      status: "error",
+    return next({
+      statusCode: 403,
       message: `Forbidden, you are not ${username}`,
     });
   }
@@ -185,8 +183,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res) => {
   const retrievedCreditCard = await MyCreditCard.findOne({ user });
 
   if (!retrievedCreditCard) {
-    return res.status(404).json({
-      status: "error",
+    return next({
+      statusCode: 404,
       message: `No credit card found for user ${username}`,
     });
   }
@@ -195,22 +193,36 @@ exports.updateMyCreditCard = tryCatch(async (req, res) => {
   if (incomingCreditCard) {
     retrievedCreditCard.creditCard = incomingCreditCard;
   } else {
-    return res.status(400).json({
-      status: "error",
+    return next({
+      statusCode: 400,
       message: "Please provide a valid credit card number",
     });
   }
 
   // Guardar la tarjeta de crédito actualizada
-  const savedCard = await retrievedCreditCard.save();
-
-  res.status(200).json({
-    status: "success",
-    message: `${username}'s credit card updated successfully!`,
-    data: {
-      creditCard: savedCard,
-    },
-  });
+  try {
+    const savedCard = await retrievedCreditCard.save({ runValidators: true });
+    res.status(200).json({
+      status: "success",
+      message: `${username}'s credit card updated successfully!`,
+      data: {
+        creditCard: savedCard,
+      },
+    });
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      // Manejo específico para errores de validación
+      return next({
+        statusCode: 400,
+        message: error.message,
+      });
+    }
+    // Manejo de otros errores
+    return next({
+      statusCode: 500,
+      message: `Error updating credit card for user ${username}`,
+    });
+  }
 });
 
 exports.deleteMyCreditCard = tryCatch(async (req, res) => {
