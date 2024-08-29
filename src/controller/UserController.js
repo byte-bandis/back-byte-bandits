@@ -118,6 +118,7 @@ exports.register = tryCatch(async (req, res) => {
       flat: "Add your flat number",
       door: "Add your flat door",
       postalCode: "Add your postal code",
+      city: "Add your city",
       mobilePhoneNumber: "123 123 123",
     });
   } catch (error) {

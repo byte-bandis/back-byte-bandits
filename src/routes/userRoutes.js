@@ -28,7 +28,10 @@ const {
   deleteMyCreditCard,
   updateMyCreditCard,
 } = require("../controller/myPersonalData/MyCreditCardController");
-const { getMyData } = require("../controller/myPersonalData/MyDataController");
+const {
+  getMyData,
+  updateMyData,
+} = require("../controller/myPersonalData/MyDataController");
 
 router.post("/register", register);
 router.post("/login", login);
@@ -46,6 +49,7 @@ router.put("/:username/mycreditcard", authenticate, updateMyCreditCard);
 router.delete("/:username/mycreditcard", authenticate, deleteMyCreditCard);
 
 router.get("/:username/mydata", authenticate, getMyData);
+router.put("/:username/mydata", authenticate, updateMyData);
 
 router.get("/:username", getSinglePublicProfile);
 router.post(

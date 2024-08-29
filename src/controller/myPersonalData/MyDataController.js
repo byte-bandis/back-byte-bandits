@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const { tryCatch } = require("../../utils/tryCatch");
+const moment = require("moment");
 //const MyCreditCard = require("../../models/myPersonalData/MyCreditCard");
 
 /* exports.createMyCreditCard = tryCatch(async (req, res) => {
@@ -92,21 +93,19 @@ exports.getMyData = tryCatch(async (req, res) => {
 
   const requesterId = decodedToken.user._id;
 
-  const username = req.params.username;
-  //const username = req.user.username;
+  //const username = req.params.username;
+  const username = req.user.username;
 
-  const linkedUser = await User.findOne({ username });
+  const user = await User.findOne({ username });
 
-  if (!linkedUser) {
+  if (!user) {
     return res.status(404).json({
       status: "error",
       message: `User ${username} not found`,
     });
   }
 
-  const user = linkedUser._id;
-
-  if (requesterId !== user.toString()) {
+  if (requesterId !== user._id.toString()) {
     return res.status(403).json({
       status: "error",
       message: `Forbidden, you are not ${username}`,
@@ -117,25 +116,28 @@ exports.getMyData = tryCatch(async (req, res) => {
     status: "success",
     message: `Registered data for ${username} loaded successfully!`,
     data: {
-      username: linkedUser.username,
-      email: linkedUser.email,
-      password: "******",
-      birthdate: linkedUser.birthdate,
-      updatedAt: linkedUser.updatedAt,
-      _id: linkedUser._id,
+      userData: {
+        username: user.username,
+        name: user.name,
+        lastname: user.lastname,
+        email: user.email,
+        password: "******",
+        birthdate: user.birthdate,
+        updatedAt: user.updatedAt,
+        _id: user._id,
+      },
     },
   });
 });
 
-exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
+exports.updateMyData = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
-      state: "error",
+      status: "error",
       message: "No token provided",
     });
-    //return next(createError(401, "No token provided"));
   }
 
   const token = authHeader.split(" ")[1];
@@ -143,84 +145,71 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
 
   if (!decodedToken) {
     return res.status(401).json({
-      state: "error",
+      status: "error",
       message: "Invalid token",
     });
-
-    //return next(createError(401, "Invalid token"));
   }
 
   const requesterId = decodedToken.user._id;
-  const incomingCreditCard = req.body.creditCard;
+  const incomingUsername = req.body.username;
+  const incomingEmail = req.body.email;
+  const incomingBirthdate = req.body.birthdate;
+  const incomingName = req.body.name;
+  const incomingLastname = req.body.lastname;
+
+  const parsedBirthdate = moment(incomingBirthdate, "DD-MM-YYYY")
+    .utc()
+    .toDate();
+
   const username = req.params.username;
 
-  const linkedUser = await User.findOne({ username });
+  const user = await User.findOne({ username });
 
-  if (!linkedUser) {
+  if (!user) {
     return res.status(404).json({
-      state: "error",
+      status: "error",
       message: `User ${username} not found`,
     });
-    /*     return next({
-      status: 404,
-      //statusCode: 404,
-      message: `User ${username} not found`,
-    }); */
-    //return next(createError(404, `User ${username} not found`));
   }
 
-  const user = linkedUser._id;
-
-  if (requesterId !== user.toString()) {
+  if (requesterId !== user._id.toString()) {
     return res.status(403).json({
-      state: "error",
+      status: "error",
       message: `Forbidden, you are not ${username}`,
     });
-
-    //return next(createError(403, `Forbidden, you are not ${username}`));
   }
 
-  const retrievedCreditCard = await MyCreditCard.findOne({ user });
+  const data = {
+    username:
+      incomingUsername !== user.username ? incomingUsername : user.username,
+    email: incomingEmail !== user.email ? incomingEmail : user.email,
+    birthdate:
+      incomingBirthdate && parsedBirthdate !== user.birthdate
+        ? parsedBirthdate
+        : user.birthdate,
+    name: incomingName !== user.name ? incomingName : user.name,
+    lastname:
+      incomingLastname !== user.lastname ? incomingLastname : user.lastname,
+  };
 
-  if (!retrievedCreditCard) {
-    return res.status(404).json({
-      state: "error",
-      message: `No credit card found for user ${username}`,
-    });
-    return next(createError(404, `No credit card found for user ${username}`));
-  }
+  const updatedUser = await User.findByIdAndUpdate(user._id, data, {
+    new: true,
+  });
 
-  if (incomingCreditCard) {
-    retrievedCreditCard.creditCard = incomingCreditCard;
-  } else {
-    return res.status(400).json({
-      state: "error",
-      message: "Please provide a valid credit card number",
-    });
-
-    //return next(createError(400, "Please provide a valid credit card number"));
-  }
-
-  const savedCard = await retrievedCreditCard.save();
-
-  if (savedCard) {
-    res.status(200).json({
-      status: "success",
-      message: `${username}'s credit card updated successfully!`,
-      data: {
-        creditCard: savedCard,
-      },
-    });
-  } else {
+  if (!updatedUser) {
     return res.status(500).json({
-      state: "error",
-      message: `Error updating credit card for user ${username}`,
+      status: "error",
+      message: `Could not update ${username}'s data`,
     });
-
-    /* return next(
-      createError(500, `Error updating credit card for user ${username}`)
-    ); */
   }
+
+  res.status(200).json({
+    status: "success",
+    message: `${username}'s data updated successfully!!`,
+    data: {
+      userData: updatedUser,
+    },
+  });
 });
 
 exports.deleteMyCreditCard = tryCatch(async (req, res) => {
