@@ -4,72 +4,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const { tryCatch } = require("../../utils/tryCatch");
 const moment = require("moment");
-//const MyCreditCard = require("../../models/myPersonalData/MyCreditCard");
-
-/* exports.createMyCreditCard = tryCatch(async (req, res) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({
-      status: "error",
-      message: "No token provided",
-    });
-  }
-
-  const token = authHeader.split(" ")[1];
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
-  if (!decodedToken) {
-    return res.status(401).json({
-      status: "error",
-      message: "Invalid token",
-    });
-  }
-
-  const requesterId = decodedToken.user._id;
-
-  const { creditCard } = req.body;
-
-  const username = req.params.username;
-
-  const linkedUser = await User.findOne({ username });
-
-  if (!linkedUser) {
-    return res.status(404).json({
-      status: "error",
-      message: `User ${username} not found`,
-    });
-  }
-
-  const user = linkedUser._id;
-
-  if (requesterId !== user.toString()) {
-    return res.status(403).json({
-      status: "error",
-      message: `Forbidden, you are not ${username}`,
-    });
-  }
-
-  const newCreditCard = await MyCreditCard.create({
-    user,
-    creditCard,
-  });
-
-  if (!newCreditCard) {
-    return res.status(500).json({
-      status: "error",
-      message: `Error creating credit card for user ${username}`,
-    });
-  }
-
-  res.status(200).json({
-    status: "success",
-    message: `New credit card created for user ${username}!`,
-    data: {
-      creditCard: newCreditCard,
-    },
-  });
-}); */
 
 exports.getMyData = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
@@ -151,19 +85,23 @@ exports.updateMyData = tryCatch(async (req, res) => {
   }
 
   const requesterId = decodedToken.user._id;
-  const incomingUsername = req.body.username;
-  const incomingEmail = req.body.email;
-  const incomingBirthdate = req.body.birthdate;
-  const incomingName = req.body.name;
-  const incomingLastname = req.body.lastname;
+  const { username, email, birthdate, name, lastname } = req.body;
 
-  const parsedBirthdate = moment(incomingBirthdate, "DD-MM-YYYY")
-    .utc()
-    .toDate();
+  // Verificación y manejo de fecha
+  let parsedBirthdate = null;
+  if (birthdate) {
+    if (moment(birthdate, "DD-MM-YYYY", true).isValid()) {
+      // Verificar si el formato es correcto
+      parsedBirthdate = moment(birthdate, "DD-MM-YYYY").toDate(); // Convertir a Date si es válido
+    } else {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid birthdate format. Expected format is DD-MM-YYYY.",
+      });
+    }
+  }
 
-  const username = req.params.username;
-
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ username: req.params.username });
 
   if (!user) {
     return res.status(404).json({
@@ -180,16 +118,11 @@ exports.updateMyData = tryCatch(async (req, res) => {
   }
 
   const data = {
-    username:
-      incomingUsername !== user.username ? incomingUsername : user.username,
-    email: incomingEmail !== user.email ? incomingEmail : user.email,
-    birthdate:
-      incomingBirthdate && parsedBirthdate !== user.birthdate
-        ? parsedBirthdate
-        : user.birthdate,
-    name: incomingName !== user.name ? incomingName : user.name,
-    lastname:
-      incomingLastname !== user.lastname ? incomingLastname : user.lastname,
+    username: username !== user.username ? username : user.username,
+    email: email !== user.email ? email : user.email,
+    birthdate: parsedBirthdate || user.birthdate,
+    name: name !== user.name ? name : user.name,
+    lastname: lastname !== user.lastname ? lastname : user.lastname,
   };
 
   const updatedUser = await User.findByIdAndUpdate(user._id, data, {
@@ -207,7 +140,10 @@ exports.updateMyData = tryCatch(async (req, res) => {
     status: "success",
     message: `${username}'s data updated successfully!!`,
     data: {
-      userData: updatedUser,
+      userData: {
+        ...updatedUser.toObject(),
+        birthdate: moment(updatedUser.birthdate).format("DD-MM-YYYY"), // Formatear antes de enviar
+      },
     },
   });
 });
