@@ -24,17 +24,10 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   }
 
   const requesterId = decodedToken.user._id;
-  const {
-    country,
-    streetName,
-    streetNumber,
-    flat,
-    door,
-    postalCode,
-    mobilePhoneNumber,
-  } = req.body;
+  const { country, streetName, streetNumber, flat, door, postalCode } =
+    req.body;
 
-  const username = req.params.username;
+  const username = req.user.username;
 
   const linkedUser = await User.findOne({ username });
 
@@ -62,7 +55,6 @@ exports.createMyAddress = tryCatch(async (req, res) => {
     flat,
     door,
     postalCode,
-    mobilePhoneNumber,
   });
 
   if (!newAddress) {
@@ -103,7 +95,7 @@ exports.getMyAddress = tryCatch(async (req, res) => {
 
   const requesterId = decodedToken.user._id;
 
-  const username = req.params.username;
+  const username = req.user.username;
   const retrievedUser = await User.findOne({ username });
 
   if (!retrievedUser) {
@@ -173,9 +165,6 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   const incomingDoor = req.body.door;
   const incomingPostalCode = req.body.postalCode;
   const incomingCity = req.body.city;
-  const incomingMobilePhoneNumber = req.body.mobilePhoneNumber;
-
-  //const username = req.params.username;
   const username = req.user.username;
 
   const linkedUser = await User.findOne({ username });
@@ -216,7 +205,6 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
     door: incomingDoor || "Add your door",
     postalCode: incomingPostalCode || "Add your zip code",
     city: incomingCity || "Add your city",
-    mobilePhoneNumber: incomingMobilePhoneNumber || "Add your phone number",
   };
 
   const updatedAddress = await MyAddress.findByIdAndUpdate(
@@ -242,7 +230,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
 });
 
 exports.deleteMyAddress = tryCatch(async (req, res) => {
-  const username = req.params.username;
+  const username = req.user.username;
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {

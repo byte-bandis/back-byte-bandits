@@ -12,9 +12,19 @@ const UserSchema = new Schema(
     },
     name: {
       type: String,
+      index: true,
     },
     lastname: {
       type: String,
+      index: true,
+    },
+    mobilePhoneNumber: {
+      type: String,
+      index: true,
+      /*       match: [
+        /^\d{3}\s\d{3}\s\d{3}$/,
+        "Please add a valid mobile phone number with format 123 123 123",
+      ], */
     },
     email: {
       type: String,

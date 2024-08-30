@@ -33,14 +33,6 @@ exports.register = tryCatch(async (req, res) => {
     address,
     creditCard,
   } = req.body;
-  //console.log("Esxto es name: ", name);
-  console.log("Esxto es email: ", email);
-  console.log("Esxto es passwrord: ", password);
-  console.log("Esxto es username: ", username);
-  //console.log("Esxto es lastname: ", lastname);
-  console.log("Esxto es birthdate: ", birthdate);
-  console.log("Esxto es address: ", address);
-  console.log("Esxto es creditCard: ", creditCard);
 
   if (password !== passwordConfirmation) {
     return res.status(400).json({ message: "Passwords do not match." });
@@ -70,6 +62,9 @@ exports.register = tryCatch(async (req, res) => {
       password,
       role,
       birthdate,
+      name: "Your name",
+      lastname: "Your last name",
+      mobilePhoneNumber: "Your phone here",
       address,
       creditCard,
     });
