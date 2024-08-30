@@ -24,17 +24,23 @@ exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
 
 exports.register = tryCatch(async (req, res) => {
   const {
-    name,
     email,
     password,
     passwordConfirmation,
     role,
     username,
-    lastname,
     birthdate,
     address,
     creditCard,
   } = req.body;
+  //console.log("Esxto es name: ", name);
+  console.log("Esxto es email: ", email);
+  console.log("Esxto es passwrord: ", password);
+  console.log("Esxto es username: ", username);
+  //console.log("Esxto es lastname: ", lastname);
+  console.log("Esxto es birthdate: ", birthdate);
+  console.log("Esxto es address: ", address);
+  console.log("Esxto es creditCard: ", creditCard);
 
   if (password !== passwordConfirmation) {
     return res.status(400).json({ message: "Passwords do not match." });
@@ -49,7 +55,7 @@ exports.register = tryCatch(async (req, res) => {
   }
 
   const existemail = await User.findOne({ email });
-  console.log(existemail);
+  console.log("Esto es existemail: ", existemail);
 
   if (existemail) {
     return res.status(400).json({ message: `${email} is already registered.` });
@@ -59,12 +65,10 @@ exports.register = tryCatch(async (req, res) => {
 
   try {
     user = await User.create({
-      name,
+      username,
       email,
       password,
       role,
-      username,
-      lastname,
       birthdate,
       address,
       creditCard,

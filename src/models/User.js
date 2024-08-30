@@ -12,11 +12,9 @@ const UserSchema = new Schema(
     },
     name: {
       type: String,
-      required: [true, "Please add your name"],
     },
     lastname: {
       type: String,
-      required: [true, "Please add your name"],
     },
     email: {
       type: String,
