@@ -24,7 +24,7 @@ exports.getAds = tryCatch(async (req, res) => {
         .filterByPriceRange()
         .filterByIsBuy();
 
-    let ads = await advancedQuery.query;
+    let ads = await advancedQuery.query.populate('user');
 
     ads = ads.map(({ _doc: { photo, ...ad } }) => {
         if (photo) {
