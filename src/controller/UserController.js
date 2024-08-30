@@ -111,7 +111,7 @@ exports.register = tryCatch(async (req, res) => {
 
   let userCreditCard;
   try {
-    userCreditCard = await User.create({
+    userCreditCard = await MyCreditCard.create({
       user: user._id,
       creditCard: "card",
     });
