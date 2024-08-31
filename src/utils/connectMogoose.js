@@ -12,5 +12,5 @@ mongoose.connection.once('open', () => {
     console.log('Conectado a MongoDB en', mongoose.connection.name);
 });
 console.log(process.env.JWT_EXPIRE);
-mongoose.connect('mongodb://localhost:27017/blogrest');
+mongoose.connect(process.env.MONGO_URI);
 module.exports = mongoose.connection;
