@@ -31,7 +31,6 @@ exports.register = tryCatch(async (req, res) => {
     username,
     birthdate,
     address,
-    creditCard,
   } = req.body;
 
   if (password !== passwordConfirmation) {
@@ -65,7 +64,7 @@ exports.register = tryCatch(async (req, res) => {
       lastname: process.env.USER_LAST_NAME_PLACEHOLDER || "------",
       mobilePhoneNumber: process.env.MOBILE_PHONE_NUMBER || "--- --- ---",
       address,
-      creditCard,
+      creditCard: process.env.CREDIT_CARD_DEFAULT_PLACEHOLDER || "----",
     });
   } catch (error) {
     return res.status(500).json({ message: "Failed to create user.", error });
