@@ -18,6 +18,7 @@ const Like = require("../models/Like");
 const Comment = require("../models/Comment");
 const MyAddress = require("../models/myPersonalData/MyAddress");
 const MyCreditCard = require("../models/myPersonalData/MyCreditCard");
+const Chat = require("../models/Chat");
 
 function secureQuestion(text) {
   return new Promise((resolve) => {
@@ -106,6 +107,10 @@ async function initComments() {
   const del = await Comment.deleteMany();
   console.log(`Se han borrado ${del.deletedCount} comments.`);
 }
+async function initChats() {
+  const del = await Chat.deleteMany();
+  console.log(`Se han borrado ${del.deletedCount} chats.`);
+}
 async function main() {
   await new Promise((resolve) => connection.once("open", resolve));
   const deleleAll = await secureQuestion(
@@ -118,6 +123,7 @@ async function main() {
     await initAd();
     await initLikes();
     await initComments();
+    await initChats();
     connection.close();
   }
 }
