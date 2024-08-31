@@ -30,7 +30,7 @@ exports.getAds = tryCatch(async (req, res) => {
         if (photo) {
             return {
                 ...ad,
-                photo: `${req.protocol}://${req.headers.host}/${process.env.NODE_ENV !== 'production' ? publicFolder : `api/${publicFolder}`}/${photo}`,
+                photo: process.env.NODE_ENV !== 'production' ? `http://${req.headers.host}/${publicFolder}/${photo}` : `https://${req.headers.host}/api/${publicFolder}/${photo}`,
             };
         } else {
             return { photo, ...ad };
@@ -52,7 +52,7 @@ exports.getAd = tryCatch(async (req, res, next) => {
             res.status(404).json({ message: "Ad not found", data: [] });
         }
         if (ad.photo) {
-            ad.photo = `${req.protocol}://${req.headers.host}/${process.env.NODE_ENV !== 'production' ? publicFolder : `api/${publicFolder}`}/${ad.photo}`;
+            ad.photo = process.env.NODE_ENV !== 'production' ? `http://${req.headers.host}/${publicFolder}/${ad.photo}` : `https://${req.headers.host}/api/${publicFolder}/${ad.photo}`;
         }
         ad = [ad];
 
