@@ -198,13 +198,13 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   }
 
   const data = {
-    country: incomingCountry || "Add your country",
-    streetName: incomingStreetName || "Add your street name",
-    streetNumber: incomingStreetNumber || "Add your street number",
-    flat: incomingFlat || "Add your flat",
-    door: incomingDoor || "Add your door",
-    postalCode: incomingPostalCode || "Add your zip code",
-    city: incomingCity || "Add your city",
+    country: incomingCountry || "None",
+    streetName: incomingStreetName || "--",
+    streetNumber: incomingStreetNumber || "--",
+    flat: incomingFlat || "--",
+    door: incomingDoor || "--",
+    postalCode: incomingPostalCode || "--",
+    city: incomingCity || "--",
   };
 
   const updatedAddress = await MyAddress.findByIdAndUpdate(

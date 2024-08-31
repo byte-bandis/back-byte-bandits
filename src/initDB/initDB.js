@@ -53,19 +53,18 @@ async function initUsers() {
     });
     const insertedAddress = await MyAddress.create({
       user: insertedUser._id,
-      country: "Please add a country",
-      streetName: "Add your street name",
-      streetNumber: "Add your street number",
-      flat: "Add your flat number",
-      door: "Add your flat door",
-      postalCode: "Add your postal code",
-      city: "Add your city",
-      mobilePhoneNumber: "123 123 123",
+      country: "None",
+      streetName: "--",
+      streetNumber: "--",
+      flat: "--",
+      door: "--",
+      postalCode: "--",
+      city: "--",
     });
 
     const insertedCreditCard = await MyCreditCard.create({
       user: insertedUser._id,
-      creditCard: "1234123412341234",
+      creditCard: "card",
       last4Digits: "",
     });
     /* console.log(insertedUser);

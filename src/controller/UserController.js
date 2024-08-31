@@ -92,14 +92,13 @@ exports.register = tryCatch(async (req, res) => {
   try {
     userAddress = await MyAddress.create({
       user: user._id,
-      country: "Please add a country",
-      streetName: "Add your street name",
-      streetNumber: "Add your street number",
-      flat: "Add your flat number",
-      door: "Add your flat door",
-      postalCode: "Add your postal code",
-      city: "Add your city",
-      mobilePhoneNumber: "123 123 123",
+      country: "None",
+      streetName: "--",
+      streetNumber: "--",
+      flat: "--",
+      door: "--",
+      postalCode: "--",
+      city: "--",
     });
   } catch (error) {
     return res.status(500).json({
