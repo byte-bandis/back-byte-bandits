@@ -65,8 +65,8 @@ MyCreditCardSchema.methods.compareCreditCard = async function (
 };
 
 MyCreditCardSchema.methods.formatCreditCard = function () {
-  if (!this.last4Digits || this.last4Digits === "card") {
-    return "Enter your credit card number";
+  if (!this.last4Digits || this.last4Digits === "----") {
+    return "----";
   }
 
   return `****${this.last4Digits}`;

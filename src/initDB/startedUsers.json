@@ -6,6 +6,7 @@
     "password": "123123",
     "role": "admin",
     "username": "AlfredoLanda",
+    "mobilePhoneNumber": "666 666 666",
     "birthdate": "1946-03-10"
   },
   {
@@ -15,6 +16,7 @@
     "password": "123123",
     "role": "user",
     "username": "FerEsteso",
+    "mobilePhoneNumber": "666 666 666",
     "birthdate": "1945-02-16"
   },
   {
@@ -24,6 +26,7 @@
     "password": "123123",
     "role": "user",
     "username": "APajares",
+    "mobilePhoneNumber": "666 666 666",
     "birthdate": "1940-04-06"
   },
   {
@@ -33,6 +36,7 @@
     "password": "123123",
     "role": "user",
     "username": "JLLopez",
+    "mobilePhoneNumber": "666 666 666",
     "birthdate": "1922-03-11"
   },
   {
@@ -42,6 +46,7 @@
     "password": "123123",
     "role": "user",
     "username": "GMorales",
+    "mobilePhoneNumber": "666 666 666",
     "birthdate": "1928-11-11"
   }
 ]

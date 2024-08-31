@@ -47,7 +47,6 @@ exports.register = tryCatch(async (req, res) => {
   }
 
   const existemail = await User.findOne({ email });
-  console.log("Esto es existemail: ", existemail);
 
   if (existemail) {
     return res.status(400).json({ message: `${email} is already registered.` });
@@ -62,9 +61,9 @@ exports.register = tryCatch(async (req, res) => {
       password,
       role,
       birthdate,
-      name: "Your name",
-      lastname: "Your last name",
-      mobilePhoneNumber: "Your phone here",
+      name: process.env.USER_NAME_PLACEHOLDER || "------",
+      lastname: process.env.USER_LAST_NAME_PLACEHOLDER || "------",
+      mobilePhoneNumber: process.env.MOBILE_PHONE_NUMBER || "--- --- ---",
       address,
       creditCard,
     });
@@ -111,7 +110,7 @@ exports.register = tryCatch(async (req, res) => {
   try {
     userCreditCard = await MyCreditCard.create({
       user: user._id,
-      creditCard: "card",
+      creditCard: "----",
     });
   } catch (error) {
     return res.status(500).json({

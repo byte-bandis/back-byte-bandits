@@ -52,11 +52,13 @@ exports.getMyData = tryCatch(async (req, res) => {
     data: {
       userData: {
         username: user.username,
-        name: user.name === "" ? "Your name" : user.name,
-        lastname: user.lastname === "" ? "Your last name" : user.lastname,
+        name: user.name === "" ? "------" : user.name,
+        lastname: user.lastname === "" ? "------" : user.lastname,
         email: user.email,
         mobilePhoneNumber:
-          user.mobilePhoneNumber === "" ? "Your phone" : user.mobilePhoneNumber,
+          user.mobilePhoneNumber === ""
+            ? "--- --- ---"
+            : user.mobilePhoneNumber,
         password: "******",
         birthdate: user.birthdate,
         updatedAt: user.updatedAt,
@@ -87,14 +89,31 @@ exports.updateMyData = tryCatch(async (req, res) => {
   }
 
   const requesterId = decodedToken.user._id;
+  const requesterName = decodedToken.user.username;
+  console.log("Esto es requesterName: ", requesterName);
+
   const { username, email, birthdate, name, lastname, mobilePhoneNumber } =
     req.body;
 
-  // Verificación y manejo de fecha
+  const usernameExists = await User.findOne({ username });
+  if (usernameExists && usernameExists._id.toString() !== requesterId) {
+    res.status(400).json({
+      status: "error",
+      message: "This name is already in use, please choose a different one",
+    });
+  }
+
+  const emailExists = await User.findOne({ email });
+  if (emailExists && emailExists._id.toString() !== requesterId) {
+    res.status(400).json({
+      status: "error",
+      message: "This email is already in use, please choose a different one",
+    });
+  }
+
   let parsedBirthdate = null;
   if (birthdate) {
     if (moment(birthdate, "DD-MM-YYYY", true).isValid()) {
-      // Verificar si el formato es correcto
       parsedBirthdate = moment(birthdate, "DD-MM-YYYY").toDate(); // Convertir a Date si es válido
     } else {
       return res.status(400).json({
@@ -104,19 +123,19 @@ exports.updateMyData = tryCatch(async (req, res) => {
     }
   }
 
-  const user = await User.findOne({ username: req.params.username });
+  const user = await User.findOne({ username: requesterName });
 
   if (!user) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: `User ${requesterName} not found`,
     });
   }
 
   if (requesterId !== user._id.toString()) {
     return res.status(403).json({
       status: "error",
-      message: `Forbidden, you are not ${username}`,
+      message: `Forbidden, you are not ${requesterId}`,
     });
   }
 
@@ -139,13 +158,13 @@ exports.updateMyData = tryCatch(async (req, res) => {
   if (!updatedUser) {
     return res.status(500).json({
       status: "error",
-      message: `Could not update ${username}'s data`,
+      message: `Could not update ${requesterName}'s data`,
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `${username}'s data updated successfully!!`,
+    message: `${requesterName}'s data updated successfully!!`,
     data: {
       userData: {
         ...updatedUser.toObject(),
