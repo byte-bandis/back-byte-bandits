@@ -90,28 +90,28 @@ exports.updateMyData = tryCatch(async (req, res) => {
 
   const requesterId = decodedToken.user._id;
   const requesterName = decodedToken.user.username;
-  console.log("Esto es requesterName: ", requesterName);
 
   const { username, email, birthdate, name, lastname, mobilePhoneNumber } =
     req.body;
 
   const usernameExists = await User.findOne({ username });
   if (usernameExists && usernameExists._id.toString() !== requesterId) {
-    res.status(400).json({
+    return res.status(400).json({
       status: "error",
-      message: "This name is already in use, please choose a different one",
+      message:
+        "This nick name is already in use, please choose a different one",
     });
   }
 
   const emailExists = await User.findOne({ email });
   if (emailExists && emailExists._id.toString() !== requesterId) {
-    res.status(400).json({
+    return res.status(400).json({
       status: "error",
       message: "This email is already in use, please choose a different one",
     });
   }
 
-  let parsedBirthdate = null;
+  /*   let parsedBirthdate = null;
   if (birthdate) {
     if (moment(birthdate, "DD-MM-YYYY", true).isValid()) {
       parsedBirthdate = moment(birthdate, "DD-MM-YYYY").toDate(); // Convertir a Date si es válido
@@ -121,7 +121,7 @@ exports.updateMyData = tryCatch(async (req, res) => {
         message: "Invalid birthdate format. Expected format is DD-MM-YYYY.",
       });
     }
-  }
+  } */
 
   const user = await User.findOne({ username: requesterName });
 
@@ -142,7 +142,7 @@ exports.updateMyData = tryCatch(async (req, res) => {
   const data = {
     username: username !== user.username ? username : user.username,
     email: email !== user.email ? email : user.email,
-    birthdate: parsedBirthdate || user.birthdate,
+    birthdate: birthdate || user.birthdate,
     name: name !== user.name ? name : user.name,
     lastname: lastname !== user.lastname ? lastname : user.lastname,
     mobilePhoneNumber:
