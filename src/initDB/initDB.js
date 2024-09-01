@@ -64,7 +64,7 @@ async function initUsers() {
 
     const insertedCreditCard = await MyCreditCard.create({
       user: insertedUser._id,
-      creditCard: "card",
+      creditCard: "----",
       last4Digits: "",
     });
     /* console.log(insertedUser);
