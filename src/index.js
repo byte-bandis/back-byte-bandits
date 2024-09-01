@@ -82,8 +82,25 @@ const startServer = async () => {
       socket.join(chatId); // Unirse a la sala del chat
       console.log(`${userId} se ha unido al chat: ${chatId}`);
 
+      // Marcar todos los mensajes del chat distintos al usuario como leídos
+      await Chat.findByIdAndUpdate(chatId, {
+        $set: {
+            "messages.$[msg].read": true
+        }
+    }, {
+        arrayFilters: [
+            { "msg.read": false , "msg.user": { $ne: userId } }
+        ],
+        new: true
+    });
+
       // Enviar el historial de mensajes del chat
-      const chat = await Chat.findById(chatId).populate("messages.user");
+      const chat = await Chat.findById(chatId).populate('messages.user');
+      
+      socket.emit('chatHistory', chat.messages);
+
+      io.to(chatId).emit('messagesRead', userId);
+  });
 
       socket.emit("chatHistory", chat.messages);
     });
@@ -111,6 +128,21 @@ const startServer = async () => {
 
       // Emitir el mensaje a la sala del chat
       io.to(chatId).emit("newMessage", lastMessage);
+    });
+
+    socket.on('readMessage', async ({ chatId, userId }) => {
+      await Chat.findByIdAndUpdate(chatId, {
+          $set: {
+              "messages.$[msg].read": true
+          }
+      }, {
+          arrayFilters: [
+              { "msg.read": false , "msg.user": { $ne: userId } }
+          ],
+          new: true
+      });
+
+      io.to(chatId).emit('messagesRead', userId);
     });
 
     socket.on("disconnect", () => {
