@@ -9,7 +9,7 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("No token provided"),
     });
   }
 
@@ -19,7 +19,7 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("Invalid token"),
     });
   }
 
@@ -34,7 +34,7 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   if (!linkedUser) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: res.__("User") + " " + `${username}` + " " + "not found",
     });
   }
 
@@ -43,7 +43,12 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   if (requesterId !== user.toString()) {
     return res.status(403).json({
       status: "error",
-      message: `Forbidden, you are not ${username}`,
+      message:
+        res.__("Forbidden, you are not the owner of") +
+        " " +
+        `${username}'s` +
+        " " +
+        "account",
     });
   }
 
@@ -60,13 +65,13 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   if (!newAddress) {
     return res.status(500).json({
       status: "error",
-      message: `Error creating address for user ${username}`,
+      message: res.__("Error creating address for user") + " "`${username}`,
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `New address created for user ${username}!`,
+    message: res.__("New address created for user") + " "`${username}`,
     data: {
       address: newAddress,
     },
@@ -79,7 +84,7 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("No token provided"),
     });
   }
 
@@ -89,7 +94,7 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("Invalid token"),
     });
   }
 
@@ -101,7 +106,7 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   if (!retrievedUser) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: res.__("User") + " " + `${username}` + " " + "not found",
     });
   }
 
@@ -110,7 +115,12 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   if (requesterId !== user.toString()) {
     return res.status(403).json({
       status: "error",
-      message: `Forbidden, you are not ${username}`,
+      message:
+        res.__("Forbidden, you are not the owner of") +
+        " " +
+        `${username}'s` +
+        " " +
+        "account",
     });
   }
 
@@ -124,13 +134,18 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   if (!myAddress) {
     return res.status(404).json({
       status: "error",
-      message: `No address found for user ${username}`,
+      message: res.__("No address found for user") + " "`${username}`,
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `Registered address for ${username} loaded successfully!`,
+    message:
+      res.__("Registered address for") +
+      " " +
+      `${username}` +
+      " " +
+      "loaded successfully!",
     data: {
       address: myAddress,
     },
@@ -143,7 +158,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("No token provided"),
     });
   }
 
@@ -153,7 +168,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("Invalid token"),
     });
   }
 
@@ -172,7 +187,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   if (!linkedUser) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: res.__("User") + " " + `${username}` + " " + "not found",
     });
   }
 
@@ -184,7 +199,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   if (!retrievedAddress) {
     return res.status(404).json({
       status: "error",
-      message: `No address found for user ${username}`,
+      message: res.__("No address found for user") + " "`${username}`,
     });
   }
 
@@ -192,7 +207,12 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
     if (requesterId !== user.toString()) {
       return res.status(403).json({
         status: "error",
-        message: `Forbidden, you are not ${username}`,
+        message:
+          res.__("Forbidden, you are not the owner of") +
+          " " +
+          `${username}'s` +
+          " " +
+          "account",
       });
     }
   }
@@ -216,13 +236,13 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   if (!updatedAddress) {
     return res.status(500).json({
       status: "error",
-      message: `Could not update ${username}'s address`,
+      message: res.__("Could not update address for") + " " + `${username}`,
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `${username}'s address updated successfully!!`,
+    message: `${username}'s` + " " + req.__("address updated successfully!!"),
     data: {
       address: updatedAddress,
     },
@@ -236,7 +256,7 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("No token provided"),
     });
   }
 
@@ -246,7 +266,7 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("Invalid token"),
     });
   }
 
@@ -256,7 +276,7 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   if (!retrievedUser) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: res.__("User") + " " + `${username}` + " " + "not found",
     });
   }
 
@@ -266,7 +286,12 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
     if (requesterId !== user.toString()) {
       return res.status(403).json({
         status: "error",
-        message: `Forbidden, you are not ${username}`,
+        message:
+          res.__("Forbidden, you are not the owner of") +
+          " " +
+          `${username}'s` +
+          " " +
+          "account",
       });
     }
   }
@@ -276,7 +301,7 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   if (!retrievedAddress) {
     return res.status(404).json({
       status: "error",
-      message: `No address found for user ${username}`,
+      message: res.__("No address found for user") + " " + `${username}`,
     });
   }
 
@@ -287,12 +312,15 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   if (deletedAddress.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message: `Something went wrong, could not delete address for user ${username}`,
+      message:
+        res.__("Something when wrong, could not delete address for") +
+        " " +
+        `${username}`,
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `Address deleted for user ${username}`,
+    message: res.__("Address deleted for user")`${username}`,
   });
 });

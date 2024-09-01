@@ -111,18 +111,6 @@ exports.updateMyData = tryCatch(async (req, res) => {
     });
   }
 
-  /*   let parsedBirthdate = null;
-  if (birthdate) {
-    if (moment(birthdate, "DD-MM-YYYY", true).isValid()) {
-      parsedBirthdate = moment(birthdate, "DD-MM-YYYY").toDate(); // Convertir a Date si es válido
-    } else {
-      return res.status(400).json({
-        status: "error",
-        message: "Invalid birthdate format. Expected format is DD-MM-YYYY.",
-      });
-    }
-  } */
-
   const user = await User.findOne({ username: requesterName });
 
   if (!user) {
