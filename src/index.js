@@ -102,9 +102,6 @@ const startServer = async () => {
       io.to(chatId).emit('messagesRead', userId);
   });
 
-      socket.emit("chatHistory", chat.messages);
-    });
-
     // Manejar un nuevo mensaje
     socket.on("sendMessage", async ({ chatId, senderId, content }) => {
       const NewMessage = {
