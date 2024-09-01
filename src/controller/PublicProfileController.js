@@ -85,7 +85,7 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
     });
   }
 
-  const imagesFolder = "public/images/profiles";
+  const imagesFolder = process.env.NODE_ENV !== "production" ? "public/images/profiles" : "api/public/images/profiles";
   singlePublicProfile = {
     ...singlePublicProfile._doc,
     userPhoto: `http://${req.headers.host}/${imagesFolder}/${singlePublicProfile.userPhoto}`,
