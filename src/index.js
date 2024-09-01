@@ -96,7 +96,7 @@ const startServer = async () => {
       
       socket.emit('chatHistory', chat.messages);
 
-      io.to(chatId).emit('messagesRead', { chatId, userId });
+      io.to(chatId).emit('messagesRead', userId);
   });
 
       // Manejar un nuevo mensaje
@@ -119,6 +119,21 @@ const startServer = async () => {
 
         // Emitir el mensaje a la sala del chat
         io.to(chatId).emit('newMessage', lastMessage);
+    });
+
+    socket.on('readMessage', async ({ chatId, userId }) => {
+      await Chat.findByIdAndUpdate(chatId, {
+          $set: {
+              "messages.$[msg].read": true
+          }
+      }, {
+          arrayFilters: [
+              { "msg.read": false , "msg.user": { $ne: userId } }
+          ],
+          new: true
+      });
+
+      io.to(chatId).emit('messagesRead', userId);
     });
 
     socket.on("disconnect", () => {
