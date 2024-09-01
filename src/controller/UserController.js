@@ -247,7 +247,10 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedCreditCard.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message: `Something went wrong, could not delete credit card for ${username}`,
+      message:
+        res.__("Something when wrong, could not delete credit card for") +
+        " " +
+        `${username}`,
     });
   } else {
     console.log(`Credit card deleted for ${username}`);
@@ -302,7 +305,10 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedPublicProfile.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message: `Something went wrong, could not delete public profile for ${username}`,
+      message:
+        res.__("Something when wrong, could not delete public profile for") +
+        " " +
+        `${username}`,
     });
   } else {
     console.log(`Public Profile deleted for ${username}`);
@@ -313,12 +319,15 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedAccount.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message: `Something went wrong, could not delete account for user ${username}`,
+      message:
+        res.__("Something when wrong, could not delete account for") +
+        " " +
+        `${username}`,
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `Account deleted for user ${username}`,
+    message: res.__("Account deleted for user") + " " + `${username}`,
   });
 });
