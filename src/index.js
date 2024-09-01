@@ -14,6 +14,7 @@ const commentsRoutes = require("./routes/commentsRoutes");
 const chatRouter = require("./routes/chatRoutes");
 const middlewares = require("./middleware/middlewares");
 const Chat = require("./models/Chat");
+const i18n = require("./lib/i18nConfigure");
 
 const swaggerUi = require("swagger-ui-express");
 let swaggerDocument;
@@ -46,6 +47,8 @@ const startServer = async () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.static("public"));
 
+  app.use(i18n.init);
+
   app.get("/", (req, res) => {
     res.json({
       message: "Hello World",
@@ -69,52 +72,54 @@ const startServer = async () => {
   app.use("/ads", adsRoutes);
   app.use("/comments", commentsRoutes);
   app.use("/likes", likeRouter);
-  app.use("/chat",chatRouter);
+  app.use("/chat", chatRouter);
 
   io.on("connection", (socket) => {
     console.log("New user connection", socket.id);
 
     // Unirse a un chat específico
-    socket.on('joinChat', async ({ chatId, userId }) => {
+    socket.on("joinChat", async ({ chatId, userId }) => {
       socket.join(chatId); // Unirse a la sala del chat
       console.log(`${userId} se ha unido al chat: ${chatId}`);
 
       // Enviar el historial de mensajes del chat
-      const chat = await Chat.findById(chatId).populate('messages.user');
-      
-      socket.emit('chatHistory', chat.messages);
-  });
+      const chat = await Chat.findById(chatId).populate("messages.user");
 
-      // Manejar un nuevo mensaje
-    socket.on('sendMessage', async ({ chatId, senderId, content }) => {
-        const NewMessage = {
-            user: senderId,
-            content
-        };
-        console.log('NewMessage', NewMessage);
-        console.log('chatId', chatId);
+      socket.emit("chatHistory", chat.messages);
+    });
 
-       
-       const updatedChat =  await Chat.findByIdAndUpdate(chatId, {
-            $push: {
-                messages: NewMessage
-            }
-        }, { new: true }).populate('messages.user');
+    // Manejar un nuevo mensaje
+    socket.on("sendMessage", async ({ chatId, senderId, content }) => {
+      const NewMessage = {
+        user: senderId,
+        content,
+      };
+      console.log("NewMessage", NewMessage);
+      console.log("chatId", chatId);
 
-        const lastMessage = updatedChat.messages[updatedChat.messages.length - 1];
+      const updatedChat = await Chat.findByIdAndUpdate(
+        chatId,
+        {
+          $push: {
+            messages: NewMessage,
+          },
+        },
+        { new: true }
+      ).populate("messages.user");
 
-        // Emitir el mensaje a la sala del chat
-        io.to(chatId).emit('newMessage', lastMessage);
+      const lastMessage = updatedChat.messages[updatedChat.messages.length - 1];
+
+      // Emitir el mensaje a la sala del chat
+      io.to(chatId).emit("newMessage", lastMessage);
     });
 
     socket.on("disconnect", () => {
       console.log("User disconnected", socket.id);
     });
-  }
-  );
+  });
 
   server.listen(port, () => {
-    console.log(`🚀 Server ready at http://localhost:${port}`)
+    console.log(`🚀 Server ready at http://localhost:${port}`);
   });
 
   app.use(middlewares.notFound);

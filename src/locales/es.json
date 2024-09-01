@@ -1,0 +1,6 @@
+{
+  "email_registered": "email_registered",
+  "password_mismatch": "password_mismatch",
+  "Passwords do not match": "Passwords do not match",
+  "is already registered": "is already registered"
+}

@@ -34,21 +34,23 @@ exports.register = tryCatch(async (req, res) => {
   } = req.body;
 
   if (password !== passwordConfirmation) {
-    return res.status(400).json({ message: "Passwords do not match." });
+    return res.status(400).json({ message: res.__("Passwords do not match") });
   }
 
   const existingUser = await User.findOne({ username });
 
   if (existingUser) {
     return res.status(400).json({
-      message: `${username} already exists. Try a different username as ${username}_1 or ${username}2024`,
+      message: `${username}` + " " + res.__("is already registered"),
     });
   }
 
   const existemail = await User.findOne({ email });
 
   if (existemail) {
-    return res.status(400).json({ message: `${email} is already registered.` });
+    return res.status(400).json({
+      message: `${email}` + " " + res.__(" is already registered."),
+    });
   }
 
   let user;
@@ -67,7 +69,10 @@ exports.register = tryCatch(async (req, res) => {
       creditCard: process.env.CREDIT_CARD_DEFAULT_PLACEHOLDER || "----",
     });
   } catch (error) {
-    return res.status(500).json({ message: "Failed to create user.", error });
+    return res.status(500).json({
+      message: res.__("Failed to create user") + " " + `${username}`,
+      error,
+    });
   }
 
   let userPublicProfile;
@@ -77,11 +82,16 @@ exports.register = tryCatch(async (req, res) => {
       user: user._id,
       userPhoto: "UserTemplate.jpg",
       headerPhoto: "UserHeader.jpg",
-      userDescription: "Your user description is empty",
+      userDescription: res.__("Your user description is empty"),
     });
   } catch (error) {
     return res.status(500).json({
-      message: `Could not create ${user.username} default public profile`,
+      message:
+        res.__("Could not create") +
+        " " +
+        `${username}'s` +
+        " " +
+        "default public profile",
       error,
     });
   }
@@ -100,7 +110,12 @@ exports.register = tryCatch(async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: `Could not create ${user.username} default address`,
+      message:
+        res.__("Could not create") +
+        " " +
+        `${user.username}'s` +
+        " " +
+        "default address",
       error,
     });
   }
@@ -113,7 +128,12 @@ exports.register = tryCatch(async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: `Could not create ${user.username} default credit card`,
+      message:
+        res.__("Could not create") +
+        " " +
+        `${user.username}'s` +
+        " " +
+        "default credit card",
     });
   }
 
@@ -134,7 +154,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!email || !password) {
     return next({
-      message: "Please provide valid email and password.",
+      message: res.__("Please provide valid email and password"),
     });
   }
 
@@ -142,7 +162,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!user) {
     return next({
-      message: "Invalid Credentials",
+      message: res.__("Invalid Credentials"),
     });
   }
 
@@ -150,7 +170,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!isMatch) {
     return next({
-      message: "Invalid Credentials",
+      message: res.__("Invalid Credentials"),
     });
   }
 
@@ -173,7 +193,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("No token provided"),
     });
   }
 
@@ -183,7 +203,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("Invalid token"),
     });
   }
   const requesterId = decodedToken.user._id;
@@ -192,14 +212,19 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (!account) {
     return res.status(404).json({
       status: "error",
-      message: `Account for ${username} not found`,
+      message: res.__("Account for") + " " + `${username}` + " " + "not found",
     });
   }
 
   if (requesterId !== account._id.toString()) {
     return res.status(403).json({
       status: "error",
-      message: `Forbidden, you are not the owner of ${username}'s account`,
+      message:
+        res.__("Forbidden, you are not the owner of") +
+        " " +
+        `${username}'s` +
+        " " +
+        "account",
     });
   }
 
@@ -208,7 +233,10 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedAddress.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message: `Something went wrong, could not delete address for user ${username}`,
+      message:
+        res.__("Something when wrong, could not delete address for") +
+        " " +
+        `${username}`,
     });
   } else {
     console.log(`Address deleted for ${username}`);
