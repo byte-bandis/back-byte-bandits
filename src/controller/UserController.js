@@ -4,21 +4,20 @@ const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
 const MyAddress = require("../models/myPersonalData/MyAddress");
 const MyCreditCard = require("../models/myPersonalData/MyCreditCard");
+const path = require("path");
+const fs = require("fs").promises;
 
 exports.getUsers = tryCatch(async (req, res) => {
   const users = await User.find();
   res.status(200).json({ users });
 });
 
-// Esto está a medias
 exports.getUsersPublicProfiles = tryCatch(async (req, res) => {
   const users = await User.find();
-  const usersPublicProfiles = users.map((user) => {
-    return {
-      username: user.username,
-      _id: user._id,
-    };
-  });
+  const usersPublicProfiles = users.map((user) => ({
+    username: user.username,
+    _id: user._id,
+  }));
   res.status(200).json({ usersPublicProfiles });
 });
 
@@ -34,14 +33,14 @@ exports.register = tryCatch(async (req, res) => {
   } = req.body;
 
   if (password !== passwordConfirmation) {
-    return res.status(400).json({ message: res.__("Passwords do not match") });
+    return res.status(400).json({ message: res.__("passwords_do_not_match") });
   }
 
   const existingUser = await User.findOne({ username });
 
   if (existingUser) {
     return res.status(400).json({
-      message: `${username}` + " " + res.__("is already registered"),
+      message: res.__("user_already_registered", { username }),
     });
   }
 
@@ -49,7 +48,7 @@ exports.register = tryCatch(async (req, res) => {
 
   if (existemail) {
     return res.status(400).json({
-      message: `${email}` + " " + res.__(" is already registered."),
+      message: res.__("email_already_registered", { email }),
     });
   }
 
@@ -70,7 +69,7 @@ exports.register = tryCatch(async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: res.__("Failed to create user") + " " + `${username}`,
+      message: res.__("failed_to_create_user", { username }),
       error,
     });
   }
@@ -82,16 +81,11 @@ exports.register = tryCatch(async (req, res) => {
       user: user._id,
       userPhoto: "UserTemplate.jpg",
       headerPhoto: "UserHeader.jpg",
-      userDescription: res.__("Your user description is empty"),
+      userDescription: res.__("user_description_empty"),
     });
   } catch (error) {
     return res.status(500).json({
-      message:
-        res.__("Could not create") +
-        " " +
-        `${username}'s` +
-        " " +
-        "default public profile",
+      message: res.__("could_not_create_public_profile", { username }),
       error,
     });
   }
@@ -110,12 +104,7 @@ exports.register = tryCatch(async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message:
-        res.__("Could not create") +
-        " " +
-        `${user.username}'s` +
-        " " +
-        "default address",
+      message: res.__("could_not_create_address", { username }),
       error,
     });
   }
@@ -128,12 +117,8 @@ exports.register = tryCatch(async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message:
-        res.__("Could not create") +
-        " " +
-        `${user.username}'s` +
-        " " +
-        "default credit card",
+      message: res.__("could_not_create_credit_card", { username }),
+      error,
     });
   }
 
@@ -154,7 +139,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!email || !password) {
     return next({
-      message: res.__("Please provide valid email and password"),
+      message: res.__("provide_valid_email_and_password"),
     });
   }
 
@@ -162,7 +147,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!user) {
     return next({
-      message: res.__("Invalid Credentials"),
+      message: res.__("invalid_credentials"),
     });
   }
 
@@ -170,7 +155,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!isMatch) {
     return next({
-      message: res.__("Invalid Credentials"),
+      message: res.__("invalid_credentials"),
     });
   }
 
@@ -185,7 +170,6 @@ exports.login = tryCatch(async (req, res, next) => {
 });
 
 exports.deleteUser = tryCatch(async (req, res) => {
-  //const username = req.params.username;
   const username = req.user.username;
 
   const authHeader = req.headers.authorization;
@@ -193,7 +177,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: res.__("No token provided"),
+      message: res.__("no_token_provided"),
     });
   }
 
@@ -203,28 +187,24 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: res.__("Invalid token"),
+      message: res.__("invalid_token"),
     });
   }
+
   const requesterId = decodedToken.user._id;
   const account = await User.findOne({ username });
 
   if (!account) {
     return res.status(404).json({
       status: "error",
-      message: res.__("Account for") + " " + `${username}` + " " + "not found",
+      message: res.__("user_not_found", { username }),
     });
   }
 
   if (requesterId !== account._id.toString()) {
     return res.status(403).json({
       status: "error",
-      message:
-        res.__("Forbidden, you are not the owner of") +
-        " " +
-        `${username}'s` +
-        " " +
-        "account",
+      message: res.__("forbidden_not_owner", { username }),
     });
   }
 
@@ -233,10 +213,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedAddress.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message:
-        res.__("Something when wrong, could not delete address for") +
-        " " +
-        `${username}`,
+      message: res.__("something_went_wrong_delete_address", { username }),
     });
   } else {
     console.log(`Address deleted for ${username}`);
@@ -247,10 +224,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedCreditCard.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message:
-        res.__("Something when wrong, could not delete credit card for") +
-        " " +
-        `${username}`,
+      message: res.__("something_went_wrong_delete_credit_card", { username }),
     });
   } else {
     console.log(`Credit card deleted for ${username}`);
@@ -305,10 +279,9 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedPublicProfile.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message:
-        res.__("Something when wrong, could not delete public profile for") +
-        " " +
-        `${username}`,
+      message: res.__("something_went_wrong_delete_public_profile", {
+        username,
+      }),
     });
   } else {
     console.log(`Public Profile deleted for ${username}`);
@@ -319,15 +292,12 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedAccount.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message:
-        res.__("Something when wrong, could not delete account for") +
-        " " +
-        `${username}`,
+      message: res.__("something_went_wrong_delete_account", { username }),
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: res.__("Account deleted for user") + " " + `${username}`,
+    message: res.__("account_deleted_successfully", { username }),
   });
 });

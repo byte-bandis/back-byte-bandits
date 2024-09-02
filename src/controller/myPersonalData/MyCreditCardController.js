@@ -11,7 +11,7 @@ exports.createMyCreditCard = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("no_token_provided"),
     });
   }
 
@@ -21,7 +21,7 @@ exports.createMyCreditCard = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("invalid_token"),
     });
   }
 
@@ -36,7 +36,7 @@ exports.createMyCreditCard = tryCatch(async (req, res) => {
   if (!linkedUser) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
   }
 
@@ -45,7 +45,7 @@ exports.createMyCreditCard = tryCatch(async (req, res) => {
   if (requesterId !== user.toString()) {
     return res.status(403).json({
       status: "error",
-      message: `Forbidden, you are not ${username}`,
+      message: res.__("forbidden_not_owner", { username }),
     });
   }
 
@@ -57,13 +57,13 @@ exports.createMyCreditCard = tryCatch(async (req, res) => {
   if (!newCreditCard) {
     return res.status(500).json({
       status: "error",
-      message: `Error creating credit card for user ${username}`,
+      message: res.__("error_creating_credit_card", { username }),
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `New credit card created for user ${username}!`,
+    message: res.__("success_credit_card_created", { username }),
     data: {
       creditCard: newCreditCard,
     },
@@ -76,7 +76,7 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("no_token_provided"),
     });
   }
 
@@ -86,7 +86,7 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("invalid_token"),
     });
   }
 
@@ -99,7 +99,7 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
   if (!linkedUser) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
   }
 
@@ -108,7 +108,7 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
   if (requesterId !== user.toString()) {
     return res.status(403).json({
       status: "error",
-      message: `Forbidden, you are not ${username}`,
+      message: res.__("forbidden_not_owner", { username }),
     });
   }
 
@@ -117,7 +117,7 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
   if (!retrievedCreditCard) {
     return res.status(404).json({
       status: "error",
-      message: `No credit card found for user ${username}`,
+      message: res.__("no_credit_card_found", { username }),
     });
   }
 
@@ -125,9 +125,10 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
 
   res.status(200).json({
     status: "success",
-    message: `Registered credit card for user ${username} loaded successfully!`,
+    message: res.__("success_credit_card_loaded", { username }),
     data: {
-      creditCard: formattedCreditCard || "Please enter a credit card number",
+      creditCard:
+        formattedCreditCard || res.__("please_provide_credit_card_number"),
       updatedAt: retrievedCreditCard.updatedAt,
       _id: retrievedCreditCard._id,
     },
@@ -140,9 +141,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       state: "error",
-      message: "No token provided",
+      message: res.__("no_token_provided"),
     });
-    //return next(createError(401, "No token provided"));
   }
 
   const token = authHeader.split(" ")[1];
@@ -151,10 +151,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   if (!decodedToken) {
     return res.status(401).json({
       state: "error",
-      message: "Invalid token",
+      message: res.__("invalid_token"),
     });
-
-    //return next(createError(401, "Invalid token"));
   }
 
   const requesterId = decodedToken.user._id;
@@ -166,14 +164,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   if (!linkedUser) {
     return res.status(404).json({
       state: "error",
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
-    /*     return next({
-      status: 404,
-      //statusCode: 404,
-      message: `User ${username} not found`,
-    }); */
-    //return next(createError(404, `User ${username} not found`));
   }
 
   const user = linkedUser._id;
@@ -181,10 +173,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   if (requesterId !== user.toString()) {
     return res.status(403).json({
       state: "error",
-      message: `Forbidden, you are not ${username}`,
+      message: res.__("forbidden_not_owner", { username }),
     });
-
-    //return next(createError(403, `Forbidden, you are not ${username}`));
   }
 
   const retrievedCreditCard = await MyCreditCard.findOne({ user });
@@ -192,9 +182,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   if (!retrievedCreditCard) {
     return res.status(404).json({
       state: "error",
-      message: `No credit card found for user ${username}`,
+      message: res.__("no_credit_card_found", { username }),
     });
-    return next(createError(404, `No credit card found for user ${username}`));
   }
 
   if (incomingCreditCard) {
@@ -202,10 +191,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   } else {
     return res.status(400).json({
       state: "error",
-      message: "Please provide a valid credit card number",
+      message: res.__("provide_valid_credit_card_number"),
     });
-
-    //return next(createError(400, "Please provide a valid credit card number"));
   }
 
   const savedCard = await retrievedCreditCard.save();
@@ -213,7 +200,7 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   if (savedCard) {
     res.status(200).json({
       status: "success",
-      message: `${username}'s credit card updated successfully!`,
+      message: res.__("success_credit_card_updated", { username }),
       data: {
         creditCard: savedCard,
       },
@@ -221,12 +208,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   } else {
     return res.status(500).json({
       state: "error",
-      message: `Error updating credit card for user ${username}`,
+      message: res.__("error_updating_credit_card", { username }),
     });
-
-    /* return next(
-      createError(500, `Error updating credit card for user ${username}`)
-    ); */
   }
 });
 
@@ -237,7 +220,7 @@ exports.deleteMyCreditCard = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("no_token_provided"),
     });
   }
 
@@ -247,7 +230,7 @@ exports.deleteMyCreditCard = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("invalid_token"),
     });
   }
   const requesterId = decodedToken.user._id;
@@ -256,7 +239,7 @@ exports.deleteMyCreditCard = tryCatch(async (req, res) => {
   if (!linkedUser) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
   }
 
@@ -265,7 +248,7 @@ exports.deleteMyCreditCard = tryCatch(async (req, res) => {
   if (requesterId !== user.toString()) {
     return res.status(403).json({
       status: "error",
-      message: "Forbidden, you are not the owner of this credit card",
+      message: res.__("forbidden_not_owner", { username }),
     });
   }
 
@@ -274,7 +257,7 @@ exports.deleteMyCreditCard = tryCatch(async (req, res) => {
   if (!retrievedCreditCard) {
     return res.status(404).json({
       status: "error",
-      message: `No credit card found for user ${username}`,
+      message: res.__("no_credit_card_found", { username }),
     });
   }
 
@@ -285,12 +268,12 @@ exports.deleteMyCreditCard = tryCatch(async (req, res) => {
   if (deletedCreditCard.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message: `Something went wrong, could not delete credit card for user ${username}`,
+      message: res.__("something_went_wrong_delete_credit_card", { username }),
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `Credit card deleted for user ${username}`,
+    message: res.__("success_credit_card_deleted", { username }),
   });
 });

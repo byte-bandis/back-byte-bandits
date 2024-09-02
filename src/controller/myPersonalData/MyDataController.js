@@ -11,7 +11,7 @@ exports.getMyData = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("no_token_provided"),
     });
   }
 
@@ -21,13 +21,11 @@ exports.getMyData = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("invalid_token"),
     });
   }
 
   const requesterId = decodedToken.user._id;
-
-  //const username = req.params.username;
   const username = req.user.username;
 
   const user = await User.findOne({ username });
@@ -35,20 +33,20 @@ exports.getMyData = tryCatch(async (req, res) => {
   if (!user) {
     return res.status(404).json({
       status: "error",
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
   }
 
   if (requesterId !== user._id.toString()) {
     return res.status(403).json({
       status: "error",
-      message: `Forbidden, you are not ${username}`,
+      message: res.__("forbidden_not_owner", { username }),
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `Registered data for ${username} loaded successfully!`,
+    message: res.__("user_data_loaded_successfully", { username }),
     data: {
       userData: {
         username: user.username,
@@ -74,7 +72,7 @@ exports.updateMyData = tryCatch(async (req, res) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "error",
-      message: "No token provided",
+      message: res.__("no_token_provided"),
     });
   }
 
@@ -84,7 +82,7 @@ exports.updateMyData = tryCatch(async (req, res) => {
   if (!decodedToken) {
     return res.status(401).json({
       status: "error",
-      message: "Invalid token",
+      message: res.__("invalid_token"),
     });
   }
 
@@ -98,8 +96,7 @@ exports.updateMyData = tryCatch(async (req, res) => {
   if (usernameExists && usernameExists._id.toString() !== requesterId) {
     return res.status(400).json({
       status: "error",
-      message:
-        "This nick name is already in use, please choose a different one",
+      message: res.__("username_already_in_use"),
     });
   }
 
@@ -107,7 +104,7 @@ exports.updateMyData = tryCatch(async (req, res) => {
   if (emailExists && emailExists._id.toString() !== requesterId) {
     return res.status(400).json({
       status: "error",
-      message: "This email is already in use, please choose a different one",
+      message: res.__("email_already_in_use"),
     });
   }
 
@@ -116,14 +113,14 @@ exports.updateMyData = tryCatch(async (req, res) => {
   if (!user) {
     return res.status(404).json({
       status: "error",
-      message: `User ${requesterName} not found`,
+      message: res.__("user_not_found", { username: requesterName }),
     });
   }
 
   if (requesterId !== user._id.toString()) {
     return res.status(403).json({
       status: "error",
-      message: `Forbidden, you are not ${requesterId}`,
+      message: res.__("forbidden_not_owner", { username: requesterName }),
     });
   }
 
@@ -146,13 +143,13 @@ exports.updateMyData = tryCatch(async (req, res) => {
   if (!updatedUser) {
     return res.status(500).json({
       status: "error",
-      message: `Could not update ${requesterName}'s data`,
+      message: res.__("error_updating_user_data", { username: requesterName }),
     });
   }
 
   res.status(200).json({
     status: "success",
-    message: `${requesterName}'s data updated successfully!!`,
+    message: res.__("success_user_data_updated", { username: requesterName }),
     data: {
       userData: {
         ...updatedUser.toObject(),
