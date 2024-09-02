@@ -34,7 +34,7 @@ exports.createMyAddress = tryCatch(async (req, res) => {
   if (!linkedUser) {
     return res.status(404).json({
       status: "error",
-      message: res.__("User") + " " + `${username}` + " " + "not found",
+      message: res.__("User") + " " + `${username}` + " " + res.__("not found"),
     });
   }
 
@@ -106,7 +106,7 @@ exports.getMyAddress = tryCatch(async (req, res) => {
   if (!retrievedUser) {
     return res.status(404).json({
       status: "error",
-      message: res.__("User") + " " + `${username}` + " " + "not found",
+      message: res.__("User") + " " + `${username}` + " " + res.__("not found"),
     });
   }
 
@@ -118,9 +118,10 @@ exports.getMyAddress = tryCatch(async (req, res) => {
       message:
         res.__("Forbidden, you are not the owner of") +
         " " +
-        `${username}'s` +
+        `${username}` +
+        res.__("'s") +
         " " +
-        "account",
+        res.__("account"),
     });
   }
 
@@ -145,7 +146,7 @@ exports.getMyAddress = tryCatch(async (req, res) => {
       " " +
       `${username}` +
       " " +
-      "loaded successfully!",
+      res.__("loaded successfully!"),
     data: {
       address: myAddress,
     },
@@ -187,7 +188,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
   if (!linkedUser) {
     return res.status(404).json({
       status: "error",
-      message: res.__("User") + " " + `${username}` + " " + "not found",
+      message: res.__("User") + " " + `${username}` + " " + res.__("not found"),
     });
   }
 
@@ -210,9 +211,10 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
         message:
           res.__("Forbidden, you are not the owner of") +
           " " +
-          `${username}'s` +
+          `${username}` +
+          res.__("'s") +
           " " +
-          "account",
+          res.__("account"),
       });
     }
   }
@@ -276,7 +278,7 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
   if (!retrievedUser) {
     return res.status(404).json({
       status: "error",
-      message: res.__("User") + " " + `${username}` + " " + "not found",
+      message: res.__("User") + " " + `${username}` + " " + res.__("not found"),
     });
   }
 
@@ -321,6 +323,6 @@ exports.deleteMyAddress = tryCatch(async (req, res) => {
 
   res.status(200).json({
     status: "success",
-    message: res.__("Address deleted for user")`${username}`,
+    message: res.__("Address deleted for user") + " " + `${username}`,
   });
 });
