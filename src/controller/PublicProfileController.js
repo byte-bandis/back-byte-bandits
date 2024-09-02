@@ -9,7 +9,7 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "No token provided" });
+    return res.status(401).json({ message: res.__("no_token_provided") });
   }
 
   const token = authHeader.split(" ")[1];
@@ -18,7 +18,7 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
   try {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: res.__("invalid_token") });
   }
 
   const requesterId = decodedToken.user._id;
@@ -36,7 +36,7 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
 
   if (!linkedUser) {
     return res.status(404).json({
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
   }
 
@@ -44,7 +44,7 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
 
   if (requesterId !== user.toString()) {
     return res.status(401).json({
-      message: `Forbidden, you are not ${username}`,
+      message: res.__("forbidden_not_owner", { username }),
     });
   }
 
@@ -58,7 +58,7 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
 
   res.status(200).json({
     newPublicProfile,
-    message: `Public profile created for user ${username}!`,
+    message: res.__("public_profile_created", { username }),
   });
 });
 
@@ -68,7 +68,7 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
 
   if (!retrievedUser) {
     return res.status(404).json({
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
   }
 
@@ -81,7 +81,7 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
 
   if (!singlePublicProfile) {
     return res.status(404).json({
-      message: `Profile not found for user ${username}`,
+      message: res.__("profile_not_found", { username }),
     });
   }
 
@@ -100,7 +100,7 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
       headerPhoto: singlePublicProfile.headerPhoto,
       userDescription: singlePublicProfile.userDescription,
     },
-    message: `Public profile for ${username} loaded successfully!`,
+    message: res.__("public_profile_loaded_successfully", { username }),
   });
 });
 
@@ -108,7 +108,7 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "No token provided" });
+    return res.status(401).json({ message: res.__("no_token_provided") });
   }
 
   const token = authHeader.split(" ")[1];
@@ -117,7 +117,7 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   try {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: res.__("invalid_token") });
   }
 
   const requesterId = decodedToken.user._id;
@@ -136,7 +136,7 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
 
   if (!retrievedUser) {
     return res.status(404).json({
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
   }
 
@@ -146,13 +146,13 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
 
   if (!retrievedProfile) {
     return res.status(404).json({
-      message: `Profile not found for ${username}`,
+      message: res.__("profile_not_found", { username }),
     });
   }
 
   if (requesterId !== retrievedProfile.user.toString()) {
     return res.status(401).json({
-      message: "Forbidden, you are not the owner of this profile",
+      message: res.__("forbidden_not_owner_profile"),
     });
   }
 
@@ -176,7 +176,7 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
 
   res.status(200).json({
     updatedPublicProfile,
-    message: `${username}'s profile updated successfully!!`,
+    message: res.__("profile_updated_successfully", { username }),
   });
 });
 
@@ -186,7 +186,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
-      message: "Authorization token is missing or invalid",
+      message: res.__("no_token_provided"),
     });
   }
 
@@ -197,7 +197,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
     return res.status(401).json({
-      message: "Token verification failed",
+      message: res.__("invalid_token"),
     });
   }
 
@@ -206,7 +206,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
 
   if (!retrievedUser) {
     return res.status(404).json({
-      message: `User ${username} not found`,
+      message: res.__("user_not_found", { username }),
     });
   }
 
@@ -214,7 +214,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
 
   if (requesterId !== user.toString()) {
     return res.status(403).json({
-      message: "Forbidden, you are not the owner of this profile",
+      message: res.__("forbidden_not_owner_profile"),
     });
   }
 
@@ -222,7 +222,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
 
   if (!retrievedProfile) {
     return res.status(404).json({
-      message: `User ${username} doesn't have a public profile`,
+      message: res.__("profile_not_found", { username }),
     });
   }
 
@@ -240,7 +240,9 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
         retrievedProfile.userPhoto
       );
       await fs.unlink(userPhotoPath);
-      console.log(`${username}'s image deleted successfully now!`);
+      console.log(
+        res.__("image_deleted_successfully", { username, type: "imagen" })
+      );
     }
 
     if (
@@ -256,15 +258,20 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
         retrievedProfile.headerPhoto
       );
       await fs.unlink(headerPhotoPath);
-      console.log(`${username}'s header image deleted successfully now!`);
+      console.log(
+        res.__("image_deleted_successfully", {
+          username,
+          type: "imagen de cabecera",
+        })
+      );
     }
   } catch (error) {
-    console.error("Error deleting image files:", error.message);
+    console.error(res.__("error_deleting_images", { error: error.message }));
   }
 
   await PublicProfile.deleteOne({ user });
 
   res.status(200).json({
-    message: `Public profile deleted for user ${username}`,
+    message: res.__("public_profile_deleted", { username }),
   });
 });
