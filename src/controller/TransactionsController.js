@@ -22,7 +22,7 @@ exports.getTransactionsByAd = tryCatch(async (req, res) => {
 exports.createTransaction = tryCatch(async (req, res) => {
     const seller = req.user._id
     const {buyer, ad, price } = req.body;
-    const transaction = await Transactions.create({ seller, buyer, ad, price });
+    const transaction = await Transactions.create({ seller, buyer, ad, price, state });
     res.status(201).json({ transaction });
 })
 
