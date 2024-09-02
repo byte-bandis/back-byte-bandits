@@ -27,4 +27,4 @@ const TransactionsSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Like', LikeSchema);
+module.exports = mongoose.model('Transactions', TransactionsSchema);
