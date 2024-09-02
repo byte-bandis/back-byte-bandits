@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const adsRoutes = require("./routes/adsRoutes");
 const likeRouter = require("./routes/likesRouter");
 const commentsRoutes = require("./routes/commentsRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
 const chatRouter = require("./routes/chatRoutes");
 const middlewares = require("./middleware/middlewares");
 const Chat = require("./models/Chat");
@@ -72,6 +73,7 @@ const startServer = async () => {
   app.use("/ads", adsRoutes);
   app.use("/comments", commentsRoutes);
   app.use("/likes", likeRouter);
+  app.use("/transactions", transactionRoutes);
   app.use("/chat", chatRouter);
 
   io.on("connection", (socket) => {
