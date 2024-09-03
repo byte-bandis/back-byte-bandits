@@ -27,10 +27,17 @@ exports.countLikes = tryCatch(async (req, res) => {
 });
 
 exports.getUserLikes = tryCatch(async (req, res) => {
-
-    const userId = req.params.id;
-    console.log('userId', userId)
-    const likesquery = new APIFeatures(Like.find({ user: userId })).paginate();
+    const userId = req.user._id;
+    const likesquery = new APIFeatures(Like.find({ user: userId }, req.query).populate('ad'), req.query)
+        .sort()
+        .paginate()
+        .fields()
+        .filter()
+        .searchByTitle()
+        .filterByTags()
+        .filterByPriceRange()
+        .filterByIsBuy();
     const likes = await likesquery.query.populate('ad');
-    res.status(200).json(likes);
+
+    res.status(200).json({ likes });
 });
