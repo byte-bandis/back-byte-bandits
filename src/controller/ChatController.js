@@ -3,6 +3,7 @@ const Ad = require("../models/Ad");
 const User = require("../models/User");
 const Chat = require("../models/Chat");
 const { tryCatch } = require("../utils/tryCatch");
+const publicFolder = "public/images";
 
 /*Crear un chat*/
 exports.createChat = tryCatch(async (req, res) => {
@@ -42,12 +43,26 @@ exports.getChats = tryCatch(async (req, res) => {
     }
 
     // Consultar los chats según los filtros aplicados y ordenar por fecha de creación
-    const chats = await Chat.find(filters)
+    let chats = await Chat.find(filters)
         .populate('product')
         .populate('buyer')
         .populate('seller')
         .populate('messages.user')
-        .sort({ createdAt: -1 }); // Ordenar de más nuevo a más antiguo
+        .sort({ createdAt: -1 }) // Ordenar de más nuevo a más antiguos
+        .lean(); 
+
+        chats = chats.map(chat => {
+            const { product } = chat;
+            
+            if (product && product.photo) {
+                product.photo = process.env.NODE_ENV !== 'production' 
+                    ? `http://${req.headers.host}/${publicFolder}/${product.photo}` 
+                    : `https://${req.headers.host}/api/${publicFolder}/${product.photo}`;
+            }
+            
+            return chat;
+        });
+
 
     res.status(200).json({ chats });
 });
