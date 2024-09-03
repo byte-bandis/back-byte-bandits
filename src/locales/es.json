@@ -52,8 +52,8 @@
   "public_profile_deleted": "Perfil público eliminado para el usuario {{username}}",
   "user_description_empty": "No has escrito una descipción para tu perfil",
   "incorrect_current_password": "La contraseña actual es incorrecta",
-  "success_password_updated": "Contraseña actualizada exitosamente para: {{username}}",
-  "error_updating_password": "Error al actualizar la contraseña para: {{username}}",
+  "success_password_updated": "Contraseña actualizada con éxito para {{username}}",
+  "error_updating_password": "Error al actualizar la contraseña para {{username}}",
   "password_not_set_for_user": "Contraseña no establecida para el usuario: {{username}}",
-  "missing_password_fields": "Se requieren los campos de contraseña actual y nueva"
+  "missing_password_fields": "Los campos de contraseña actual y nueva son obligatorios"
 }
