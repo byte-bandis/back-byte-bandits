@@ -29,8 +29,8 @@ exports.countLikes = tryCatch(async (req, res) => {
 exports.getUserLikes = tryCatch(async (req, res) => {
 
     const userId = req.params.id;
-    console.log(userId)
-    const likes = new APIFeatures(Like.find({ user: userId }), req.query).paginate();
-    const ads = await likes.query.populate('ad');
-    res.status(200).json(ads);
+    console.log('userId', userId)
+    const likesquery = new APIFeatures(Like.find({ user: userId })).paginate();
+    const likes = await likesquery.query.populate('ad');
+    res.status(200).json(likes);
 });
