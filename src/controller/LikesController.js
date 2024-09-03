@@ -1,9 +1,11 @@
 const Like = require('../models/Like');
+const APIFeatures = require('../utils/ApiFeature');
 const { tryCatch } = require('../utils/tryCatch');
 
 exports.setLike = tryCatch(async (req, res) => {
   const { adId } = req.body;
   const userId = req.user._id;
+
 
   const existingLike = await Like.findOne({ ad: adId, user: userId });
   if (existingLike) {
@@ -24,7 +26,9 @@ exports.countLikes = tryCatch(async (req, res) => {
 });
 
 exports.getUserLikes = tryCatch(async (req, res) => {
+
   const userId =req.params.id;
-  const likes = await Like.find({ user: userId }).populate('ad');
-  res.status(200).json({ likes });
+  const likes =  new APIFeatures(Like.find({ user: userId }), req.query).paginate();
+  const ads = await likes.query.populate('ad');
+  res.status(200).json(ads );
 });
