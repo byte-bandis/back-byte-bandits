@@ -57,7 +57,8 @@ exports.createPublicProfile = tryCatch(async (req, res) => {
   });
 
   res.status(200).json({
-    newPublicProfile,
+    state: "success",
+    data: newPublicProfile,
     message: res.__("public_profile_created", { username }),
   });
 });
@@ -99,7 +100,8 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
   };
 
   res.status(200).json({
-    publicProfileLoaded: {
+    state: "success",
+    data: {
       profileId: singlePublicProfile._id,
       userPhoto: singlePublicProfile.userPhoto,
       userName: singlePublicProfile.user.username,
@@ -181,7 +183,8 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   );
 
   res.status(200).json({
-    updatedPublicProfile,
+    state: "success",
+    data: updatedPublicProfile,
     message: res.__("profile_updated_successfully", { username }),
   });
 });
