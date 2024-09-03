@@ -1,7 +1,7 @@
 const Like = require('../models/Like');
 const APIFeatures = require('../utils/ApiFeature');
 const { tryCatch } = require('../utils/tryCatch');
-const User = require("../models/User");
+const publicFolder = "public/images";
 
 exports.setLike = tryCatch(async (req, res) => {
     const { adId } = req.body;
@@ -37,7 +37,14 @@ exports.getUserLikes = tryCatch(async (req, res) => {
         .filterByTags()
         .filterByPriceRange()
         .filterByIsBuy();
-    const likes = await likesquery.query.populate('ad');
-
+    
+    let likes = await likesquery.query.populate('ad');
+    likes = likes.map(({ _doc: { ad, ...like } }) => {
+        if (ad.photo) {
+            ad.photo = process.env.NODE_ENV !== 'production' ? `http://${req.headers.host}/${publicFolder}/${ad.photo}` : `https://${req.headers.host}/api/${publicFolder}/${ad.photo}`;
+        }      
+        return { ad, ...like };
+    })
+ 
     res.status(200).json({ likes });
 });
