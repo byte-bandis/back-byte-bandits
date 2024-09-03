@@ -94,7 +94,7 @@ exports.createAd = tryCatch(async (req, res) => {
 });
 /* actualizar un anuncio */
 exports.updateAd = tryCatch(async (req, res, next) => {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
 
         return next({
             message: "Ad not found",
