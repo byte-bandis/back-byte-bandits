@@ -2,7 +2,6 @@ const Like = require('../models/Like');
 const APIFeatures = require('../utils/ApiFeature');
 const { tryCatch } = require('../utils/tryCatch');
 const User = require("../models/User");
-const APIFeatures = require("../utils/ApiFeature");
 
 exports.setLike = tryCatch(async (req, res) => {
     const { adId } = req.body;
@@ -30,6 +29,7 @@ exports.countLikes = tryCatch(async (req, res) => {
 exports.getUserLikes = tryCatch(async (req, res) => {
 
     const userId = req.params.id;
+    console.log(userId)
     const likes = new APIFeatures(Like.find({ user: userId }), req.query).paginate();
     const ads = await likes.query.populate('ad');
     res.status(200).json(ads);
