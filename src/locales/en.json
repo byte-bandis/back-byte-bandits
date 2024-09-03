@@ -50,5 +50,10 @@
 	"image_deleted_successfully": "{{username}}'s {{type}} deleted successfully!",
 	"error_deleting_images": "Error deleting image files: {{error}}",
 	"public_profile_deleted": "Public profile deleted for user {{username}}",
-	"user_description_empty": "user_description_empty"
+	"user_description_empty": "You don't have a description so far...",
+	"incorrect_current_password": "Current password is incorrect",
+	"success_password_updated": "Password successfully updated for: {{username}}",
+	"error_updating_password": "Error updating password for: {{username}}",
+	"password_not_set_for_user": "Password not set for user: {{username}}",
+	"missing_password_fields": "Current and new password fields are required"
 }
