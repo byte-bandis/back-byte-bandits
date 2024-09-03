@@ -13,7 +13,6 @@ const {
   getSinglePublicProfile,
   createPublicProfile,
   updatePublicProfile,
-  deletePublicProfile,
 } = require("../controller/PublicProfileController");
 
 const {
@@ -33,6 +32,9 @@ const {
   getMyData,
   updateMyData,
 } = require("../controller/myPersonalData/MyDataController");
+const {
+  updateMyPassword,
+} = require("../controller/myPersonalData/passwordController");
 
 router.post("/register", register);
 router.post("/login", login);
@@ -51,6 +53,8 @@ router.delete("/:username/mycreditcard", authenticate, deleteMyCreditCard);
 
 router.get("/:username/mydata", authenticate, getMyData);
 router.put("/:username/mydata", authenticate, updateMyData);
+
+router.put("/:username/password", authenticate, updateMyPassword);
 
 router.get("/:username", getSinglePublicProfile);
 router.post(
