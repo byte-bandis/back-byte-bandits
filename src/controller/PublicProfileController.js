@@ -88,8 +88,14 @@ exports.getSinglePublicProfile = tryCatch(async (req, res) => {
   const imagesFolder = "public/images/profiles";
   singlePublicProfile = {
     ...singlePublicProfile._doc,
-    userPhoto: `http://${req.headers.host}/${imagesFolder}/${singlePublicProfile.userPhoto}`,
-    headerPhoto: `http://${req.headers.host}/${imagesFolder}/${singlePublicProfile.headerPhoto}`,
+    userPhoto:
+      process.env.NODE_ENV !== "production"
+        ? `http://${req.headers.host}/${imagesFolder}/${singlePublicProfile.userPhoto}`
+        : `https://${req.headers.host}/api/${imagesFolder}/${singlePublicProfile.userPhoto}`,
+    headerPhoto:
+      process.env.NODE_ENV !== "production"
+        ? `http://${req.headers.host}/${imagesFolder}/${singlePublicProfile.headerPhoto}`
+        : `https://${req.headers.host}/api/${imagesFolder}/${singlePublicProfile.headerPhoto}`,
   };
 
   res.status(200).json({
@@ -261,7 +267,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
       console.log(
         res.__("image_deleted_successfully", {
           username,
-          type: "imagen de cabecera",
+          type: "User header image",
         })
       );
     }
