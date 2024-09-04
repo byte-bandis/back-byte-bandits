@@ -68,6 +68,9 @@ exports.updateMyPassword = tryCatch(async (req, res, next) => {
     res.status(200).json({
       state: "success",
       message: res.__("success_password_updated", { username }),
+      data: {
+        updatedAt: linkedUser.updatedAt,
+      },
     });
   } catch (error) {
     return res.status(500).json({

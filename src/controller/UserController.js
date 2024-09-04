@@ -166,6 +166,7 @@ exports.login = tryCatch(async (req, res, next) => {
     token,
     userId: user._id,
     userName: user.username,
+    updatedAt: user.updatedAt,
   });
 });
 
