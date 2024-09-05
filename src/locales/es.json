@@ -55,5 +55,6 @@
   "success_password_updated": "Contraseña actualizada con éxito para {{username}}",
   "error_updating_password": "Error al actualizar la contraseña para {{username}}",
   "password_not_set_for_user": "Contraseña no establecida para el usuario: {{username}}",
-  "missing_password_fields": "Los campos de contraseña actual y nueva son obligatorios"
+  "missing_password_fields": "Los campos de contraseña actual y nueva son obligatorios",
+  "provide_valid_email_and_password": "Proporciona un email y contraseña válidos"
 }

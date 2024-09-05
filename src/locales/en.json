@@ -55,5 +55,6 @@
   "success_password_updated": "Password successfully updated for: {{username}}",
   "error_updating_password": "Error updating password for: {{username}}",
   "password_not_set_for_user": "Password not set for user: {{username}}",
-  "missing_password_fields": "Current and new password fields are required"
+  "missing_password_fields": "Current and new password fields are required",
+  "provide_valid_email_and_password": "Provide a valid email and password"
 }

@@ -1,5 +1,12 @@
 [
   {
+    "email": "deletedUser@example.com",
+    "password": "123123",
+    "role": "user",
+    "username": "DeletedUser",
+    "birthdate": "1966-06-06"
+  },
+  {
     "name": "Alfredo",
     "lastname": "Landa",
     "email": "alfredoL@example.com",
