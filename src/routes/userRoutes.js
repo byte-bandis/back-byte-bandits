@@ -6,7 +6,6 @@ const {
   register,
   login,
   getUsersPublicProfiles,
-  deleteUser,
 } = require("../controller/UserController");
 
 const {
@@ -35,6 +34,7 @@ const {
 const {
   updateMyPassword,
 } = require("../controller/myPersonalData/passwordController");
+const { deleteUser } = require("../controller/DeleteUserController");
 
 router.post("/register", register);
 router.post("/login", login);

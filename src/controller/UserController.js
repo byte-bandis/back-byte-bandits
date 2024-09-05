@@ -170,7 +170,7 @@ exports.login = tryCatch(async (req, res, next) => {
   });
 });
 
-exports.deleteUser = tryCatch(async (req, res) => {
+/* exports.deleteUser = tryCatch(async (req, res) => {
   const username = req.user.username;
   const authHeader = req.headers.authorization;
 
@@ -337,4 +337,4 @@ exports.deleteUser = tryCatch(async (req, res) => {
     status: "success",
     message: res.__("account_deleted_successfully", { username }),
   });
-});
+}); */
