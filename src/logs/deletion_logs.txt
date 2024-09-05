@@ -20,3 +20,7 @@
 [2024-09-05T12:36:57.122Z] Credit card deleted for lelo
 [2024-09-05T12:36:57.126Z] Public Profile deleted for lelo
 [2024-09-05T12:36:57.198Z] Account for lelo deleted successfully!
+[2024-09-05T14:11:55.811Z] Address deleted for lelo
+[2024-09-05T14:11:55.815Z] Credit card deleted for lelo
+[2024-09-05T14:11:55.819Z] Public Profile deleted for lelo
+[2024-09-05T14:11:55.892Z] Account for lelo deleted successfully!
