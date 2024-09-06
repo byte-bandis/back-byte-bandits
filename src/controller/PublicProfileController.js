@@ -198,7 +198,6 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   );
 
   try {
-    // Se pasan las banderas deleteUserPhoto y deleteHeaderPhoto como parámetros a deletePhotos
     await retrievedProfile.deleteUserPhotoIfRequested({
       deleteUserPhoto: req.body.deleteUserPhoto,
     });
@@ -210,7 +209,6 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   }
 
   try {
-    // Se pasan las banderas deleteUserPhoto y deleteHeaderPhoto como parámetros a deletePhotos
     await retrievedProfile.deleteHeaderPhotoIfRequested({
       deleteHeaderPhoto: req.body.deleteHeaderPhoto,
     });
