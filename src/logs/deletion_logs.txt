@@ -24,3 +24,9 @@
 [2024-09-05T14:11:55.815Z] Credit card deleted for lelo
 [2024-09-05T14:11:55.819Z] Public Profile deleted for lelo
 [2024-09-05T14:11:55.892Z] Account for lelo deleted successfully!
+[2024-09-06T17:18:06.484Z] Address deleted for GMorales
+[2024-09-06T17:18:06.487Z] Credit card deleted for GMorales
+[2024-09-06T17:18:06.492Z] GMorales's image deleted successfully!
+[2024-09-06T17:18:06.493Z] GMorales's header image deleted successfully!
+[2024-09-06T17:18:06.495Z] Public Profile deleted for GMorales
+[2024-09-06T17:18:06.583Z] Account for GMorales deleted successfully!

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const PublicProfile = require("../models/PublicProfile");
+const removePhotoFile = require("../utils/removePhotoFile");
 const { tryCatch } = require("../utils/tryCatch");
 const fs = require("fs").promises;
 const path = require("node:path");
@@ -154,6 +155,12 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
     ? req.files["headerPhoto"][0].filename
     : "";
 
+  const requestDeleteUserPhoto = req.body.deleteUserPhoto;
+  const requestDeleteHeaderPhoto = req.body.deleteHeaderPhoto;
+
+  console.log("Esto es requestDeleteUserPhoto: ", requestDeleteUserPhoto);
+  console.log("Esto es requestDeleteHeaderPhoto: ", requestDeleteHeaderPhoto);
+
   const username = req.params.username;
 
   const retrievedUser = await User.findOne({ username });
@@ -183,15 +190,45 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
     });
   }
 
+  console.log(
+    "Esto son las fotos de retirevedProfile: ",
+    retrievedProfile.userPhoto,
+    "y",
+    retrievedProfile.headerPhoto
+  );
+
+  try {
+    // Se pasan las banderas deleteUserPhoto y deleteHeaderPhoto como parámetros a deletePhotos
+    await retrievedProfile.deleteUserPhotoIfRequested({
+      deleteUserPhoto: req.body.deleteUserPhoto,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      state: "error",
+      message: res.__("error_deleting_user_photo"),
+    });
+  }
+
+  try {
+    // Se pasan las banderas deleteUserPhoto y deleteHeaderPhoto como parámetros a deletePhotos
+    await retrievedProfile.deleteHeaderPhotoIfRequested({
+      deleteHeaderPhoto: req.body.deleteHeaderPhoto,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      state: "error",
+      message: res.__("error_deleting_user_header"),
+    });
+  }
+
   const data = {
-    userPhoto: incomingUserPhoto || retrievedProfile.userPhoto,
-    headerPhoto: incomingHeaderPhoto || retrievedProfile.headerPhoto,
+    userPhoto:
+      incomingUserPhoto || retrievedProfile.userPhoto || "UserTemplate.jpg",
+    headerPhoto:
+      incomingHeaderPhoto || retrievedProfile.headerPhoto || "UserHeader.jpg",
 
     userDescription:
-      incomingUserDescription &&
-      retrievedProfile.userDescription !== incomingUserDescription
-        ? incomingUserDescription
-        : retrievedProfile.userDescription,
+      incomingUserDescription || res.__("user_description_empty"),
   };
 
   const updatedPublicProfile = await PublicProfile.findByIdAndUpdate(
@@ -315,6 +352,11 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
         "profiles",
         retrievedProfile.userPhoto
       );
+      console.log(
+        "Esto es el userphotopath que pretenfo borrar: ",
+        userPhotoPath
+      );
+
       await fs.unlink(userPhotoPath);
       console.log(
         res.__("image_deleted_successfully", { username, type: "imagen" })
@@ -332,6 +374,10 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
         "images",
         "profiles",
         retrievedProfile.headerPhoto
+      );
+      console.log(
+        "Esto es el headerphotopath que pretenfo borrar: ",
+        headerPhotoPath
       );
       await fs.unlink(headerPhotoPath);
       console.log(
