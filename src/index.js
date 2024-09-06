@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
+import nodemailerRouter from "./routes/nodemailerRouter";
 import socketIo from "socket.io";
 import http from "http";
 const userRoutes = require("./routes/userRoutes");
@@ -47,6 +48,7 @@ const startServer = async () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(express.static("public"));
+  
 
   app.use(i18n.init);
 
@@ -73,6 +75,7 @@ const startServer = async () => {
   app.use("/ads", adsRoutes);
   app.use("/comments", commentsRoutes);
   app.use("/likes", likeRouter);
+  app.use("/nodemailer", nodemailerRouter);
   app.use("/transactions", transactionRoutes);
   app.use("/chat", chatRouter);
 
