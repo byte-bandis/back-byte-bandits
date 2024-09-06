@@ -6,7 +6,24 @@ class APIFeatures {
 
   sort() {
     if (this.queryString.sort) {
-      this.query.sort(this.queryString.sort);
+      let sortBy;
+
+      console.log("que e2", this.queryString.sort)
+      if(Array.isArray(this.queryString.sort)) { 
+      sortBy = this.queryString.sort.map(field => {
+          return field.startsWith("-") ? [field.substring(1), "desc"] : [field, "asc"]
+        })
+      }
+      else if(typeof this.queryString.sort === "string"){
+        sortBy = [[this.queryString.sort.startsWith('-') ? 
+          this.queryString.sort.substring(1) : 
+          this.queryString.sort, this.queryString.sort.startsWith('-') ?
+          'desc' : 'asc']];
+      }
+  
+      const sortObject = Object.fromEntries(sortBy);
+      this.query = this.query.sort(sortObject);
+
     }else{
       this.query.sort('-createdAt');
 
@@ -50,14 +67,22 @@ class APIFeatures {
   }
 
   searchByTitle() {
-    console.log("searchByTitle")
+    console.log("searchByTitle");
     if (this.queryString.adTitle) {
-      const regex = new RegExp(this.queryString.adTitle, 'i'); 
-      this.query = this.query.find({ adTitle: regex });
+      const queryOptions = {
+        locale: 'es', 
+        strength: 1   
+      };
+  
+      this.query = this.query.find({
+        adTitle: new RegExp(this.queryString.adTitle, 'i')
+      }).collation(queryOptions);
+  
       console.log("Search by title:", this.queryString.adTitle);
     }
     return this;
   }
+  
 
   filterByTags() {
     if (this.queryString.tags) {
