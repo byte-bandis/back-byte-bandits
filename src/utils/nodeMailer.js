@@ -3,10 +3,10 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false, // Debe ser false para TLS explícito (puerto 587)
+    secure: false,
     auth: {
         user: "icraftyoumaster@gmail.com",
-        pass: "kaqy wxsm culf fhaw", // Contraseña de aplicación
+        pass: "kaqy wxsm culf fhaw", 
     },
 });
 

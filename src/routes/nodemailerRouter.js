@@ -1,37 +1,41 @@
 const router = require('express').Router();
 const { transporter } = require("../utils/nodeMailer");
 const { tryCatch } = require("../utils/tryCatch");
+import { __ } from "i18n";
 import { welcomeTemplate, resetPasswordTemplate } from "../utils/mainTemplates";
 
 
 
 router.post('/', tryCatch(async(req, res) => {
     const { email, userName, type } = req.body;
-    
     let html;
+    let subject;
     
-    // Seleccionar la plantilla en función del tipo de correo
     switch (type) {
         case 'welcome':
             html = welcomeTemplate(userName);
+            subject = __('Welcome_to_the_platform') + ' ' +  userName ;
             break;
         case 'resetPassword':
-            const resetLink = 'https://example.com/reset-password'; // Genera o pasa el enlace real
-            html = resetPasswordTemplate(userName, resetLink);
+            const resetLink = 'https://example.com/reset-password';
+            subject = __('Reset_your_password') + ' ' +  userName ;
+            html = resetPasswordTemplate(userName, resetLink, res);
             break;
         default:
-            return res.status(400).json({ message: 'Tipo de email no soportado' });
+            return res.status(400).json({  message: res.__("Invalid_email_type") });
     }
 
-    // Enviar el correo
-    await transporter.sendMail({
+    const sendedMail = await transporter.sendMail({
         from: 'ICraftYouMaster@gmail.com',
         to: email,
-        subject: type === 'welcome' ? 'Bienvenido a nuestra plataforma' : 'Restaurar tu contraseña',
+        subject: subject,
         html: html,
     });
-
-    res.status(200).json({ message: 'Email sent' });
+    console.log('sendedMail', sendedMail);
+    if (!sendedMail) {
+        return res.status(500).json({ message: res.__('Email_not_sent') });
+    }   
+    res.status(200).json({ message: res.__('Email_sent_successfully') });
 }))
     
 module.exports = router
