@@ -147,7 +147,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!user) {
     return next({
-      message: res.__("invalid_credentials"),
+      message: res.__("invalid_user_credentials"),
     });
   }
 
@@ -155,7 +155,7 @@ exports.login = tryCatch(async (req, res, next) => {
 
   if (!isMatch) {
     return next({
-      message: res.__("invalid_credentials"),
+      message: res.__("credentials_dont_match"),
     });
   }
 
@@ -169,172 +169,3 @@ exports.login = tryCatch(async (req, res, next) => {
     updatedAt: user.updatedAt,
   });
 });
-
-/* exports.deleteUser = tryCatch(async (req, res) => {
-  const username = req.user.username;
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({
-      status: "error",
-      message: res.__("no_token_provided"),
-    });
-  }
-
-  const token = authHeader.split(" ")[1];
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
-  if (!decodedToken) {
-    return res.status(401).json({
-      status: "error",
-      message: res.__("invalid_token"),
-    });
-  }
-
-  const requesterId = decodedToken.user._id;
-  const account = await User.findOne({ username });
-
-  if (!account) {
-    return res.status(404).json({
-      status: "error",
-      message: res.__("user_not_found", { username }),
-    });
-  }
-
-  if (requesterId !== account._id.toString()) {
-    return res.status(403).json({
-      status: "error",
-      message: res.__("forbidden_not_owner", { username }),
-    });
-  }
-
-  // Ruta del archivo de log
-  const logFilePath = path.join(__dirname, "..", "logs", "deletion_logs.txt");
-
-  // Crear la carpeta logs si no existe (usando fs.promises)
-  const logsDir = path.join(__dirname, "..", "logs");
-
-  // Verificar si la carpeta logs existe
-  try {
-    await fs.access(logsDir); // Si la carpeta existe, no hace nada
-  } catch (error) {
-    await fs.mkdir(logsDir); // Si no existe, crea la carpeta
-  }
-
-  // Función para escribir en el archivo de log
-  const writeLog = async (message) => {
-    const logMessage = `[${new Date().toISOString()}] ${message}\n`;
-    try {
-      await fs.appendFile(logFilePath, logMessage); // Escribimos en el archivo de log de manera asíncrona
-    } catch (error) {
-      console.error("Error writing to log file:", error.message);
-    }
-  };
-
-  const deletedAddress = await MyAddress.deleteOne({ user: account._id });
-  if (deletedAddress.deletedCount === 0) {
-    return res.status(500).json({
-      status: "error",
-      message: res.__("something_went_wrong_delete_address", { username }),
-    });
-  } else {
-    const logMessage = `Address deleted for ${username}`;
-    console.log(logMessage);
-    await writeLog(logMessage); // Escribimos en el log de manera asíncrona
-  }
-
-  const deletedCreditCard = await MyCreditCard.deleteOne({ user: account._id });
-  if (deletedCreditCard.deletedCount === 0) {
-    return res.status(500).json({
-      status: "error",
-      message: res.__("something_went_wrong_delete_credit_card", { username }),
-    });
-  } else {
-    const logMessage = `Credit card deleted for ${username}`;
-    console.log(logMessage);
-    await writeLog(logMessage); // Escribimos en el log de manera asíncrona
-  }
-
-  const linkedPublicProfile = await PublicProfile.findOne({
-    user: account._id,
-  });
-
-  if (linkedPublicProfile) {
-    try {
-      if (
-        linkedPublicProfile.userPhoto &&
-        linkedPublicProfile.userPhoto !== "UserTemplate.jpg"
-      ) {
-        const userPhotoPath = path.join(
-          __dirname,
-          "..",
-          "public",
-          "images",
-          "profiles",
-          linkedPublicProfile.userPhoto
-        );
-        await fs.unlink(userPhotoPath);
-        const logMessage = `${username}'s image deleted successfully!`;
-        console.log(logMessage);
-        await writeLog(logMessage); // Escribimos en el log de manera asíncrona
-      }
-
-      if (
-        linkedPublicProfile.headerPhoto &&
-        linkedPublicProfile.headerPhoto !== "UserHeader.jpg"
-      ) {
-        const headerPhotoPath = path.join(
-          __dirname,
-          "..",
-          "public",
-          "images",
-          "profiles",
-          linkedPublicProfile.headerPhoto
-        );
-        await fs.unlink(headerPhotoPath);
-        const logMessage = `${username}'s header image deleted successfully!`;
-        console.log(logMessage);
-        await writeLog(logMessage); // Escribimos en el log de manera asíncrona
-      }
-    } catch (error) {
-      const logMessage = `Error deleting image files for ${username}: ${error.message}`;
-      console.error(logMessage);
-      await writeLog(logMessage); // Escribimos en el log de manera asíncrona
-    }
-  }
-
-  const deletedPublicProfile = await PublicProfile.deleteOne({
-    user: account._id,
-  });
-
-  if (deletedPublicProfile.deletedCount === 0) {
-    return res.status(500).json({
-      status: "error",
-      message: res.__("something_went_wrong_delete_public_profile", {
-        username,
-      }),
-    });
-  } else {
-    const logMessage = `Public Profile deleted for ${username}`;
-    console.log(logMessage);
-    await writeLog(logMessage); // Escribimos en el log de manera asíncrona
-  }
-
-  const deletedAccount = await User.deleteOne({ _id: account._id });
-  if (deletedAccount.deletedCount === 0) {
-    return res.status(500).json({
-      status: "error",
-      message: res.__("something_went_wrong_delete_account", { username }),
-    });
-  }
-
-  // Escribimos el log final
-  const finalLogMessage = `Account for ${username} deleted successfully!`;
-  console.log(finalLogMessage);
-  await writeLog(finalLogMessage); // Escribimos en el log de manera asíncrona
-
-  res.status(200).json({
-    status: "success",
-    message: res.__("account_deleted_successfully", { username }),
-  });
-}); */
