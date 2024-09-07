@@ -12,7 +12,7 @@ const welcomeTemplate = (userName) => `
 </body>
 </html>
 `;
-const resetPasswordTemplate = (userName, resetLink) => `
+const resetPasswordTemplate = (userName, resetLink, res) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html
     dir="ltr"
@@ -607,11 +607,12 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                     color: #1376c8;
                                                                                                 "
                                                                                                 ><img
-                                                                                                    src="/src/assets/images/ICraftYou.png"
+                                                                                                    src="https://icraftyou.es/assets/ICraftYou-rTN8Gdal.png"
                                                                                                     alt
                                                                                                     style="
                                                                                                         display: block;
-                                                                                                        border: 0;
+                                                                                                        width: 120px;
+                                                                                                        height: 120px;                                                                                                        border: 0;
                                                                                                         outline: none;
                                                                                                         text-decoration: none;
                                                                                                         -ms-interpolation-mode: bicubic;
@@ -862,8 +863,9 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                     color: #333333;
                                                                                                 "
                                                                                             >
-                                                                                                <strong
-                                                                                                    >¿HAS OLVIDADO
+                                                                                                <strong>
+                                                                                                ${res.__("password_reset1")}
+                                                                    
                                                                                                 </strong>
                                                                                             </h1>
                                                                                             <h1
@@ -882,7 +884,7 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                 "
                                                                                             >
                                                                                                 <strong
-                                                                                                    >&nbsp;TU CONTRASEÑA?</strong
+                                                                                                    >&nbsp;${res.__("password_reset2")}</strong
                                                                                                 >
                                                                                             </h1>
                                                                                         </td>
@@ -918,7 +920,7 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                     text-align: center;
                                                                                                 "
                                                                                             >
-                                                                                                HOLA,&nbsp;
+                                                                                                ${res.__('hello')},&nbsp;
                                                                                                 ${userName.toUpperCase()}
                                                                                             </p>
                                                                                         </td>
@@ -954,14 +956,8 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                     text-align: center;
                                                                                                 "
                                                                                             >
-                                                                                                There
-                                                                                                was
-                                                                                                a
-                                                                                                request
-                                                                                                to
-                                                                                                change
-                                                                                                your
-                                                                                                password!
+                                                                                              ${res.__('mail_text_password_reset1')}
+                                                                              
                                                                                             </p>
                                                                                         </td>
                                                                                     </tr>
@@ -996,26 +992,7 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                     color: #666666;
                                                                                                 "
                                                                                             >
-                                                                                                If
-                                                                                                did
-                                                                                                not
-                                                                                                make
-                                                                                                this
-                                                                                                request,
-                                                                                                just
-                                                                                                ignore
-                                                                                                this
-                                                                                                email.
-                                                                                                Otherwise,
-                                                                                                please
-                                                                                                click
-                                                                                                the
-                                                                                                button
-                                                                                                below
-                                                                                                to
-                                                                                                change
-                                                                                                your
-                                                                                                password:
+                                                                                                ${res.__('mail_text_password_reset2')}
                                                                                             </p>
                                                                                         </td>
                                                                                     </tr>
@@ -1076,8 +1053,7 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                         width: auto;
                                                                                                         text-align: center;
                                                                                                     "
-                                                                                                    >RESET
-                                                                                                    PASSWORD</a
+                                                                                                    >${res.__('mail_text_new_password')}</a
                                                                                                 ></span
                                                                                             >
                                                                                         </td>
@@ -1107,7 +1083,6 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                             "
                                                             align="left"
                                                         >
-                                                            <!--[if mso]><table style="width:580px" cellpadding="0" cellspacing="0"><tr><td style="width:199px" valign="top"><![endif]-->
                                                             <table
                                                                 class="es-left"
                                                                 cellspacing="0"
@@ -1165,27 +1140,7 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                 padding-top: 15px;
                                                                                             "
                                                                                         >
-                                                                                            <p
-                                                                                                style="
-                                                                                                    margin: 0;
-                                                                                                    -webkit-text-size-adjust: none;
-                                                                                                    -ms-text-size-adjust: none;
-                                                                                                    mso-line-height-rule: exactly;
-                                                                                                    font-size: 16px;
-                                                                                                    font-family: helvetica,
-                                                                                                        'helvetica neue',
-                                                                                                        arial,
-                                                                                                        verdana,
-                                                                                                        sans-serif;
-                                                                                                    line-height: 24px;
-                                                                                                    color: #666666;
-                                                                                                "
-                                                                                            >
-                                                                                                <strong
-                                                                                                    >Follow
-                                                                                                    us:</strong
-                                                                                                >
-                                                                                            </p>
+                                                                                            
                                                                                         </td>
                                                                                     </tr>
                                                                                 </tbody>
@@ -1266,129 +1221,7 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                                                     border-spacing: 0px;
                                                                                                 "
                                                                                             >
-                                                                                                <tbody>
-                                                                                                    <tr
-                                                                                                        style="
-                                                                                                            border-collapse: collapse;
-                                                                                                        "
-                                                                                                    >
-                                                                                                        <td
-                                                                                                            valign="top"
-                                                                                                            align="center"
-                                                                                                            style="
-                                                                                                                padding: 0;
-                                                                                                                margin: 0;
-                                                                                                                padding-right: 10px;
-                                                                                                            "
-                                                                                                        >
-                                                                                                            <img
-                                                                                                                src="https://tlr.stripocdn.email/content/assets/img/social-icons/rounded-gray/facebook-rounded-gray.png"
-                                                                                                                alt="Fb"
-                                                                                                                title="Facebook"
-                                                                                                                width="32"
-                                                                                                                style="
-                                                                                                                    display: block;
-                                                                                                                    border: 0;
-                                                                                                                    outline: none;
-                                                                                                                    text-decoration: none;
-                                                                                                                    -ms-interpolation-mode: bicubic;
-                                                                                                                "
-                                                                                                            />
-                                                                                                        </td>
-                                                                                                        <td
-                                                                                                            valign="top"
-                                                                                                            align="center"
-                                                                                                            style="
-                                                                                                                padding: 0;
-                                                                                                                margin: 0;
-                                                                                                                padding-right: 10px;
-                                                                                                            "
-                                                                                                        >
-                                                                                                            <img
-                                                                                                                src="https://tlr.stripocdn.email/content/assets/img/social-icons/rounded-gray/twitter-rounded-gray.png"
-                                                                                                                alt="Tw"
-                                                                                                                title="Twitter"
-                                                                                                                width="32"
-                                                                                                                style="
-                                                                                                                    display: block;
-                                                                                                                    border: 0;
-                                                                                                                    outline: none;
-                                                                                                                    text-decoration: none;
-                                                                                                                    -ms-interpolation-mode: bicubic;
-                                                                                                                "
-                                                                                                            />
-                                                                                                        </td>
-                                                                                                        <td
-                                                                                                            valign="top"
-                                                                                                            align="center"
-                                                                                                            style="
-                                                                                                                padding: 0;
-                                                                                                                margin: 0;
-                                                                                                                padding-right: 10px;
-                                                                                                            "
-                                                                                                        >
-                                                                                                            <img
-                                                                                                                src="https://tlr.stripocdn.email/content/assets/img/social-icons/rounded-gray/instagram-rounded-gray.png"
-                                                                                                                alt="Ig"
-                                                                                                                title="Instagram"
-                                                                                                                width="32"
-                                                                                                                style="
-                                                                                                                    display: block;
-                                                                                                                    border: 0;
-                                                                                                                    outline: none;
-                                                                                                                    text-decoration: none;
-                                                                                                                    -ms-interpolation-mode: bicubic;
-                                                                                                                "
-                                                                                                            />
-                                                                                                        </td>
-                                                                                                        <td
-                                                                                                            valign="top"
-                                                                                                            align="center"
-                                                                                                            style="
-                                                                                                                padding: 0;
-                                                                                                                margin: 0;
-                                                                                                                padding-right: 10px;
-                                                                                                            "
-                                                                                                        >
-                                                                                                            <img
-                                                                                                                src="https://tlr.stripocdn.email/content/assets/img/social-icons/rounded-gray/youtube-rounded-gray.png"
-                                                                                                                alt="Yt"
-                                                                                                                title="Youtube"
-                                                                                                                width="32"
-                                                                                                                style="
-                                                                                                                    display: block;
-                                                                                                                    border: 0;
-                                                                                                                    outline: none;
-                                                                                                                    text-decoration: none;
-                                                                                                                    -ms-interpolation-mode: bicubic;
-                                                                                                                "
-                                                                                                            />
-                                                                                                        </td>
-                                                                                                        <td
-                                                                                                            valign="top"
-                                                                                                            align="center"
-                                                                                                            style="
-                                                                                                                padding: 0;
-                                                                                                                margin: 0;
-                                                                                                                padding-right: 10px;
-                                                                                                            "
-                                                                                                        >
-                                                                                                            <img
-                                                                                                                src="https://tlr.stripocdn.email/content/assets/img/social-icons/rounded-gray/linkedin-rounded-gray.png"
-                                                                                                                alt="In"
-                                                                                                                title="Linkedin"
-                                                                                                                width="32"
-                                                                                                                style="
-                                                                                                                    display: block;
-                                                                                                                    border: 0;
-                                                                                                                    outline: none;
-                                                                                                                    text-decoration: none;
-                                                                                                                    -ms-interpolation-mode: bicubic;
-                                                                                                                "
-                                                                                                            />
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                </tbody>
+                                                                                                
                                                                                             </table>
                                                                                         </td>
                                                                                     </tr>
@@ -1398,7 +1231,6 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
-                                                            <!--[if mso]></td></tr></table><![endif]-->
                                                         </td>
                                                     </tr>
                                                     <tr
@@ -1619,171 +1451,7 @@ const resetPasswordTemplate = (userName, resetLink) => `
                                                                     border-spacing: 0px;
                                                                 "
                                                             >
-                                                                <tbody>
-                                                                    <tr
-                                                                        style="
-                                                                            border-collapse: collapse;
-                                                                        "
-                                                                    >
-                                                                        <td
-                                                                            valign="top"
-                                                                            align="center"
-                                                                            style="
-                                                                                padding: 0;
-                                                                                margin: 0;
-                                                                                width: 560px;
-                                                                            "
-                                                                        >
-                                                                            <table
-                                                                                width="100%"
-                                                                                cellspacing="0"
-                                                                                cellpadding="0"
-                                                                                role="presentation"
-                                                                                style="
-                                                                                    mso-table-lspace: 0pt;
-                                                                                    mso-table-rspace: 0pt;
-                                                                                    border-collapse: collapse;
-                                                                                    border-spacing: 0px;
-                                                                                "
-                                                                            >
-                                                                                <tbody>
-                                                                                    <tr
-                                                                                        style="
-                                                                                            border-collapse: collapse;
-                                                                                        "
-                                                                                    >
-                                                                                        <td
-                                                                                            align="left"
-                                                                                            style="
-                                                                                                padding: 0;
-                                                                                                margin: 0;
-                                                                                                padding-top: 5px;
-                                                                                                padding-bottom: 5px;
-                                                                                            "
-                                                                                        >
-                                                                                            <h2
-                                                                                                style="
-                                                                                                    margin: 0;
-                                                                                                    line-height: 19.2px;
-                                                                                                    mso-line-height-rule: exactly;
-                                                                                                    font-family: arial,
-                                                                                                        'helvetica neue',
-                                                                                                        helvetica,
-                                                                                                        sans-serif;
-                                                                                                    font-size: 16px;
-                                                                                                    font-style: normal;
-                                                                                                    font-weight: normal;
-                                                                                                    color: #ffffff;
-                                                                                                "
-                                                                                            >
-                                                                                                <strong
-                                                                                                    >Have
-                                                                                                    quastions?</strong
-                                                                                                >
-                                                                                            </h2>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr
-                                                                                        style="
-                                                                                            border-collapse: collapse;
-                                                                                        "
-                                                                                    >
-                                                                                        <td
-                                                                                            align="left"
-                                                                                            style="
-                                                                                                padding: 0;
-                                                                                                margin: 0;
-                                                                                                padding-bottom: 5px;
-                                                                                            "
-                                                                                        >
-                                                                                            <p
-                                                                                                style="
-                                                                                                    margin: 0;
-                                                                                                    -webkit-text-size-adjust: none;
-                                                                                                    -ms-text-size-adjust: none;
-                                                                                                    mso-line-height-rule: exactly;
-                                                                                                    font-size: 14px;
-                                                                                                    font-family: helvetica,
-                                                                                                        'helvetica neue',
-                                                                                                        arial,
-                                                                                                        verdana,
-                                                                                                        sans-serif;
-                                                                                                    line-height: 21px;
-                                                                                                    color: #ffffff;
-                                                                                                "
-                                                                                            >
-                                                                                                We
-                                                                                                are
-                                                                                                here
-                                                                                                to
-                                                                                                help,
-                                                                                                learn
-                                                                                                more
-                                                                                                about
-                                                                                                us
-                                                                                                <a
-                                                                                                    target="_blank"
-                                                                                                    style="
-                                                                                                        -webkit-text-size-adjust: none;
-                                                                                                        -ms-text-size-adjust: none;
-                                                                                                        mso-line-height-rule: exactly;
-                                                                                                        font-family: helvetica,
-                                                                                                            'helvetica neue',
-                                                                                                            arial,
-                                                                                                            verdana,
-                                                                                                            sans-serif;
-                                                                                                        font-size: 14px;
-                                                                                                        text-decoration: none;
-                                                                                                        color: #ffffff;
-                                                                                                    "
-                                                                                                    href=""
-                                                                                                    >here</a
-                                                                                                >
-                                                                                            </p>
-                                                                                            <p
-                                                                                                style="
-                                                                                                    margin: 0;
-                                                                                                    -webkit-text-size-adjust: none;
-                                                                                                    -ms-text-size-adjust: none;
-                                                                                                    mso-line-height-rule: exactly;
-                                                                                                    font-size: 14px;
-                                                                                                    font-family: helvetica,
-                                                                                                        'helvetica neue',
-                                                                                                        arial,
-                                                                                                        verdana,
-                                                                                                        sans-serif;
-                                                                                                    line-height: 21px;
-                                                                                                    color: #ffffff;
-                                                                                                "
-                                                                                            >
-                                                                                                or
-                                                                                                <a
-                                                                                                    target="_blank"
-                                                                                                    style="
-                                                                                                        -webkit-text-size-adjust: none;
-                                                                                                        -ms-text-size-adjust: none;
-                                                                                                        mso-line-height-rule: exactly;
-                                                                                                        font-family: helvetica,
-                                                                                                            'helvetica neue',
-                                                                                                            arial,
-                                                                                                            verdana,
-                                                                                                            sans-serif;
-                                                                                                        font-size: 14px;
-                                                                                                        text-decoration: none;
-                                                                                                        color: #ffffff;
-                                                                                                    "
-                                                                                                    href=""
-                                                                                                    >contact
-                                                                                                    us</a
-                                                                                                ><br />
-                                                                                            </p>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
+                                                                
                                                             </table>
                                                         </td>
                                                     </tr>
