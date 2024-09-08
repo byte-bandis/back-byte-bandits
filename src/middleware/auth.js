@@ -10,7 +10,7 @@ exports.authenticate = tryCatch(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
   if (!token) {
-    return next({
+    return res.status(401).json({
       message: 'Unauthorized. Token not available.'
     });
   }
@@ -20,7 +20,7 @@ exports.authenticate = tryCatch(async (req, res, next) => {
     req.user = decode.user;
     next();
   } catch (error) {
-    return next({
+    return res.status(401).json({
       message: 'Unauthorized. Error while verifying the token'
     });
   }
@@ -28,7 +28,7 @@ exports.authenticate = tryCatch(async (req, res, next) => {
 
 exports.authorize = (roles) => (req, res, next) => {
   if (!roles.includes(req.user.role)) {
-    return next({
+    return res.status(403).json({
       message: 'Unauthorized to access this route'
     });
   }
