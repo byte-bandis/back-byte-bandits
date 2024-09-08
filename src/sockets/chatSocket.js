@@ -94,12 +94,6 @@ const chatSocket = (io, socket) => {
         io.to(userId).emit('userMessagesRead', userId);
     });
 
-    // Manejar la conexión del usuario
-    socket.on("connectUser", async () => {
-        socket.join(socket.user._id);
-        console.log("User connected", socket.user._id);
-    });
-
     // Manejar cierre de sala de chat
     socket.on("leaveChat", async ({ chatId }) => {
         const userId = socket.user._id;
@@ -114,9 +108,23 @@ const chatSocket = (io, socket) => {
     }
     );
 
+    // Manejar la conexión del usuario
+    socket.on("connectUser", async () => {
+        const userId = socket.user._id;
+        socket.join(userId);
+        console.log("User connected", userId);
+    });
+
+    // Manejar la desconexión del usuario
+    socket.on("disconnectUser", async () => {
+        const userId = socket.user._id;
+        socket.leave(userId);
+        console.log("User disconnected", userId);
+    });
+
     // Manejar la desconexión del usuario
     socket.on("disconnect", () => {
-      console.log("User disconnected", socket.id);
+        console.log("User disconnected", socket.id);
     });
   };
 
