@@ -68,7 +68,7 @@ exports.createAd = tryCatch(async (req, res) => {
         photo = req.file.filename;
     }
     tags = tags.replace(" ", "").split(",");
-    const ad = await Ad.create({
+    const newAd = await Ad.create({
         adTitle,
         adBody,
         sell,
@@ -77,6 +77,8 @@ exports.createAd = tryCatch(async (req, res) => {
         tags,
         user,
     });
+    const ad = await Ad.findById(newAd._id).populate('user');
+
     if (ad.photo) {
         ad.photo = `${req.protocol}://${req.headers.host}/${process.env.NODE_ENV !== 'production' ? publicFolder : `api/${publicFolder}`}/${ad.photo}`;
     }
@@ -142,7 +144,11 @@ exports.updateAd = tryCatch(async (req, res, next) => {
     }, {
         new: true,
         runValidators: true,
-    });
+    }).populate('user');
+
+    if (ad.photo) {
+        ad.photo = `${req.protocol}://${req.headers.host}/${process.env.NODE_ENV !== 'production' ? publicFolder : `api/${publicFolder}`}/${ad.photo}`;
+    }
 
     res.status(200).json({
         success: true,
