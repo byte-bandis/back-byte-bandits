@@ -69,6 +69,7 @@ const chatSocket = (io, socket) => {
       io.to(updatedChat.seller._id.toString()).emit("userNewMessage", lastMessage);
     });
 
+    // Manejar la lectura de mensajes
     socket.on('readMessage', async ({ chatId }) => {
         const userId = socket.user._id;
         const {error} = await validateChatAndUser(chatId, userId);
@@ -98,6 +99,20 @@ const chatSocket = (io, socket) => {
         socket.join(socket.user._id);
         console.log("User connected", socket.user._id);
     });
+
+    // Manejar cierre de sala de chat
+    socket.on("leaveChat", async ({ chatId }) => {
+        const userId = socket.user._id;
+        const {error} = await validateChatAndUser(chatId, userId);
+
+        if(error) {
+            return socket.emit('error', error);
+        }
+
+        socket.leave(chatId);
+        console.log(`${userId} ha dejado el chat: ${chatId}`);
+    }
+    );
 
     // Manejar la desconexión del usuario
     socket.on("disconnect", () => {
