@@ -1,22 +1,21 @@
 const router = require("express").Router();
-const crypto = require("crypto");
-const { transporter } = require("../utils/nodeMailer");
+
 const { tryCatch } = require("../utils/tryCatch");
 import { __ } from "i18n";
-import { welcomeTemplate, resetPasswordTemplate } from "../utils/mainTemplates";
 import User from "../models/User";
 
 router.post(
   "/",
-  tryCatch(async (req, res) => {
+  sendEmail
+  /*   tryCatch(async (req, res) => {
     const { email, userName, type } = req.body;
     let html;
     let subject;
 
     const hostURI =
       process.env.NODE_ENV !== "production"
-        ? `http://${req.headers.host}`
-        : `https://${req.headers.host}`;
+        ? `${process.env.DEV_HOST_URI}`
+        : `${process.env.HOST_URI}`;
 
     switch (type) {
       case "welcome":
@@ -88,7 +87,7 @@ router.post(
       return res.status(500).json({ message: res.__("Email_not_sent") });
     }
     res.status(200).json({ message: res.__("Email_sent_successfully") });
-  })
+  }) */
 );
 
 module.exports = router;
