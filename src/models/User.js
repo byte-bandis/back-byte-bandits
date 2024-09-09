@@ -47,7 +47,14 @@ const UserSchema = new Schema(
       type: Date,
       required: [true, "Please add your birthdate"],
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
   },
+
   { timestamps: true }
 );
 

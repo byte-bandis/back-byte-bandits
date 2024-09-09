@@ -33,21 +33,12 @@ exports.sendEmail = tryCatch(async (req, res) => {
         });
       }
 
-      const checkUserEmail = await User.findOne({ email });
-
-      if (!checkUserEmail) {
-        return res.status(404).json({
-          state: "error",
-          message: res.__("email_not_found", { email }),
-        });
-      }
-
       const user = await User.findOne({ email });
 
       if (!user) {
         return res.status(404).json({
           state: "error",
-          message: res.__("account_not_found_with_email", { email }),
+          message: res.__("email_not_found", { email }),
         });
       }
 
@@ -85,12 +76,28 @@ exports.sendEmail = tryCatch(async (req, res) => {
 
 exports.resetPassword = tryCatch(async (req, res) => {
   const { token } = req.params;
-  const { password } = req.body;
+  const { newPassword, confirmPassword } = req.body;
+
+  console.log(
+    "Esta es newPassword: ",
+    newPassword,
+    "y conformPassword: ",
+    confirmPassword
+  );
+
+  if (!newPassword) {
+    return res.status(400).json({
+      state: "error",
+      message: res.__("wrong_password_length"),
+    });
+  }
 
   const user = await User.findOne({
     resetPasswordToken: token,
     resetPasswordExpires: { $gt: Date.now() },
   });
+
+  console.log("Este es user que debería tener el token que le mando: ", user);
 
   if (!user) {
     return res.status(400).json({
@@ -99,8 +106,15 @@ exports.resetPassword = tryCatch(async (req, res) => {
     });
   }
 
+  if (!newPassword === confirmPassword) {
+    return res.status(400).json({
+      state: "error",
+      message: res.__("passwords_dont_match"),
+    });
+  }
+
   const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
   user.password = hashedPassword;
   user.resetPasswordToken = undefined;
