@@ -79,5 +79,6 @@
   "email_not_found": "{{email}} no está asociado a ninguna cuenta",
   "user_not_linked_to_any_account": "{{userName}} no está asociado a ninguna cuenta",
   "username_email_dont_match": "El correo {{email}} no está asociado a {{userName}}",
-  "password_has_been_reset": "¡Contraseña cambiada con éxito!"
+  "password_has_been_reset": "¡Contraseña cambiada con éxito!",
+  "wrong_password_length": "La contraseña no puede estar vacía"
 }
