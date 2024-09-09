@@ -1,10 +1,13 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
-import { __ } from "i18n";
-import { tryCatch } from "../utils/tryCatch";
+//const { __ } = require("i18n");
+const { tryCatch } = require("../utils/tryCatch");
 const crypto = require("crypto");
 const { transporter } = require("../utils/nodeMailer");
-import { welcomeTemplate, resetPasswordTemplate } from "../utils/mainTemplates";
+const {
+  welcomeTemplate,
+  resetPasswordTemplate,
+} = require("../utils/mainTemplates");
 
 exports.sendEmail = tryCatch(async (req, res) => {
   const { email, userName, type } = req.body;
@@ -19,42 +22,32 @@ exports.sendEmail = tryCatch(async (req, res) => {
   switch (type) {
     case "welcome":
       html = welcomeTemplate(userName);
-      subject = __("Welcome_to_the_platform") + " " + userName;
+      subject = res.__("Welcome_to_the_platform") + " " + userName;
       break;
 
     case "resetPassword":
       if (!email) {
         return res.status(400).json({
           state: "error",
-          message: __("Please_enter_a_valid_email"),
+          message: res.__("Please_enter_a_valid_email"),
         });
       }
 
-      const checkUserName = await User.findOne({ username: userName });
       const checkUserEmail = await User.findOne({ email });
 
-      console.log("esto es email: ", checkUserEmail);
-      console.log("esto es user: ", checkUserName);
-
-      if (!checkUserName) {
-        return res.status(404).json({
-          state: "error",
-          message: __("user_not_linked_to_any_account", { userName }),
-        });
-      }
       if (!checkUserEmail) {
         return res.status(404).json({
           state: "error",
-          message: __("email_not_found", { email }),
+          message: res.__("email_not_found", { email }),
         });
       }
 
-      const user = await User.findOne({ email, username: userName });
+      const user = await User.findOne({ email });
 
       if (!user) {
         return res.status(404).json({
           state: "error",
-          message: __("username_email_dont_match", { userName, email }),
+          message: res.__("account_not_found_with_email", { email }),
         });
       }
 
@@ -66,8 +59,8 @@ exports.sendEmail = tryCatch(async (req, res) => {
       await user.save();
 
       const resetLink = `${hostURI}/reset-password/${token}`;
-      subject = __("Reset_your_password") + " " + userName;
-      html = resetPasswordTemplate(userName, resetLink, res);
+      subject = res.__("Reset_your_password") + " " + user.username;
+      html = resetPasswordTemplate(user.username, resetLink, res);
       break;
 
     default:
@@ -80,33 +73,13 @@ exports.sendEmail = tryCatch(async (req, res) => {
     subject: subject,
     html: html,
   });
-  console.log("sendedMail", sendedMail);
 
   if (!sendedMail) {
     return res.status(500).json({ message: res.__("Email_not_sent") });
   }
-  res.status(200).json({ message: res.__("Email_sent_successfully") });
-});
-
-exports.validateResetToken = tryCatch(async (req, res) => {
-  const { token } = req.params;
-
-  const user = await User.findOne({
-    resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() },
-  });
-
-  if (!user) {
-    return res.status(400).json({
-      state: "error",
-      message: __("invalid_token"),
-    });
-  }
-
   res.status(200).json({
     state: "success",
-    message: __("valid_token"),
-    userId: user._id,
+    message: res.__("Email_sent_successfully"),
   });
 });
 
@@ -122,7 +95,7 @@ exports.resetPassword = tryCatch(async (req, res) => {
   if (!user) {
     return res.status(400).json({
       state: "error",
-      message: __("invalid_token"),
+      message: res.__("invalid_token"),
     });
   }
 
@@ -137,6 +110,6 @@ exports.resetPassword = tryCatch(async (req, res) => {
 
   res.status(200).json({
     state: "success",
-    message: __("password_has_been_reset"),
+    message: res.__("password_has_been_reset"),
   });
 });
