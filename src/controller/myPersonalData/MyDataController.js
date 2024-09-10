@@ -108,7 +108,7 @@ exports.updateMyData = tryCatch(async (req, res) => {
     });
   }
 
-  const user = await User.findOne({ username: requesterName });
+  const user = await User.findOne({ _id: requesterId });
 
   if (!user) {
     return res.status(404).json({
