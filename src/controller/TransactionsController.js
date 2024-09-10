@@ -3,21 +3,32 @@ const Ad = require("../models/Ad")
 const User = require("../models/User")
 const { tryCatch } = require('../utils/tryCatch');
 const mongoose = require('mongoose');
+const MyCreditCard = require('../models/myPersonalData/MyCreditCard');
 
 //Create a new transaction
 exports.createTransaction = tryCatch(async (req, res) => {
     console.log(req.body)
     const {id} = req.body;
     const buyerId = req.user._id;
-
-    console.log(id)
     const ad = await Ad.findById(id)
-    console.log(ad)
+
     if(!ad){
-        return res.status(404).json({message: "Ad not found controller"})
+        return res.status(404).json({
+            state: "error",
+            message: "Ad not found -createTransaction"})
     }
 
-    const transaction = await Transactions.create({
+    const buyer = await MyCreditCard.findOne({user: buyerId})
+
+ 
+    if(!buyer || buyer.last4Digits === "----" ){
+         return res.status(400).json({
+            state: "error",
+            message: "Buyer or credit card buyer not found -createTransaction"
+        })
+    }
+
+     const transaction = await Transactions.create({
         buyer: buyerId,
         seller: ad.user._id,
         ad: ad._id,
@@ -29,7 +40,10 @@ exports.createTransaction = tryCatch(async (req, res) => {
 
     console.log(transaction)
 
-    res.status(201).json({success: true, data: transaction})
+    res.status(201).json({
+        state: "success", 
+        message: "Purchase transaction created correctly",
+        data: transaction})
 })
 
 
@@ -38,14 +52,16 @@ exports.acceptTransaction = tryCatch(async(req,res) =>{
     const {transactionId} = req.params;
     console.log(transactionId)
 
-    const transaction = await Transactions.findById(transactionId).populate("ad seller")
+    const transaction = await Transactions.findById(transactionId).populate({path: "seller", select: "_id username"})
     console.log(transaction)
     if(!transaction || transaction.state != "Ordered"){
-        return res.status(404).json({message: "Transaction not found"})
+        return res.status(404).json({
+            state: "error",
+            message: "Transaction not found - acceptTransaction"})
     }
 
     if(transaction.seller._id.toString() !== req.user._id.toString()){
-        return res.status(403).json({message: "Not authorized"})
+        return res.status(403).json({message: "Not authorized - acceptTransaction"})
     }
 
     transaction.state= "Sold";
@@ -57,7 +73,8 @@ exports.acceptTransaction = tryCatch(async(req,res) =>{
     console.log(transaction)
 
     res.status(200).json({ 
-        success: true, 
+        state: "success", 
+        message: "Transaction accepted succesfully",
         data: transaction,
      })
     }
@@ -68,13 +85,13 @@ exports.acceptTransaction = tryCatch(async(req,res) =>{
 exports.rejectTransaction = tryCatch(async(req,res)=> {
     const { transactionId} = req.params;
 
-    const transaction = await Transactions.findById(transactionId).populate("ad seller")
+    const transaction = await Transactions.findById(transactionId).populate({path: "seller", select: "_id username"})
     if(!transaction || transaction.state != "Ordered"){
-        return res.status(404).json({message: "Transaction not found"})
+        return res.status(404).json({message: "Transaction not found - rejectTransaction"})
     }
 
     if(transaction.seller._id.toString() !== req.user._id.toString()){
-        return res.status(403).json({message: "No authorized"})
+        return res.status(403).json({message: "No authorized - rejectTransaction"})
     }
 
     transaction.state = "Cancelled"
@@ -83,48 +100,24 @@ exports.rejectTransaction = tryCatch(async(req,res)=> {
     console.log(transaction)
 
     res.status(200).json({
-        success: true,
+        state: "success",
+        message: "Transaction rejected succesfully",
         data: transaction,
     })
 })
 
 exports.getTransactionsBySeller = tryCatch(async (req, res) => {
-    const userId = new mongoose.Types.ObjectId(req.params.userId); // Convertir a ObjectId
+    const userId = new mongoose.Types.ObjectId(req.params.userId);
     console.log(userId);
-    const transactions = await Transactions.find({ seller: userId }).populate("ad seller");
+    const transactions = await Transactions.find({ seller: userId, state: "Sold" }).populate({path: "seller", select: "_id username"});
     console.log(transactions);
-    res.status(200).json({ transactions });
+    res.status(200).json({state: "success", data: transactions});
 });
 
 exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
     const userId = new mongoose.Types.ObjectId(req.params.userId)
     console.log(userId)
-    const transaction = await Transactions.find({ buyer: userId }).populate("ad buyer");
-    console.log(transaction)
-    res.status(200).json({ transaction });
+    const transactions = await Transactions.find({ buyer: userId, state: "Cancelled" }).populate({path: "seller", select: "_id username"});
+    console.log(transactions)
+    res.status(200).json({state: "success", data: transactions});
 })
-
-
-// exports.getTransactionsByAd = tryCatch(async (req, res) => {
-//     const adId = req.params.id;
-//     const transactions = await Transactions.find({ ad: adId });
-//     res.status(200).json({ transactions });
-// })
-
-// // Cambio de esstado de la transaccion
-// exports.changeState = tryCatch(async (req, res) => {
-//     const { id } = req.params;
-//     const { state } = req.body;
-//     const transaction = await Transactions.findByIdAndUpdate(id, { state });
-//     res.status(200).json({ transaction });
-// })
-
-
-// //cambio de precio de la trasancion
-
-// exports.changePrice = tryCatch(async (req, res) => {
-//     const { id } = req.params;
-//     const { price } = req.body;
-//     const transaction = await Transactions.findByIdAndUpdate(id, { price });
-//     res.status(200).json({ transaction });
-// })

@@ -109,7 +109,7 @@ UserSchema.virtual("myAddress", {
 });
 
 UserSchema.virtual("myCreditCard", {
-  ref: "MyCreditcard",
+  ref: "MyCreditCard",
   localField: "_id",
   foreignField: "myCreditCard",
 });
