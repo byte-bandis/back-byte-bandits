@@ -2,6 +2,7 @@ const Transactions = require('../models/Transactions');
 const Ad = require("../models/Ad")
 const User = require("../models/User")
 const { tryCatch } = require('../utils/tryCatch');
+const mongoose = require('mongoose');
 
 //Create a new transaction
 exports.createTransaction = tryCatch(async (req, res) => {
@@ -22,6 +23,9 @@ exports.createTransaction = tryCatch(async (req, res) => {
         ad: ad._id,
         price: ad.price,
     })
+    transaction.state= "Ordered";
+    await transaction.save()
+    
 
     console.log(transaction)
 
@@ -32,9 +36,11 @@ exports.createTransaction = tryCatch(async (req, res) => {
 //Accept transaction
 exports.acceptTransaction = tryCatch(async(req,res) =>{
     const {transactionId} = req.params;
+    console.log(transactionId)
 
     const transaction = await Transactions.findById(transactionId).populate("ad seller")
-    if(!transaction){
+    console.log(transaction)
+    if(!transaction || transaction.state != "Ordered"){
         return res.status(404).json({message: "Transaction not found"})
     }
 
@@ -42,7 +48,7 @@ exports.acceptTransaction = tryCatch(async(req,res) =>{
         return res.status(403).json({message: "Not authorized"})
     }
 
-    transaction.status= "sold";
+    transaction.state= "Sold";
     const ad = await Ad.findById(transaction.ad)
     ad.buyer = transaction.buyer;
     await transaction.save()
@@ -52,9 +58,10 @@ exports.acceptTransaction = tryCatch(async(req,res) =>{
 
     res.status(200).json({ 
         success: true, 
-        data: transactions,
+        data: transaction,
      })
-})
+    }
+)
 
 
 //Reject transaction
@@ -62,7 +69,7 @@ exports.rejectTransaction = tryCatch(async(req,res)=> {
     const { transactionId} = req.params;
 
     const transaction = await Transactions.findById(transactionId).populate("ad seller")
-    if(!transaction){
+    if(!transaction || transaction.state != "Ordered"){
         return res.status(404).json({message: "Transaction not found"})
     }
 
@@ -70,29 +77,31 @@ exports.rejectTransaction = tryCatch(async(req,res)=> {
         return res.status(403).json({message: "No authorized"})
     }
 
-    transaction.status = "rejected"
+    transaction.state = "Cancelled"
     await transaction.save()
 
     console.log(transaction)
 
     res.status(200).json({
         success: true,
-        data: transactions,
+        data: transaction,
     })
 })
 
 exports.getTransactionsBySeller = tryCatch(async (req, res) => {
-    const userId = req.params.id;
+    const userId = new mongoose.Types.ObjectId(req.params.userId); // Convertir a ObjectId
+    console.log(userId);
     const transactions = await Transactions.find({ seller: userId }).populate("ad seller");
-    console.log(transactions)
+    console.log(transactions);
     res.status(200).json({ transactions });
-})
+});
 
 exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
-    const userId = req.params.id;
-    const transactions = await Transactions.find({ buyer: userId }).populate("ad buyer");
-    console.log(transactions)
-    res.status(200).json({ transactions });
+    const userId = new mongoose.Types.ObjectId(req.params.userId)
+    console.log(userId)
+    const transaction = await Transactions.find({ buyer: userId }).populate("ad buyer");
+    console.log(transaction)
+    res.status(200).json({ transaction });
 })
 
 
