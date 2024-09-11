@@ -78,13 +78,6 @@ exports.resetPassword = tryCatch(async (req, res) => {
   const { token } = req.params;
   const { newPassword, confirmPassword } = req.body;
 
-  console.log(
-    "Esta es newPassword: ",
-    newPassword,
-    "y conformPassword: ",
-    confirmPassword
-  );
-
   if (!newPassword) {
     return res.status(400).json({
       state: "error",
@@ -97,8 +90,6 @@ exports.resetPassword = tryCatch(async (req, res) => {
     resetPasswordExpires: { $gt: Date.now() },
   });
 
-  console.log("Este es user que debería tener el token que le mando: ", user);
-
   if (!user) {
     return res.status(400).json({
       state: "error",
@@ -106,7 +97,7 @@ exports.resetPassword = tryCatch(async (req, res) => {
     });
   }
 
-  if (!newPassword === confirmPassword) {
+  if (newPassword !== confirmPassword) {
     return res.status(400).json({
       state: "error",
       message: res.__("passwords_dont_match"),
