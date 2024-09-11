@@ -1,13 +1,63 @@
+const cote = require('cote');
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 //const { __ } = require("i18n");
 const { tryCatch } = require("../utils/tryCatch");
 const crypto = require("crypto");
-const { transporter } = require("../utils/nodeMailer");
 const {
   welcomeTemplate,
   resetPasswordTemplate,
 } = require("../utils/mainTemplates");
+
+const emailRequester = new cote.Requester({ name: 'email-requester', key: 'email' });
+emailRequester.send({ type: 'create-mail', email: 'test@example.com', subject: 'Test Email' }, (res) => {
+  console.log('Respuesta del Responder:', res);
+});
+
+exports.resetPassword = tryCatch(async (req, res) => {
+  const { token } = req.params;
+  const { newPassword, confirmPassword } = req.body;
+
+  if (!newPassword) {
+    return res.status(400).json({
+      state: "error",
+      message: res.__("wrong_password_length"),
+    });
+  }
+
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      state: "error",
+      message: res.__("invalid_token"),
+    });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({
+      state: "error",
+      message: res.__("passwords_dont_match"),
+    });
+  }
+
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+  user.password = hashedPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  await user.save();
+
+  res.status(200).json({
+    state: "success",
+    message: res.__("password_has_been_reset"),
+  });
+});
 
 exports.sendEmail = tryCatch(async (req, res) => {
   const { email, userName, type } = req.body;
@@ -58,63 +108,16 @@ exports.sendEmail = tryCatch(async (req, res) => {
       return res.status(400).json({ message: res.__("Invalid_email_type") });
   }
 
-  const sendedMail = await transporter.sendMail({
-    from: "ICraftYouMaster@gmail.com",
-    to: email,
-    subject: subject,
-    html: html,
-  });
+  // Enviar la solicitud al microservicio de correos
+  emailRequester.send({ type: 'create-mail', email, subject, html }, (err, response) => {
+    
+    if (err) {
+      return res.status(500).json({ message: res.__("Email_not_sent") });
+    }
 
-  if (!sendedMail) {
-    return res.status(500).json({ message: res.__("Email_not_sent") });
-  }
-  res.status(200).json({
-    state: "success",
-    message: res.__("Email_sent_successfully"),
-  });
-});
-
-exports.resetPassword = tryCatch(async (req, res) => {
-  const { token } = req.params;
-  const { newPassword, confirmPassword } = req.body;
-
-  if (!newPassword) {
-    return res.status(400).json({
-      state: "error",
-      message: res.__("wrong_password_length"),
+    res.status(200).json({
+      state: "success",
+      message: res.__("Email_sent_successfully"),
     });
-  }
-
-  const user = await User.findOne({
-    resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() },
-  });
-
-  if (!user) {
-    return res.status(400).json({
-      state: "error",
-      message: res.__("invalid_token"),
-    });
-  }
-
-  if (newPassword !== confirmPassword) {
-    return res.status(400).json({
-      state: "error",
-      message: res.__("passwords_dont_match"),
-    });
-  }
-
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-
-  user.password = hashedPassword;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-
-  await user.save();
-
-  res.status(200).json({
-    state: "success",
-    message: res.__("password_has_been_reset"),
   });
 });
