@@ -1,10 +1,10 @@
 const router = require('express').Router();
-const {  acceptTransaction, createTransaction, rejectTransaction, getTransactionsByBuyer, getTransactionsBySeller } = require('../controller/TransactionsController');
+const {  createTransaction, handleTransactions, soldTransactions, getTransactionsByBuyer, getTransactionsBySeller } = require('../controller/TransactionsController');
 const { authenticate } = require('../middleware/auth');
 
-router.post('/', authenticate, createTransaction);
-router.post('/acceptTransaction/:transactionId', authenticate, acceptTransaction);
-router.post('/rejectTransaction/:id', authenticate, rejectTransaction);
+router.post('/:id', authenticate, createTransaction);
+router.post('/handleTransactions/', authenticate, handleTransactions);
+router.post('/soldTransactions/', authenticate, soldTransactions);
 router.get('/seller/:userId', authenticate, getTransactionsBySeller);
 router.get('/buyer/:userId', authenticate, getTransactionsByBuyer);
 
