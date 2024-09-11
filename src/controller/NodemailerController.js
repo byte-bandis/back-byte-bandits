@@ -59,10 +59,21 @@ exports.sendEmail = tryCatch(async (req, res) => {
       return res.status(400).json({ message: res.__("Invalid_email_type") });
   }
   
-  requester.send({ type: 'create-mail', email, subject, html });
-  res.status(200).json({
-    state: "success",
-    message: res.__("Email_sent_successfully"),
+  requester.send({ type: 'create-mail', email, subject, html }, (err, response) => {
+    if (err) {
+      console.error('Error:', err);
+      return res.status(500).json({
+        state: "error",
+        message: res.__("Email_not_sent"),
+        error: err.error || err.message || 'Unknown error'
+      });
+    }
+  
+    res.status(200).json({
+      state: "success",
+      message: res.__("Email_sent_successfully"),
+      data: response
+    });
   });
 });
 

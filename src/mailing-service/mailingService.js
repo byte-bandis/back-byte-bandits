@@ -4,25 +4,34 @@ const { transporter } = require('../utils/nodeMailer');
 
 const responder = new Responder({ name: 'nodemailer', key: 'email' });
 
-
+/* const falsetransporter = {
+  sendMail: () => {
+    return new Promise((resolve, reject) => {
+      reject(new Error('Simulated transport error'));
+    });
+  },
+}; */
 responder.on('create-mail', async (req, done) => {
   const { email, subject, html } = req;
   try {
-
     const sendedMail = await transporter.sendMail({
       from: 'ICraftYouMaster@gmail.com',
       to: email,
       subject: subject,
       html: html,
     });
-    console.log('Email enviado:', subject);
+
     if (!sendedMail) {
       return done({ message: 'Email_not_sent' });
     }
 
-    done(null, { message: 'Email_sent_successfully' });
+    done(null, { message: 'Email enviado correctamente' });
   } catch (error) {
-    console.error('Error enviando correo:', error);
-    done(error);
+    
+    // Enviar error al Requester
+    done({ message: 'No enviado', err: error.message }).catch((value) => {
+      console.error('Error al enviar el error:', value);
+    })
+    return;
   }
 });
