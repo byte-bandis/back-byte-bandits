@@ -106,7 +106,7 @@ exports.resetPassword = tryCatch(async (req, res) => {
     });
   }
 
-  if (!newPassword === confirmPassword) {
+  if (newPassword !== confirmPassword) {
     return res.status(400).json({
       state: "error",
       message: res.__("passwords_dont_match"),

@@ -80,5 +80,6 @@
   "user_not_linked_to_any_account": "{{userName}} no está asociado a ninguna cuenta",
   "username_email_dont_match": "El correo {{email}} no está asociado a {{userName}}",
   "password_has_been_reset": "¡Contraseña cambiada con éxito!",
-  "wrong_password_length": "La contraseña no puede estar vacía"
+  "wrong_password_length": "La contraseña no puede estar vacía",
+  "passwords_dont_match": "Las contraseñas no coinciden"
 }
