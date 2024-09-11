@@ -34,7 +34,9 @@ exports.updateMyPassword = tryCatch(async (req, res, next) => {
   }
   const username = req.user.username;
 
-  const linkedUser = await User.findOne({ username }).select("+password");
+  const linkedUser = await User.findOne({ _id: requesterId }).select(
+    "+password"
+  );
 
   if (!linkedUser) {
     return res.status(404).json({
@@ -67,7 +69,9 @@ exports.updateMyPassword = tryCatch(async (req, res, next) => {
     await linkedUser.save();
     res.status(200).json({
       state: "success",
-      message: res.__("success_password_updated", { username }),
+      message: res.__("success_password_updated", {
+        username: linkedUser.username,
+      }),
       data: {
         updatedAt: linkedUser.updatedAt,
       },
