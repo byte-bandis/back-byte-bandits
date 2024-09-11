@@ -33,7 +33,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
   }
 
   const requesterId = decodedToken.user._id;
-  const account = await User.findOne({ username });
+  const account = await User.findOne({ _id: requesterId });
 
   if (!account) {
     return res.status(404).json({
@@ -45,7 +45,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (requesterId !== account._id.toString()) {
     return res.status(403).json({
       status: "error",
-      message: res.__("forbidden_not_owner", { username }),
+      message: res.__("forbidden_not_owner", { username: account.username }),
     });
   }
 
@@ -75,7 +75,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
       message: res.__("something_went_wrong_delete_address", { username }),
     });
   } else {
-    const logMessage = `Address deleted for ${username}`;
+    const logMessage = `Address deleted for ${account.username}`;
     console.log(logMessage);
     await writeLog(logMessage);
   }
@@ -84,10 +84,12 @@ exports.deleteUser = tryCatch(async (req, res) => {
   if (deletedCreditCard.deletedCount === 0) {
     return res.status(500).json({
       status: "error",
-      message: res.__("something_went_wrong_delete_credit_card", { username }),
+      message: res.__("something_went_wrong_delete_credit_card", {
+        username: account.username,
+      }),
     });
   } else {
-    const logMessage = `Credit card deleted for ${username}`;
+    const logMessage = `Credit card deleted for ${account.username}`;
     console.log(logMessage);
     await writeLog(logMessage);
   }
@@ -111,7 +113,7 @@ exports.deleteUser = tryCatch(async (req, res) => {
           linkedPublicProfile.userPhoto
         );
         await fs.unlink(userPhotoPath);
-        const logMessage = `${username}'s image deleted successfully!`;
+        const logMessage = `${account.username}'s image deleted successfully!`;
         console.log(logMessage);
         await writeLog(logMessage);
       }
@@ -129,12 +131,12 @@ exports.deleteUser = tryCatch(async (req, res) => {
           linkedPublicProfile.headerPhoto
         );
         await fs.unlink(headerPhotoPath);
-        const logMessage = `${username}'s header image deleted successfully!`;
+        const logMessage = `${account.username}'s header image deleted successfully!`;
         console.log(logMessage);
         await writeLog(logMessage);
       }
     } catch (error) {
-      const logMessage = `Error deleting image files for ${username}: ${error.message}`;
+      const logMessage = `Error deleting image files for ${account.username}: ${error.message}`;
       console.error(logMessage);
       await writeLog(logMessage);
     }
@@ -148,11 +150,11 @@ exports.deleteUser = tryCatch(async (req, res) => {
     return res.status(500).json({
       status: "error",
       message: res.__("something_went_wrong_delete_public_profile", {
-        username,
+        username: account.username,
       }),
     });
   } else {
-    const logMessage = `Public Profile deleted for ${username}`;
+    const logMessage = `Public Profile deleted for ${account.username}`;
     console.log(logMessage);
     await writeLog(logMessage);
   }
@@ -176,26 +178,30 @@ exports.deleteUser = tryCatch(async (req, res) => {
       return res.status(500).json({
         status: "error",
         message: res.__("something_went_wrong_anonymize_account", {
-          username,
+          username: account.username,
         }),
       });
     }
 
-    const finalLogMessage = `Account for ${username} deleted successfully!`;
+    const finalLogMessage = `Account for ${account.username} deleted successfully!`;
     console.log(finalLogMessage);
     await writeLog(finalLogMessage);
 
     res.status(200).json({
       status: "success",
-      message: res.__("account_deleted_successfully", { username }),
+      message: res.__("account_deleted_successfully", {
+        username: account.username,
+      }),
     });
   } catch (error) {
-    const errorMessage = `Error anonymizing account for ${username}: ${error.message}\n`;
+    const errorMessage = `Error anonymizing account for ${account.username}: ${error.message}\n`;
     fs.appendFileSync(logFilePath, errorMessage);
 
     return res.status(500).json({
       status: "error",
-      message: res.__("something_went_wrong_deleting_account", { username }),
+      message: res.__("something_went_wrong_deleting_account", {
+        username: account.username,
+      }),
     });
   }
 });
