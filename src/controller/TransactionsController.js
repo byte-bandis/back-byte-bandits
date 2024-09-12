@@ -56,7 +56,7 @@ exports.getPendingTransactions = tryCatch(async(req,res) =>{
     const pendingTransactions = await Transactions.find({
         seller: userId,
         state: "Ordered"
-    }).populate("ad buyer", "adTitle price username")
+    }).populate("ad buyer", "")
     
     console.log(pendingTransactions)
 
