@@ -94,7 +94,7 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
 
   const username = req.params.username;
 
-  const linkedUser = await User.findOne({ username });
+  const linkedUser = await User.findOne({ _id: requesterId });
 
   if (!linkedUser) {
     return res.status(404).json({
@@ -121,14 +121,19 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
     });
   }
 
-  const formattedCreditCard = await retrievedCreditCard.formatCreditCard();
+  console.log("Esto es retrievedCreditcard de Manolo: ", retrievedCreditCard);
+  console.log(
+    "Esto es retrievedCreditcard.last4Digits de Manolo: ",
+    retrievedCreditCard.last4Digits
+  );
 
   res.status(200).json({
     status: "success",
     message: res.__("success_credit_card_loaded", { username }),
     data: {
-      creditCard:
-        formattedCreditCard || res.__("please_provide_credit_card_number"),
+      creditCard: retrievedCreditCard.last4Digits
+        ? `**********${retrievedCreditCard.last4Digits}`
+        : "------",
       updatedAt: retrievedCreditCard.updatedAt,
       _id: retrievedCreditCard._id,
     },
@@ -159,7 +164,7 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   const incomingCreditCard = req.body.creditCard;
   const username = req.params.username;
 
-  const linkedUser = await User.findOne({ username });
+  const linkedUser = await User.findOne({ _id: requesterId });
 
   if (!linkedUser) {
     return res.status(404).json({
@@ -188,21 +193,26 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
 
   if (incomingCreditCard) {
     retrievedCreditCard.creditCard = incomingCreditCard;
-  } else {
+  }
+  /*  else {
     return res.status(400).json({
       state: "error",
       message: res.__("provide_valid_credit_card_number"),
     });
-  }
+  } */
 
   const savedCard = await retrievedCreditCard.save();
 
   if (savedCard) {
+    console.log("Esto es savedCard: ", savedCard);
+    console.log("Esto es savedCard.last4Digits: ", savedCard.last4Digits);
     res.status(200).json({
       status: "success",
       message: res.__("success_credit_card_updated", { username }),
       data: {
-        creditCard: savedCard,
+        creditCard: savedCard.creditCard
+          ? `**********${savedCard.last4Digits}`
+          : "------",
       },
     });
   } else {
