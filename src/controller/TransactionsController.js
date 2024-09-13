@@ -47,30 +47,70 @@ exports.createTransaction = tryCatch(async (req, res) => {
 })
 
 
-//Handle transaction
-exports.handleTransactions = tryCatch(async(req,res) =>{
-    const {transactionId} = req.body;
-    const {action} = req.body
-    console.log(transactionId)
+//Get pending transactions
+exports.getPendingTransactions = tryCatch(async(req,res) =>{
+    console.log("Request received")
+    const userId = req.user._id; //userId (logged) = seller
+    console.log(userId)
+    
+    const pendingTransactions = await Transactions.find({
+        seller: userId,
+        state: "Ordered"
+    }).populate("ad buyer", "")
+    
+    console.log(pendingTransactions)
 
-    const transaction = await Transactions.findById(transactionId).populate({path: "seller", select: "_id username"})
-    console.log(transaction)
-    if(!transaction || transaction.state != "Ordered"){
+    console.log(pendingTransactions.length)
+
+    if(pendingTransactions.length===0){
+        return res.status(200).json({
+            status: "others",
+            message: "There is no pending transactions"
+        })
+    }
+
+    return res.status(200).json({
+        status: "success",
+        message: "All ordered ads pending for approval or reject",
+        data: pendingTransactions,
+    })
+})
+
+
+//Handle transactions
+exports.handleTransactions = tryCatch(async (req, res) => {
+    const { transactionId, action } = req.body;
+    const userId = req.user._id; // userId (logged) = seller
+
+    const transaction = await Transactions.findById(transactionId).populate("seller", "username _id");
+    console.log("transaction", transaction)
+
+    if (!transaction || transaction.state !== "Ordered") {
         return res.status(404).json({
-            state: "error",
-            message: "Transaction not found - acceptTransaction"})
-    }
+          state: "error",
+          message: "Transaction not found or not in the correct state"
+        });
+      }
 
-    if(transaction.seller._id.toString() !== req.user._id.toString()){
-        return res.status(403).json({message: "Not authorized - acceptTransaction"})
-    }
+   if (transaction.seller._id.toString() !== userId.toString()) {
+    return res.status(403).json({ message: "Not authorized to handle this transaction" });
+  }
 
-    if(action==="accept"){
-        transaction.state= "Reserved";
-        const ad = await Ad.findById(transaction.ad)
-        ad.buyer = transaction.buyer;
-        await transaction.save()
-        await ad.save()
+  if (action === "accept") {
+    transaction.state = "Sold";
+        console.log(transaction)
+        console.log(transaction.ad)
+        const ad = await Ad.findById(transaction.ad);
+  
+    if (!ad) {
+      return res.status(404).json({
+        state: "error",
+        message: "Ad not found"
+      })};
+
+      ad.buyer = transaction.buyer;
+    await transaction.save();
+    await ad.save();
     
         console.log(transaction)
 
@@ -79,26 +119,24 @@ exports.handleTransactions = tryCatch(async(req,res) =>{
             message: "Transaction accepted succesfully",
             data: transaction,
          })
-    }else if(action==="reject"){
-        transaction.state="Cancelled"
-       
-        await transaction.save()
+        } else if (action === "reject") {
+            transaction.state = "Cancelled";
+            await transaction.save();
 
         console.log(transaction)
 
-        res.status(200).json({
+        return res.status(200).json({
             state: "success",
-            message: "Transaction rejected succesfully",
+            message: "Transaction rejected successfully",
             data: transaction
-        }) 
-    }else{
-        return res.status(400).json({
-            state: "error",
-            message: "Invalid action. Use 'accept' o 'reject'"
-        })
-    }   
-    }
-)
+          });
+        } else {
+            return res.status(400).json({
+              state: "error",
+              message: "Invalid action. Use 'accept' or 'reject'."
+            });
+          }
+        });
 
 
 //Sold transaction
@@ -107,7 +145,7 @@ exports.soldTransactions = tryCatch(async(req,res)=> {
     const {action} = req.body;
 
     const transaction = await Transactions.findById(transactionId)
-    .populate({seller: userId, state:"Reserved" })
+    .populate({seller: userId, state:"Sold" })
 
     if(action==="accept"){
         transaction.state="Sold"
