@@ -1,6 +1,7 @@
 
 const Ad = require("../models/Ad");
 const Chat = require("../models/Chat");
+const User = require("../models/User");
 const mongoose = require("mongoose");
 const { tryCatch } = require("../utils/tryCatch");
 const publicFolder = "public/images";
@@ -8,7 +9,7 @@ const publicFolder = "public/images";
 /*Crear un chat*/
 exports.createChat = tryCatch(async (req, res) => {
     const user = req.user._id;
-    const { productId } = req.body;
+    const { productId, buyerId } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(productId)) {
         return res.status(400).json({
@@ -16,11 +17,9 @@ exports.createChat = tryCatch(async (req, res) => {
         });
     }
 
-    let chat = await Chat.findOne({ product: productId, buyer: user});
-
-    if(chat){
-        return res.status(409).json({
-            message: "Chat already exists",
+    if (!mongoose.Types.ObjectId.isValid(buyerId)) {
+        return res.status(400).json({
+            message: "Invalid buyer ID",
         });
     }
 
@@ -32,14 +31,33 @@ exports.createChat = tryCatch(async (req, res) => {
         });
     }
 
-    console.log(ad.user.toString(), user.toString());
-    if (ad.user.toString() === user.toString()) {
+    if (ad.user.toString() === buyerId) {
         return res.status(409).json({
-            message: "You cannot chat with yourself",
+            message: "You can't chat with product owner",
+        });
+    }
+
+    const buyer = await User.findById(buyerId);
+
+    if (!buyer) {
+        return res.status(404).json({
+            message: "Buyer not found",
+        });
+    }
+
+    let chat = await Chat.findOne({ product: productId, buyer: buyerId});
+
+    if(chat){
+        return res.status(409).json({
+            message: "Chat already exists",
         });
     }
     
-    chat = await Chat.create({ product: productId, buyer: user, seller: ad.user });
+    if (user.toString() === buyerId) {
+        chat = await Chat.create({ product: productId, buyer: user, seller: ad.user });
+    } else {
+        chat = await Chat.create({ product: productId, buyer: buyerId, seller: user });
+    }
     
     res.status(201).json({ chat });
     }
@@ -85,18 +103,39 @@ exports.getChats = tryCatch(async (req, res) => {
         .lean(); 
 
     chats = chats.map(chat => {
-        const { product } = chat;
+        const newChat = { ...chat };
+        const newProduct = { ...newChat.product };
         
-        if (product && product.photo) {
-            product.photo = process.env.NODE_ENV !== 'production' 
-                ? `http://${req.headers.host}/${publicFolder}/${product.photo}` 
-                : `https://${req.headers.host}/api/${publicFolder}/${product.photo}`;
+        if (newProduct && newProduct.photo) {
+            newProduct.photo = process.env.NODE_ENV !== 'production' 
+                ? `http://${req.headers.host}/${publicFolder}/${newProduct.photo}` 
+                : `https://${req.headers.host}/api/${publicFolder}/${newProduct.photo}`;
         }
         
-        return chat;
+        newChat.product = newProduct;
+        return newChat;
     });
 
-    res.status(200).json({ chats });
+    if(req.query.isExtended === 'true') {
+        return res.status(200).json({ chats });
+    }
+        else {
+    res.status(200).json({ chats: 
+        chats.map(chat => {
+            return {
+                _id: chat._id,
+                product: chat.product,
+                buyer: chat.buyer,
+                seller: chat.seller,
+                messages: {
+                    totalMessages: chat.messages.length,
+                    totalUnreadMessages: chat.messages.filter(message => message.read === false && message.user._id.toString() !== user).length,
+                }
+            };
+        }
+    )
+    });
+    }
 });
 
 /*Obtener un chat*/
@@ -117,6 +156,13 @@ exports.getChat = tryCatch(async (req, res) => {
         return res.status(404).json({
             message: "Chat not found",
         });
+    }
+
+    const { product } = chat;
+    if (product && product.photo) {
+        product.photo = process.env.NODE_ENV !== 'production' 
+            ? `http://${req.headers.host}/${publicFolder}/${product.photo}` 
+            : `https://${req.headers.host}/api/${publicFolder}/${product.photo}`;
     }
 
     if (chat.buyer._id.toString() !== req.user._id && chat.seller._id.toString() !== req.user._id) {
