@@ -188,7 +188,7 @@ exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
     const userId = new mongoose.Types.ObjectId(req.params.userId)
     console.log(userId)
     const transactions = await Transactions.find({ buyer: userId, state: "Sold" })
-    .populate({path: "seller", select: "_id username"});
+    .populate({path: "buyer", select: "_id username"});
 
     console.log(transactions)
     res.status(200).json({state: "success", data: transactions});

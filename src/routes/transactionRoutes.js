@@ -5,7 +5,6 @@ const { authenticate } = require('../middleware/auth');
 
 router.get('/getTransactions', authenticate, getPendingTransactions);
 router.post('/handleTransactions', authenticate, handleTransactions);
-router.post('/soldTransactions/', authenticate, soldTransactions);
 router.get('/seller/:userId', authenticate, getTransactionsBySeller);
 router.get('/buyer/:userId', authenticate, getTransactionsByBuyer);
 router.post('/:id', authenticate, createTransaction);
