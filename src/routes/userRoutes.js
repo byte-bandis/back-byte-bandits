@@ -6,6 +6,7 @@ const {
   register,
   login,
   getUsersPublicProfiles,
+  getUser
 } = require("../controller/UserController");
 
 const {
@@ -38,6 +39,7 @@ const { deleteUser } = require("../controller/DeleteUserController");
 
 router.post("/register", register);
 router.post("/login", login);
+router.get("/find/:userId", getUser);
 
 router.get("/usersprofiles", getUsersPublicProfiles);
 

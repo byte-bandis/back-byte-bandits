@@ -28,11 +28,6 @@ const chatSocket = (io, socket) => {
             new: true
         });
 
-        // Enviar el historial de mensajes del chat
-        const updatedChat = await Chat.findById(chatId).populate('messages.user');
-        
-        socket.emit('chatHistory', updatedChat.messages);
-
         io.to(chatId).emit('messagesRead', userId);
         io.to(userId).emit('userMessagesRead', userId);
   });
@@ -125,6 +120,21 @@ const chatSocket = (io, socket) => {
     // Manejar la desconexión del usuario
     socket.on("disconnect", () => {
         console.log("User disconnected", socket.id);
+    });
+
+    // Se ejecuta cuando la reconexión falla
+    socket.on('reconnect_failed', () => {
+        console.log('Fallo en la reconexión');
+    });
+  
+    // Se ejecuta en cada intento de reconexión
+    socket.on('reconnect_attempt', (attemptNumber) => {
+        console.log(`Intento de reconexión #${attemptNumber}`);
+    });
+  
+    // Se ejecuta cuando la reconexión tiene éxito
+    socket.on('reconnect', (attemptNumber) => {
+        console.log(`Reconectado con éxito después de ${attemptNumber} intento(s)`);
     });
   };
 
