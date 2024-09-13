@@ -160,7 +160,7 @@ exports.updateMyAddress = tryCatch(async (req, res) => {
     req.body;
   const username = req.user.username;
 
-  const linkedUser = await User.findOne({ username });
+  const linkedUser = await User.findOne({ _id: requesterId });
 
   if (!linkedUser) {
     return res.status(404).json({

@@ -114,3 +114,49 @@
 [2024-09-11T05:13:29.908Z] Credit card deleted for GMorales
 [2024-09-11T05:13:29.913Z] Public Profile deleted for GMorales
 [2024-09-11T05:13:29.984Z] Account for GMorales deleted successfully!
+[2024-09-12T14:52:44.041Z] Address deleted for GMorales
+[2024-09-12T14:52:44.045Z] Credit card deleted for GMorales
+[2024-09-12T14:52:44.050Z] GMorales's image deleted successfully!
+[2024-09-12T14:52:44.051Z] GMorales's header image deleted successfully!
+[2024-09-12T14:52:44.054Z] Public Profile deleted for GMorales
+[2024-09-12T14:52:44.130Z] Account for GMorales deleted successfully!
+[2024-09-12T14:59:50.945Z] Address deleted for Jesusito
+[2024-09-12T14:59:50.948Z] Credit card deleted for Jesusito
+[2024-09-12T14:59:50.952Z] Public Profile deleted for Jesusito
+[2024-09-12T14:59:51.027Z] Account for Jesusito deleted successfully!
+[2024-09-12T15:01:52.699Z] Address deleted for jesusito
+[2024-09-12T15:01:52.702Z] Credit card deleted for jesusito
+[2024-09-12T15:01:52.707Z] Public Profile deleted for jesusito
+[2024-09-12T15:01:52.778Z] Account for jesusito deleted successfully!
+[2024-09-12T15:03:41.313Z] Address deleted for jesusito
+[2024-09-12T15:03:41.317Z] Credit card deleted for jesusito
+[2024-09-12T15:03:41.321Z] Public Profile deleted for jesusito
+[2024-09-12T15:03:41.393Z] Account for jesusito deleted successfully!
+[2024-09-12T15:06:37.150Z] Address deleted for jesusito
+[2024-09-12T15:06:37.153Z] Credit card deleted for jesusito
+[2024-09-12T15:06:37.158Z] Public Profile deleted for jesusito
+[2024-09-12T15:06:37.231Z] Account for jesusito deleted successfully!
+[2024-09-12T15:08:23.394Z] Address deleted for jesusito
+[2024-09-12T15:08:23.397Z] Credit card deleted for jesusito
+[2024-09-12T15:08:23.400Z] Public Profile deleted for jesusito
+[2024-09-12T15:08:23.477Z] Account for jesusito deleted successfully!
+[2024-09-12T15:09:25.204Z] Address deleted for pablito
+[2024-09-12T15:09:25.208Z] Credit card deleted for pablito
+[2024-09-12T15:09:25.213Z] Public Profile deleted for pablito
+[2024-09-12T15:09:25.285Z] Account for pablito deleted successfully!
+[2024-09-12T15:11:58.541Z] Address deleted for jesusito
+[2024-09-12T15:11:58.545Z] Credit card deleted for jesusito
+[2024-09-12T15:11:58.549Z] Public Profile deleted for jesusito
+[2024-09-12T15:11:58.621Z] Account for jesusito deleted successfully!
+[2024-09-12T15:13:04.344Z] Address deleted for jesusito
+[2024-09-12T15:13:04.347Z] Credit card deleted for jesusito
+[2024-09-12T15:13:04.352Z] Public Profile deleted for jesusito
+[2024-09-12T15:13:04.424Z] Account for jesusito deleted successfully!
+[2024-09-12T15:14:50.100Z] Address deleted for popi
+[2024-09-12T15:14:50.103Z] Credit card deleted for popi
+[2024-09-12T15:14:50.107Z] Public Profile deleted for popi
+[2024-09-12T15:14:50.182Z] Account for popi deleted successfully!
+[2024-09-13T04:51:20.175Z] Address deleted for Manola
+[2024-09-13T04:51:20.180Z] Credit card deleted for Manola
+[2024-09-13T04:51:20.185Z] Public Profile deleted for Manola
+[2024-09-13T04:51:20.276Z] Account for Manola deleted successfully!
