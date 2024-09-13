@@ -160,3 +160,9 @@
 [2024-09-13T04:51:20.180Z] Credit card deleted for Manola
 [2024-09-13T04:51:20.185Z] Public Profile deleted for Manola
 [2024-09-13T04:51:20.276Z] Account for Manola deleted successfully!
+[2024-09-13T07:08:34.424Z] Address deleted for Manolo
+[2024-09-13T07:08:34.428Z] Credit card deleted for Manolo
+[2024-09-13T07:08:34.433Z] Manolo's image deleted successfully!
+[2024-09-13T07:08:34.435Z] Manolo's header image deleted successfully!
+[2024-09-13T07:08:34.437Z] Public Profile deleted for Manolo
+[2024-09-13T07:08:34.511Z] Account for Manolo deleted successfully!
