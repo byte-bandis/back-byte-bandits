@@ -36,6 +36,7 @@ exports.getAds = tryCatch(async (req, res) => {
             return { photo, ...ad };
         }
     });
+
     res.status(200).json({ ads });
 });
 /* obtener un anuncio */
@@ -48,7 +49,7 @@ exports.getAd = tryCatch(async (req, res, next) => {
 
         console.log('get ad', id);
         let ad = await Ad.findById(id).populate('user');
-        if (!ad) {
+        if (!ad || ad.available) {
             res.status(404).json({ message: "Ad not found", data: [] });
         }
         if (ad.photo) {
@@ -236,7 +237,7 @@ exports.buyAd = tryCatch(async (req, res, next) => {
     });
 });
 /* eliminar un anuncio */
-exports.deleteAd = tryCatch(async (req, res, next) => {
+/* exports.deleteAd = tryCatch(async (req, res, next) => {
     const toDeleteId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(toDeleteId)) {
 
@@ -267,5 +268,31 @@ exports.deleteAd = tryCatch(async (req, res, next) => {
         success: true,
         data: {},
     });
-});
+}); */
+
+//Metodo de eliminacion de anuncio cambiando status a eliminado
+exports.deleteAd = tryCatch(async (req, res, next) => {
+    const toDeleteId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(toDeleteId)) {
+
+        res.status(404).json({ message: "Ad not found" });
+    }
+    let ad = await Ad.findById(toDeleteId);
+    if (!ad) {
+        return next({
+            message: "Ad not found",
+        });
+    }
+    console.log(toDeleteId, ad.user.toString());
+    const currentUser = req.user._id;
+    if (ad.user.toString() !== currentUser) {
+        return next({
+            message: "Not authorized to delete this ad",
+        });
+    }
+
+    ad.available = false;
+    console.log(ad)
+    await ad.save();
+})
 

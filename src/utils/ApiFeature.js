@@ -52,20 +52,34 @@ class APIFeatures {
   }
 
   filter() {
-    const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields', 'minPrice', 'maxPrice'];
-    excludedFields.forEach((excFields) => delete queryObj[excFields]);
-    let queryStr = JSON.stringify(queryObj);
-
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
-    console.log("filter")
-    this.query = this.query.find(JSON.parse(queryStr));
-
-    console.log("Final Query:", this.query.getQuery())
-
+    try {
+      const queryObj = { ...this.queryString };
+  
+      // Excluir campos no relacionados con el filtrado
+      const excludedFields = ['page', 'sort', 'limit', 'fields', 'minPrice', 'maxPrice'];
+      excludedFields.forEach((excFields) => delete queryObj[excFields]);
+  
+      // Convertir 'available' a booleano
+      if (queryObj.hasOwnProperty('available')) {
+        queryObj.available = queryObj.available === 'true';
+      } else {
+        queryObj.available = true; // Valor por defecto: true
+      }
+  
+      // Convertir operadores gt, gte, lt, lte
+      let queryStr = JSON.stringify(queryObj);
+      queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
+  
+      // Ejecutar la consulta
+      this.query = this.query.find(JSON.parse(queryStr));
+  
+      console.log("Consulta final ejecutada:", this.query.getQuery());
+    } catch (error) {
+      console.error("Error en la consulta:", error);
+    }
+  
     return this;
   }
-
   searchByTitle() {
     console.log("searchByTitle");
     if (this.queryString.adTitle) {

@@ -50,6 +50,10 @@ const AdSchema = Schema(
     },
     duration: {
       type: Number
+    },
+    available: {
+      type: Boolean,
+      default: true
     }
   },
   { timestamps: true }
