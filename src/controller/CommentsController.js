@@ -86,6 +86,7 @@ exports.updateComment = tryCatch(async (req, res, next) => {
   }
 
   comment = await Comment.findByIdAndUpdate(req.params.id, req.body, {
+
     new: true,
     runValidators: true
   });
@@ -112,10 +113,10 @@ exports.deleteComment = tryCatch(async (req, res, next) => {
     });
   }
 
-  await comment.remove();
+  await Comment.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
     success: true,
-    data: {}
+    data: comment
   });
 });
