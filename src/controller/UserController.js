@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const PublicProfile = require("../models/PublicProfile");
 const { tryCatch } = require("../utils/tryCatch");
@@ -10,6 +11,35 @@ const fs = require("fs").promises;
 exports.getUsers = tryCatch(async (req, res) => {
   const users = await User.find();
   res.status(200).json({ users });
+});
+
+exports.getUser = tryCatch(async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({
+      message: res.__("provide_user_id"),
+    });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({
+      message: res.__("invalid_user_id"),
+    });
+}
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return res.status(404).json({
+      message: res.__("user_not_found"),
+    });
+  }
+
+  res.status(200).json({ user: {
+    _id:userId,
+    username: user.username,
+  } });
 });
 
 exports.getUsersPublicProfiles = tryCatch(async (req, res) => {

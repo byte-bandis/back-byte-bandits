@@ -80,5 +80,7 @@
 	"user_not_linked_to_any_account": "There isn't any account linked to {{userName}}",
 	"username_email_dont_match": "Mail {{email}} is not linked to {{userName}}",
 	"password_has_been_reset": "Password restored succesfully!",
-	"wrong_password_length": "Password can not be empty"
+	"wrong_password_length": "Password can not be empty",
+	"passwords_dont_match": "Passwords don't match",
+	"invalid_user_id": "Invalid user id",
 }
