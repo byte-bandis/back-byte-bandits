@@ -9,7 +9,8 @@
     "initDB": "node ./src/initDB/initDB.js",
     "build": "babel src/ -d dist/",
     "pm2:dev": "pm2 start app.json --env development",
-    "pm2:prod": "pm2 start app.json --env production"
+    "pm2:prod": "pm2 start app.json --env production",
+    "mailing": "node ./src/mailing-service/mailingService.js"
   },
   "repository": {
     "type": "git",
