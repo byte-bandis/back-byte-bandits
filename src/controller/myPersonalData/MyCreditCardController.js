@@ -94,7 +94,7 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
 
   const username = req.params.username;
 
-  const linkedUser = await User.findOne({ username });
+  const linkedUser = await User.findOne({ _id: requesterId });
 
   if (!linkedUser) {
     return res.status(404).json({
@@ -159,7 +159,7 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   const incomingCreditCard = req.body.creditCard;
   const username = req.params.username;
 
-  const linkedUser = await User.findOne({ username });
+  const linkedUser = await User.findOne({ _id: requesterId });
 
   if (!linkedUser) {
     return res.status(404).json({
