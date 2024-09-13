@@ -78,7 +78,7 @@ exports.getPendingTransactions = tryCatch(async(req,res) =>{
 
 
 //Handle transactions
-exports.handleTransactionsUp = tryCatch(async (req, res) => {
+exports.handleTransactions = tryCatch(async (req, res) => {
     const { transactionId, action } = req.body;
     const userId = req.user._id; // userId (logged) = seller
 
