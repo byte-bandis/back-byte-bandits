@@ -1,114 +1,210 @@
 [
-    {
-        "adTitle": "Moto - Harley-Davidson Sportster",
-        "adBody": "Descripcion de la moto...",
-        "sell": true,
-        "price": 12000,
-        "photo": "harley_davidson_sportster.jpg",
-        "tags": ["motor", "lifestyle"]
-    },
-    {
-        "adTitle": "Consola clásica Nintendo (NES)",
-        "adBody": "Descripcion de la consola...",
-        "sell": true,
-        "price": 200,
-        "photo": "nes.jpg",
-        "tags": ["lifestyle"]
-    },
-    {
-        "adTitle": "Coche clásico - Volkswagen Beetle",
-        "adBody": "Descripcion del coche...",
-        "sell": true,
-        "price": 15000,
-        "photo": "volkswagen_beetle.jpg",
-        "tags": ["motor", "lifestyle"]
-    },
-    {
-        "adTitle": "Juego Super Mario Bros",
-        "adBody": "Descripcion del juego...",
-        "sell": true,
-        "price": 30,
-        "photo": "super_mario_bros.jpg",
-        "tags": ["lifestyle"]
-    },
-    {
-        "adTitle": "Bicicleta de montaña",
-        "adBody": "Descripcion de la bicicleta...",
-        "sell": true,
-        "price": 500,
-        "photo": "mountain_bike.jpg",
-        "tags": ["lifestyle"]
-    },
-    {
-        "adTitle": "Libro - El Señor de los Anillos",
-        "adBody": "Descripcion del libro...",
-        "sell": true,
-        "price": 20,
-        "photo": "lord_of_the_rings.jpg",
-        "tags": ["lifestyle"]
-    },
-    {
-        "adTitle": "Televisor Samsung 4K",
-        "adBody": "Descripcion del televisor...",
-        "sell": true,
-        "price": 800,
-        "photo": "samsung_4k_tv.jpg",
-        "tags": ["lifestyle"]
-    },
-    {
-        "adTitle": "Smartphone - iPhone 12",
-        "adBody": "Descripcion del smartphone...",
-        "sell": true,
-        "price": 1000,
-        "photo": "iphone_12.jpg",
-        "tags": ["mobile", "lifestyle"]
-    },
-    {
-        "adTitle": "Tablet - iPad Pro",
-        "adBody": "Descripcion del tablet...",
-        "sell": true,
-        "price": 1200,
-        "photo": "ipad_pro.jpg",
-        "tags": ["mobile", "lifestyle"]
-    },
-    {
-        "adTitle": "Reloj inteligente - Apple Watch",
-        "adBody": "Descripcion del reloj...",
-        "sell": true,
-        "price": 400,
-        "photo": "apple_watch.jpg",
-        "tags": ["mobile", "lifestyle"]
-    },
-    {
-        "adTitle": "Auriculares - Bose QC35",
-        "adBody": "Descripcion de los auriculares...",
-        "sell": true,
-        "price": 300,
-        "photo": "bose_qc35.jpg",
-        "tags": ["mobile", "lifestyle"]
-    },
-    {
-        "adTitle": "Cámara fotográfica - Canon EOS 5D",
-        "adBody": "Descripcion de la cámara...",
-        "sell": true,
-        "price": 2500,
-        "photo": "canon_eos_5d.jpg",
-        "tags": ["others", "lifestyle"]
-    },
-    {
-        "adTitle": "Guitarra eléctrica - Fender Stratocaster",
-        "adBody": "Descripcion de la guitarra...",
-        "sell": true,
-        "price": 1200,
-        "photo": "fender_stratocaster.jpg",
-        "tags": ["lifestyle"]
-    },
-    {
-        "adTitle": "Juego de mesa - Catan",
-        "adBody": "Descripcion del juego de mesa...",
-        "sell": true,
-        "price": 45,
-        "photo": "catan.jpg",
-        "tags": ["lifestyle"]
-    }
+  {
+    "adTitle": "Joyería hecha a mano",
+    "adBody": "Collares, pendientes, pulseras... Todo artesanal y con materiales de primera calidad.",
+    "sell": true,
+    "price": 50,
+    "photo": "joyería.jpg",
+    "tags": ["motor", "lifestyle"]
+  },
+  {
+    "adTitle": "Adornos de macramé",
+    "adBody": "Artículos de macramé para dar un toque clásico a tu casa moderna. No dudes en contactar por chat para contarnos tu proyecto.",
+    "sell": true,
+    "price": 50,
+    "photo": "macrame.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Ilustraciones manga",
+    "adBody": "Serie de ilustraciones de temática manga. Diseño personalizado para proyectos profesionales",
+    "sell": true,
+    "price": 300,
+    "photo": "manga.jpg",
+    "tags": ["motor", "lifestyle"]
+  },
+  {
+    "adTitle": "La joven melancólica",
+    "adBody": "Ilustraciones manga para proyectos profesionales. CUéntanos tu idea y te ayudamos a llevarla a cabo.",
+    "sell": true,
+    "price": 320,
+    "photo": "manga2.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Bicicleta fixie",
+    "adBody": "Hacemos biciletas de manera artesanal. Diseños propios personalizables",
+    "sell": true,
+    "price": 2500,
+    "photo": "deportes3.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Muebles vintage",
+    "adBody": "Busco profesional que pueda construir una serie de muebles especiales para una casa en el campo.",
+    "sell": false,
+    "price": 6000,
+    "photo": "muebles.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Pintura al óleo",
+    "adBody": "Óleo sobre lienzo de 2 x 2 m. Se aceptan proyectos personalizados.",
+    "sell": true,
+    "price": 300,
+    "photo": "pintura.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Chaqueta de lana",
+    "adBody": "Chaqueta de lana de alpaca. Temporada otoño/invierno 2024",
+    "sell": true,
+    "price": 50,
+    "photo": "ropa.jpg",
+    "tags": ["mobile", "lifestyle"]
+  },
+  {
+    "adTitle": "Vestido otoño verde",
+    "adBody": "Diseño exclusivo. Confeccionado a mano. Consultar tallas.",
+    "sell": true,
+    "price": 70,
+    "photo": "ropa2.jpg",
+    "tags": ["mobile", "lifestyle"]
+  },
+  {
+    "adTitle": "Vestido otoño verde",
+    "adBody": "Diseño exclusivo. Confeccionado a mano. Consultar tallas.",
+    "sell": true,
+    "price": 80,
+    "photo": "ropa3.jpg",
+    "tags": ["mobile", "lifestyle"]
+  },
+  {
+    "adTitle": "Flexo",
+    "adBody": "Lámpara de mesa de estilo vintage. Materiales 100 % reciclados.",
+    "sell": true,
+    "price": 40,
+    "photo": "lampara.jpg",
+    "tags": ["mobile", "lifestyle"]
+  },
+  {
+    "adTitle": "Osito de peluche",
+    "adBody": "Busco peluches para un evento. Me gustaría encontrar a un profesional que pudiese encargarse de hacer cierta cnatidad de muñecos",
+    "sell": false,
+    "price": 2000,
+    "photo": "peluche.jpg",
+    "tags": ["others", "lifestyle"]
+  },
+  {
+    "adTitle": "Papelería personalizada",
+    "adBody": "Agendas, blocs, cuadernos... Hacemos todo tipo de libretas a medida de tus necesidades.",
+    "sell": true,
+    "price": 10,
+    "photo": "papelería.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Balón antiguo",
+    "adBody": "Recreación del balón de tu abuelo, el que te hablaba de Kubala, Di Stéfano, pero traído al siglo XXI para que seas tú quien corra la banda.",
+    "sell": true,
+    "price": 35,
+    "photo": "deportes2.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Sandalias de esparto",
+    "adBody": "Sandalias de suela de esparto con tacón. Números 37 al 42.",
+    "sell": true,
+    "price": 30,
+    "photo": "calzado.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Guantes de boxeo",
+    "adBody": "Guantes a la antigua, para que entrenes con ganas todas las mañanas.",
+    "sell": true,
+    "price": 55,
+    "photo": "deportes.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Vestido de otoño",
+    "adBody": "Vestido de raso verde con manga farol. COnsultar tallas.",
+    "sell": true,
+    "price": 85,
+    "photo": "ropa4.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Lámpara antigua",
+    "adBody": "Busco aparatos de iluminación de aspecto retro.",
+    "sell": false,
+    "price": 1000,
+    "photo": "iluminacion.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Lámpara de mesa",
+    "adBody": "Hacemos lámparas y aparatos de iluminación de estilo retro. Si tienes una idea, te ayudamos a hacerla realidad.",
+    "sell": true,
+    "price": 60,
+    "photo": "iluminacion.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Muñecos de trapo",
+    "adBody": "Oso de peluche de 50 cm de alto. Hecho a mano con tejidos antialérgicos",
+    "sell": true,
+    "price": 65,
+    "photo": "peluche2.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Yoda escanciador",
+    "adBody": "A Yoda le gusta la sidra, pero no sabe escanciar. ¡Enséñale tú! Figura de 35 cm.",
+    "sell": true,
+    "price": 20,
+    "photo": "yoda1.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "La merienda de Vader",
+    "adBody": "El lado oscuro de la fuerza te permite parar en la hora del bocadillo. Y a Vader le encanta el chorizo. Figura de 35 cm.",
+    "sell": true,
+    "price": 20,
+    "photo": "vader.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Pendientes de bayas",
+    "adBody": "Pendientes elaborados con plata de ley y rubí mate de Alaska.",
+    "sell": true,
+    "price": 120,
+    "photo": "pendientes.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Apolo esperando el milagro",
+    "adBody": "Escultura de arcilla esmaltada de 2 m de altura.",
+    "sell": true,
+    "price": 6500,
+    "photo": "figurita.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Apolo DJ",
+    "adBody": "Escultura de arcilla esmaltada de 2,5 m de altura.",
+    "sell": true,
+    "price": 8500,
+    "photo": "figurita2.jpg",
+    "tags": ["lifestyle"]
+  },
+  {
+    "adTitle": "Atenea backend",
+    "adBody": "Escultura de arcilla esmaltada de 2 m de altura.",
+    "sell": true,
+    "price": 9000,
+    "photo": "figurita3.jpg",
+    "tags": ["lifestyle"]
+  }
 ]
