@@ -1,23 +1,48 @@
 {
   "apps": [
     {
-      "name"           : "my-app",
-      "script"         : "dist/index.js",
-      "exec_mode"      : "fork",
-      "instances"      : 1,
+      "name": "my-app",
+      "script": "dist/index.js",
+      "exec_mode": "fork",
+      "instances": 1,
+      "watch": true,
       "env_development": {
         "NODE_ENV": "development",
         "PORT": "4000",
         "MONGO_URI": "mongodb://localhost:27017/blogrest",
         "JWT_SECRET": "hello_world_test",
-        "JWT_EXPIRE": "7d"
-	 },
-      "env_production" : {
+        "JWT_EXPIRE": "7d",
+        "USER_NAME_PLACEHOLDER": "------",
+        "USER_LAST_NAME_PLACEHOLDER": "------",
+        "MOBILE_PHONE_NUMBER_PLACEHOLDER": "--- --- ---",
+        "CREDIT_CARD_DEFAULT_PLACEHOLDER": "----",
+        "DEV_HOST_URI": "http://localhost:5173",
+        "HOST_URI": "https://www.icraftyou.es"
+      },
+      "env_production": {
         "NODE_ENV": "production",
         "PORT": "4000",
         "MONGO_URI": "mongodb://localhost:27017/blogrest_prod",
         "JWT_SECRET": "hello_world_test",
-        "JWT_EXPIRE": "7d"
+        "JWT_EXPIRE": "7d",
+        "USER_NAME_PLACEHOLDER": "------",
+        "USER_LAST_NAME_PLACEHOLDER": "------",
+        "MOBILE_PHONE_NUMBER_PLACEHOLDER": "--- --- ---",
+        "CREDIT_CARD_DEFAULT_PLACEHOLDER": "----",
+        "DEV_HOST_URI": "http://localhost:5173",
+        "HOST_URI": "https://www.icraftyou.es"
+      }
+    },
+    {
+      "name": "mailing-service",
+      "script": "./src/mailing-service/mailingService.js",
+      "exec_mode": "fork",
+      "instances": 1,
+      "env_development": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
       }
     }
   ]
