@@ -39,10 +39,14 @@
       "exec_mode": "fork",
       "instances": 1,
       "env_development": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "development",
+        "DEV_HOST_URI": "http://localhost:5173",
+        "HOST_URI": "https://www.icraftyou.es"
       },
       "env_production": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "DEV_HOST_URI": "http://localhost:5173",
+        "HOST_URI": "https://www.icraftyou.es"
       }
     }
   ]
