@@ -10,7 +10,11 @@
     "build": "babel src/ -d dist/",
     "pm2:dev": "pm2 start app.json --env development",
     "pm2:prod": "pm2 start app.json --env production",
-    "mailing": "node ./src/mailing-service/mailingService.js"
+    "mailing": "node ./src/mailing-service/mailingService.js",
+    "pm2:app:dev": "pm2 start app.json --only my-app --env development",
+    "pm2:app:prod": "pm2 start app.json --only my-app --env production",
+    "pm2:mailing:dev": "pm2 start app.json --only mailing-service --env development",
+    "pm2:mailing:prod": "pm2 start app.json --only mailing-service --env production"
   },
   "repository": {
     "type": "git",
