@@ -49,7 +49,7 @@ exports.getAd = tryCatch(async (req, res, next) => {
 
         console.log('get ad', id);
         let ad = await Ad.findById(id).populate('user');
-        if (!ad || ad.available) {
+        if (!ad || ad.available === false) {
             res.status(404).json({ message: "Ad not found", data: [] });
         }
         if (ad.photo) {
