@@ -82,5 +82,5 @@
 	"password_has_been_reset": "Password restored succesfully!",
 	"wrong_password_length": "Password can not be empty",
 	"passwords_dont_match": "Passwords don't match",
-	"invalid_user_id": "Invalid user id",
+	"invalid_user_id": "Invalid user id"
 }

@@ -117,6 +117,12 @@ exports.updateAd = tryCatch(async (req, res, next) => {
         });
     }
 
+    if (ad.sell.toString() !== req.body.sell) {
+        return res.status(400).json({
+            message: "Cannot change transaction type status",
+        });
+    }
+
     let { adTitle, adBody, sell, price, tags } = req.body;
     let photo = ad.photo;
     if (req.file) {
