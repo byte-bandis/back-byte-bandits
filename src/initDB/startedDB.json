@@ -37,7 +37,7 @@
     "sell": true,
     "price": 2500,
     "photo": "deportes3.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["lifestyle", "others"]
   },
   {
     "adTitle": "Muebles vintage",
@@ -165,7 +165,7 @@
     "sell": true,
     "price": 20,
     "photo": "yoda1.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["work"]
   },
   {
     "adTitle": "La merienda de Vader",
@@ -173,7 +173,7 @@
     "sell": true,
     "price": 20,
     "photo": "vader.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["work"]
   },
   {
     "adTitle": "Pendientes de bayas",
@@ -181,7 +181,7 @@
     "sell": true,
     "price": 120,
     "photo": "pendientes.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["mobile", "work"]
   },
   {
     "adTitle": "Apolo esperando el milagro",
@@ -189,7 +189,7 @@
     "sell": true,
     "price": 6500,
     "photo": "figurita.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["lifestyle", "motor"]
   },
   {
     "adTitle": "Apolo DJ",
@@ -197,7 +197,7 @@
     "sell": true,
     "price": 8500,
     "photo": "figurita2.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["lifestyle", "motor"]
   },
   {
     "adTitle": "Atenea backend",
@@ -205,6 +205,38 @@
     "sell": true,
     "price": 9000,
     "photo": "figurita3.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["mobile"]
+  },
+  {
+    "adTitle": "Cazadora naranja",
+    "adBody": "Cazadora diseño exclusivo y fabricación en un pequeño taller en Almazán (Soria). Impermeable y con forro de lana. Talla S, M y L.",
+    "sell": true,
+    "price": 175,
+    "photo": "conjuntonaranja.jpg",
+    "tags": ["mobile"]
+  },
+  {
+    "adTitle": "Ajedrez",
+    "adBody": "Juego de ajedrez clásico. Piezas de madera tallada de 50 g.",
+    "sell": true,
+    "price": 90,
+    "photo": "ajedrez.jpg",
+    "tags": ["motor"]
+  },
+  {
+    "adTitle": "Parchís raro",
+    "adBody": "Revisión del parchís de toda la vida, epro actualizado al siglo XXI.",
+    "sell": true,
+    "price": 40,
+    "photo": "juego.jpg",
+    "tags": ["work", "mobile"]
+  },
+  {
+    "adTitle": "Butaca de terciopelo",
+    "adBody": "Butaca modelo Robinson diseñada y fabricada artesanalmente en un pequeño estudio de Esquiroz (Navarra).",
+    "sell": true,
+    "price": 240,
+    "photo": "butaca.jpg",
+    "tags": ["work", "mobile"]
   }
 ]
