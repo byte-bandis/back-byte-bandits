@@ -13,7 +13,13 @@ exports.adsAccount = tryCatch(async (req, res) => {
     res.status(200).json({ count });
 });
 exports.getAds = tryCatch(async (req, res) => {
-    console.log('get ads');
+
+    if (req.query.hasOwnProperty('available')) {
+        req.query.available = req.query.available === 'true';  
+    } else {
+        req.query.available = true; 
+    }
+
     const advancedQuery = new APIFeatures(Ad.find({}).populate('user'), req.query)
         .sort()
         .paginate()

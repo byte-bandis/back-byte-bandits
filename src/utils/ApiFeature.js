@@ -59,12 +59,6 @@ class APIFeatures {
       const excludedFields = ['page', 'sort', 'limit', 'fields', 'minPrice', 'maxPrice'];
       excludedFields.forEach((excFields) => delete queryObj[excFields]);
   
-      // Convertir 'available' a booleano
-      if (queryObj.hasOwnProperty('available')) {
-        queryObj.available = queryObj.available === 'true';
-      } else {
-        queryObj.available = true; // Valor por defecto: true
-      }
   
       // Convertir operadores gt, gte, lt, lte
       let queryStr = JSON.stringify(queryObj);
