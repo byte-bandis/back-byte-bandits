@@ -83,5 +83,6 @@
   "wrong_password_length": "Password can not be empty",
   "passwords_dont_match": "Passwords don't match",
   "invalid_user_id": "Invalid user id",
-  "success_password_confirmed": "Password confirmed!"
+  "success_password_confirmed": "Password confirmed!",
+  "missing_confirm_password_field": "Current password field can not be empty"
 }

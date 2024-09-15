@@ -83,5 +83,6 @@
   "wrong_password_length": "La contraseña no puede estar vacía",
   "passwords_dont_match": "Las contraseñas no coinciden",
   "invalid_user_id": "Id de usuario no válido",
-  "success_password_confirmed": "Contraseña confirmada con éxito"
+  "success_password_confirmed": "Contraseña confirmada con éxito",
+  "missing_confirm_password_field": "El campo para confirmar tu contraseña no puede estar vacío"
 }

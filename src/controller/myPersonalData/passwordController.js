@@ -110,7 +110,7 @@ exports.matchMyPassword = tryCatch(async (req, res, next) => {
   if (!currentPassword) {
     return res.status(400).json({
       state: "error",
-      message: res.__("missing_password_fields"),
+      message: res.__("missing_confirm_password_field"),
     });
   }
 
