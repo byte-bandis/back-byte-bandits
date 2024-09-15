@@ -6,7 +6,7 @@ const {
   register,
   login,
   getUsersPublicProfiles,
-  getUser
+  getUser,
 } = require("../controller/UserController");
 
 const {
@@ -34,6 +34,7 @@ const {
 } = require("../controller/myPersonalData/MyDataController");
 const {
   updateMyPassword,
+  matchMyPassword,
 } = require("../controller/myPersonalData/passwordController");
 const { deleteUser } = require("../controller/DeleteUserController");
 
@@ -57,6 +58,7 @@ router.get("/:username/mydata", authenticate, getMyData);
 router.put("/:username/mydata", authenticate, updateMyData);
 
 router.put("/:username/password", authenticate, updateMyPassword);
+router.post("/:username/confirm-password", authenticate, matchMyPassword);
 
 router.get("/:username", getSinglePublicProfile);
 router.post(
