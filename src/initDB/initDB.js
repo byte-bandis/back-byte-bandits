@@ -1,7 +1,3 @@
-/**
- * The JavaScript code initializes a database by deleting existing ads and inserting new ads from a
- * JSON file.
- */
 "use strict";
 
 require("dotenv").config();
@@ -88,16 +84,26 @@ async function initAd() {
   const del = await Ad.deleteMany();
   console.log(`Se han borrado ${del.deletedCount} anuncios.`);
   const users = await User.find();
-  console.log(users);
+  const n = users.length;
   // Añade anuncios
   let userIndex = 0;
   const updatedData = data.map((item) => {
     item.user = users[userIndex]._id;
-    userIndex = (userIndex + 1) % 2; // Alterna entre 0 y 1
+    userIndex = (userIndex + 1) % n;
     return item;
   });
-  const insertAds = await Ad.insertMany(updatedData);
-  console.log(`Se han creado ${insertAds.length} anuncios.`);
+  let i = 0;
+  for (const item of updatedData) {
+    try {
+   await Ad.create(item);
+  i++;
+    } catch (error) {
+      console.log(error);
+    }
+    
+  }
+
+  console.log(`Se han creado ${i} anuncios.`);
 }
 async function initLikes() {
   const del = await Like.deleteMany();
