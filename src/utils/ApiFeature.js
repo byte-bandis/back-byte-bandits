@@ -1,3 +1,5 @@
+const { default: mongoose } = require("mongoose");
+
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
@@ -56,7 +58,7 @@ class APIFeatures {
       const queryObj = { ...this.queryString };
   
       // Excluir campos no relacionados con el filtrado
-      const excludedFields = ['page', 'sort', 'limit', 'fields', 'minPrice', 'maxPrice'];
+      const excludedFields = ['page', 'sort', 'limit', 'fields', 'minPrice', 'maxPrice', 'user'];
       excludedFields.forEach((excFields) => delete queryObj[excFields]);
   
   
@@ -131,6 +133,19 @@ class APIFeatures {
     }
     return this;
   }
+  filterByUser() {
+    if (this.queryString.user) {
+        const userId = this.queryString.user;
+
+        if (mongoose.Types.ObjectId.isValid(userId)) {
+            this.query = this.query.find({ user: userId });
+        } else {
+            console.warn("Invalid user ID format:", userId);
+        }
+    }
+
+    return this;
+}
 }
 
 module.exports = APIFeatures;

@@ -9,7 +9,14 @@ const mongoose = require("mongoose");
 const publicFolder = "public/images";
 /* Obtener anuncios */
 exports.adsAccount = tryCatch(async (req, res) => {
-    const count = await Ad.countDocuments();
+    let count = 0;
+    if (req.query.hasOwnProperty('user')) {
+        
+        const user = req.query.user;
+         count = await Ad.countDocuments({user: user});
+    } else {
+         count = await Ad.countDocuments();
+    }
     res.status(200).json({ count });
 });
 exports.getAds = tryCatch(async (req, res) => {
@@ -23,6 +30,7 @@ exports.getAds = tryCatch(async (req, res) => {
     const advancedQuery = new APIFeatures(Ad.find({}).populate('user'), req.query)
         .sort()
         .paginate()
+        .filterByUser()
         .fields()
         .filter()
         .searchByTitle()
@@ -69,6 +77,7 @@ exports.getAd = tryCatch(async (req, res, next) => {
 /* crear un anuncio */
 exports.createAd = tryCatch(async (req, res) => {
     const user = req.user._id;
+    console.log('create ad', user);
     let { adTitle, adBody, sell, price, tags } = req.body;
     let photo = "";
     if (req.file) {
