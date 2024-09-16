@@ -84,5 +84,8 @@
   "passwords_dont_match": "Las contraseñas no coinciden",
   "invalid_user_id": "Id de usuario no válido",
   "success_password_confirmed": "Contraseña confirmada con éxito",
-  "missing_confirm_password_field": "El campo para confirmar tu contraseña no puede estar vacío"
+  "missing_confirm_password_field": "El campo para confirmar tu contraseña no puede estar vacío",
+  "username_empty": "El nick no puede estar vacío",
+  "email_empty": "El email no puede estar vacío",
+  "email_invalid": "El email no es válido"
 }

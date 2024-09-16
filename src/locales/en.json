@@ -84,5 +84,8 @@
   "passwords_dont_match": "Passwords don't match",
   "invalid_user_id": "Invalid user id",
   "success_password_confirmed": "Password confirmed!",
-  "missing_confirm_password_field": "Current password field can not be empty"
+  "missing_confirm_password_field": "Current password field can not be empty",
+  "username_empty": "Your nick name can't be empty",
+  "email_empty": "Your email can't be empty",
+  "email_invalid": "The format of the email is not valid"
 }
