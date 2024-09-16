@@ -92,6 +92,27 @@ exports.updateMyData = tryCatch(async (req, res) => {
   const { username, email, birthdate, name, lastname, mobilePhoneNumber } =
     req.body;
 
+  if (!username) {
+    return res.status(400).json({
+      status: "error",
+      message: res.__("username_empty"),
+    });
+  }
+
+  const emailRegex = /^\S+@\S+$/;
+
+  if (!email) {
+    return res.status(400).json({
+      status: "error",
+      message: res.__("email_empty"),
+    });
+  } else if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      status: "error",
+      message: res.__("email_invalid"),
+    });
+  }
+
   const usernameExists = await User.findOne({ username });
   if (usernameExists && usernameExists._id.toString() !== requesterId) {
     return res.status(400).json({
