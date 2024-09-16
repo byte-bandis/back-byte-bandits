@@ -92,7 +92,6 @@ exports.updateMyData = tryCatch(async (req, res) => {
   const { username, email, birthdate, name, lastname, mobilePhoneNumber } =
     req.body;
 
-  console.log("Esto es username y email: ", username, " ", email);
   if (!username) {
     return res.status(400).json({
       status: "error",
