@@ -9,6 +9,7 @@ const path = require("path");
 const {
   default: generateRandomPassword,
 } = require("../utils/generatePassword");
+const Ad = require("../models/Ad");
 const fs = require("fs").promises;
 
 exports.deleteUser = tryCatch(async (req, res) => {
@@ -158,7 +159,12 @@ exports.deleteUser = tryCatch(async (req, res) => {
     console.log(logMessage);
     await writeLog(logMessage);
   }
-
+const userAds = await Ad.find({ user: account._id });
+  for (const ad of userAds) {
+    ad.available = false;
+    console.log(ad)
+    await ad.save();
+  }
   const newUsername = `deleted_${account._id}`;
   const newEmail = `deleted_${account._id}@example.com`;
   const randomPassword = generateRandomPassword();
