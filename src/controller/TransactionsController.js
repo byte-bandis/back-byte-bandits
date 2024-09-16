@@ -139,57 +139,54 @@ exports.handleTransactions = tryCatch(async (req, res) => {
         });
 
 
-//Sold transaction
-exports.soldTransactions = tryCatch(async(req,res)=> {
-    const userId = new mongoose.Types.ObjectId(req.params.userId);
-    const {action} = req.body;
-
-    const transaction = await Transactions.findById(transactionId)
-    .populate({seller: userId, state:"Sold" })
-
-    if(action==="accept"){
-        transaction.state="Sold"
-        await transaction.save()
-
-        return res.status(200).json({
-            state: "success",
-            message: "Product sold successfuylly",
-            data: transaction,
-        })
-    }else if(action==="reject"){
-        transaction.state="Cancelled"
-        await transaction.save()
-
-        return res.status(200).json({
-            state: "success",
-            message: "Sold successfully cancelled",
-            data: transaction,
-        })
-    }else{
-        return res.status(400).json({
-            state: "error",
-            message: "Invalid action. Use 'accept' or 'reject'"
-        })
-    }
-    
-})
-
 exports.getTransactionsBySeller = tryCatch(async (req, res) => {
-    const userId = new mongoose.Types.ObjectId(req.params.userId);
+    const userId = req.user._id;
     console.log(userId);
-    const transactions = await Transactions.find({ seller: userId, state: "Sold" })
-    .populate({path: "seller", select: "_id username"});
+    const transactions = await Transactions.find({ 
+        seller: userId, 
+        state: {$in: ["Ordered", "Sold"]}
+    })
+    .populate({path: "seller", select: "_id username"})
+    .populate("ad", "");
 
     console.log(transactions);
-    res.status(200).json({state: "success", data: transactions});
+    res.status(200).json({
+        state: "success", 
+        data: transactions,
+        message: "Transactions by seller received"});
 });
 
 exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
-    const userId = new mongoose.Types.ObjectId(req.params.userId)
+    const userId = req.user._id;
     console.log(userId)
-    const transactions = await Transactions.find({ buyer: userId, state: "Sold" })
-    .populate({path: "buyer", select: "_id username"});
+    const transactions = await Transactions.find({
+         buyer: userId, 
+         state: {$in: ["Ordered", "Sold"] }
+        })
+    .populate({path: "buyer", select: "_id username"})
+    .populate("ad", "");;
 
     console.log(transactions)
-    res.status(200).json({state: "success", data: transactions});
-})
+    res.status(200).json({
+        state: "success", 
+        data: transactions,
+        message: "Transactions by buyer received"});
+    });
+
+
+exports.getTransactionsByUser = tryCatch(async (req, res)=>{
+    const userId = req.user._id;
+    const transactions = await Transactions.find({
+        userid: userId, 
+        state: {$in: ["Ordered", "Sold"]}
+    })
+    .populate({path: "buyer", select: "_id username"})
+    .populate({path: "seller", select: "_id username"})
+    .populate("ad", "");;
+
+    res.status(200).json({
+        state:"success", 
+        data:transactions,
+        message: "Transactions by user received"});
+    })
+
