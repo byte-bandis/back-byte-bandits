@@ -11,12 +11,11 @@ const publicFolder = "public/images";
 exports.adsAccount = tryCatch(async (req, res) => {
     let count = 0;
     if (req.query.hasOwnProperty('user')) {
-        console.log(req.query.user);
         const user =await User.find({username:req.query.user});
 
-         count = await Ad.countDocuments({user: user[0]._id.toString(), available: true});
+        count = await Ad.countDocuments({user: user[0]._id.toString(), available: true});
     } else {
-         count = await Ad.countDocuments({ available: true});
+        count = await Ad.countDocuments({ available: true});
     }
     res.status(200).json({ count });
 });
@@ -29,13 +28,10 @@ exports.getAds = tryCatch(async (req, res) => {
     }
 
     if (req.query.hasOwnProperty('user')) {
-        console.log('------------------username----------------',req.query.user);
+        
         const user = await User.find({username:req.query.user});
 
-        console.log('------------------user----------------',user[0]);
-        console.log('------------------userid----------------',user[0]._id);
         req.query.user= user[0]._id.toString();
-        console.log('------------------query----------------',req.query.user);
     }
     
     const advancedQuery = new APIFeatures(Ad.find({}).populate('user'), req.query)
@@ -72,7 +68,6 @@ exports.getAd = tryCatch(async (req, res, next) => {
         res.status(404).json({ message: "Ad not found", data: [] });
     } else {
 
-        console.log('get ad', id);
         let ad = await Ad.findById(id).populate('user');
         if (!ad || ad.available === false) {
             res.status(404).json({ message: "Ad not found", data: [] });
@@ -88,7 +83,6 @@ exports.getAd = tryCatch(async (req, res, next) => {
 /* crear un anuncio */
 exports.createAd = tryCatch(async (req, res) => {
     const user = req.user._id;
-    console.log('create ad', user);
     let { adTitle, adBody, sell, price, tags } = req.body;
     let photo = "";
     if (req.file) {
@@ -281,7 +275,6 @@ exports.buyAd = tryCatch(async (req, res, next) => {
             message: "Ad not found",
         });
     }
-    console.log(toDeleteId, ad.user.toString());
     const currentUser = req.user._id;
     if (ad.user.toString() !== currentUser) {
         return next({
@@ -315,7 +308,7 @@ exports.deleteAd = tryCatch(async (req, res, next) => {
             message: "Ad not found",
         });
     }
-    console.log(toDeleteId, ad.user.toString());
+
     const currentUser = req.user._id;
     if (ad.user.toString() !== currentUser) {
         return next({
@@ -324,7 +317,6 @@ exports.deleteAd = tryCatch(async (req, res, next) => {
     }
 
     ad.available = false;
-    console.log(ad)
     await ad.save();
 })
 

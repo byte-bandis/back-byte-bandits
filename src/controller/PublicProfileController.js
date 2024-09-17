@@ -158,8 +158,8 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   const requestDeleteUserPhoto = req.body.deleteUserPhoto;
   const requestDeleteHeaderPhoto = req.body.deleteHeaderPhoto;
 
-  console.log("Esto es requestDeleteUserPhoto: ", requestDeleteUserPhoto);
-  console.log("Esto es requestDeleteHeaderPhoto: ", requestDeleteHeaderPhoto);
+  console.log("requestDeleteUserPhoto: ", requestDeleteUserPhoto);
+  console.log("requestDeleteHeaderPhoto: ", requestDeleteHeaderPhoto);
 
   const username = req.params.username;
 
@@ -191,9 +191,9 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
   }
 
   console.log(
-    "Esto son las fotos de retirevedProfile: ",
+    "retrievedProfile photos: ",
     retrievedProfile.userPhoto,
-    "y",
+    " and ",
     retrievedProfile.headerPhoto
   );
 
@@ -351,7 +351,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
         retrievedProfile.userPhoto
       );
       console.log(
-        "Esto es el userphotopath que pretenfo borrar: ",
+        "userphotopath to delete: ",
         userPhotoPath
       );
 
@@ -374,7 +374,7 @@ exports.deletePublicProfile = tryCatch(async (req, res) => {
         retrievedProfile.headerPhoto
       );
       console.log(
-        "Esto es el headerphotopath que pretenfo borrar: ",
+        "headerphotopath to delete: ",
         headerPhotoPath
       );
       await fs.unlink(headerPhotoPath);

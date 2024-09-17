@@ -7,7 +7,7 @@ const MyCreditCard = require('../models/myPersonalData/MyCreditCard');
 
 //Create a new transaction
 exports.createTransaction = tryCatch(async (req, res) => {
-    console.log(req.body)
+    
     const { id } = req.params;
     const buyerId = req.user._id;
     const ad = await Ad.findById(id)
@@ -38,8 +38,6 @@ exports.createTransaction = tryCatch(async (req, res) => {
     await transaction.save()
     
 
-    console.log(transaction)
-
     res.status(201).json({
         status: "success", 
         message: "Purchase transaction created correctly",
@@ -49,18 +47,12 @@ exports.createTransaction = tryCatch(async (req, res) => {
 
 //Get pending transactions
 exports.getPendingTransactions = tryCatch(async(req,res) =>{
-    console.log("Request received")
     const userId = req.user._id; //userId (logged) = seller
-    console.log(userId)
     
     const pendingTransactions = await Transactions.find({
         seller: userId,
         state: "Ordered"
     }).populate("ad buyer", "")
-    
-    console.log(pendingTransactions)
-
-    console.log(pendingTransactions.length)
 
     if(pendingTransactions.length===0){
         return res.status(200).json({
@@ -83,7 +75,6 @@ exports.handleTransactions = tryCatch(async (req, res) => {
     const userId = req.user._id; // userId (logged) = seller
 
     const transaction = await Transactions.findById(transactionId).populate("seller", "username _id");
-    console.log("transaction", transaction)
 
     if (!transaction || transaction.state !== "Ordered") {
         return res.status(404).json({
@@ -98,8 +89,6 @@ exports.handleTransactions = tryCatch(async (req, res) => {
 
   if (action === "accept") {
     transaction.state = "Sold";
-        console.log(transaction)
-        console.log(transaction.ad)
         const ad = await Ad.findById(transaction.ad);
   
     if (!ad) {
@@ -111,8 +100,6 @@ exports.handleTransactions = tryCatch(async (req, res) => {
       ad.buyer = transaction.buyer;
     await transaction.save();
     await ad.save();
-    
-        console.log(transaction)
 
         res.status(200).json({ 
             state: "success", 
@@ -122,8 +109,6 @@ exports.handleTransactions = tryCatch(async (req, res) => {
         } else if (action === "reject") {
             transaction.state = "Cancelled";
             await transaction.save();
-
-        console.log(transaction)
 
         return res.status(200).json({
             state: "success",
@@ -141,7 +126,7 @@ exports.handleTransactions = tryCatch(async (req, res) => {
 
 exports.getTransactionsBySeller = tryCatch(async (req, res) => {
     const userId = req.user._id;
-    console.log(userId);
+
     const transactions = await Transactions.find({ 
         seller: userId, 
         state: {$in: ["Ordered", "Sold"]}
@@ -149,7 +134,6 @@ exports.getTransactionsBySeller = tryCatch(async (req, res) => {
     .populate({path: "seller", select: "_id username"})
     .populate("ad", "");
 
-    console.log(transactions);
     res.status(200).json({
         state: "success", 
         data: transactions,
@@ -158,7 +142,7 @@ exports.getTransactionsBySeller = tryCatch(async (req, res) => {
 
 exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
     const userId = req.user._id;
-    console.log(userId)
+    
     const transactions = await Transactions.find({
          buyer: userId, 
          state: {$in: ["Ordered", "Sold"] }
@@ -166,7 +150,6 @@ exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
     .populate({path: "buyer", select: "_id username"})
     .populate("ad", "");;
 
-    console.log(transactions)
     res.status(200).json({
         state: "success", 
         data: transactions,

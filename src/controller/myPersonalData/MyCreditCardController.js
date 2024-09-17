@@ -121,9 +121,9 @@ exports.getMyCreditCard = tryCatch(async (req, res) => {
     });
   }
 
-  console.log("Esto es retrievedCreditcard de Manolo: ", retrievedCreditCard);
+  console.log("retrievedCreditcard: ", retrievedCreditCard);
   console.log(
-    "Esto es retrievedCreditcard.last4Digits de Manolo: ",
+    "retrievedCreditcard.last4Digits: ",
     retrievedCreditCard.last4Digits
   );
 
@@ -204,8 +204,8 @@ exports.updateMyCreditCard = tryCatch(async (req, res, next) => {
   const savedCard = await retrievedCreditCard.save();
 
   if (savedCard) {
-    console.log("Esto es savedCard: ", savedCard);
-    console.log("Esto es savedCard.last4Digits: ", savedCard.last4Digits);
+    console.log("savedCard: ", savedCard);
+    console.log("savedCard.last4Digits: ", savedCard.last4Digits);
     res.status(200).json({
       status: "success",
       message: res.__("success_credit_card_updated", { username }),

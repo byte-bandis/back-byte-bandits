@@ -5,9 +5,9 @@ const publicFolder = "public/images";
 
 exports.getUserLikeAccount = tryCatch(async (req, res) => {
     const userId = req.user._id;
-    console.log('userId', userId)
+    
     const count = await Like.countDocuments({ user: userId });
-    console.log('count', count)
+    
     res.status(200).json({ count });
 })
 exports.setLike = tryCatch(async (req, res) => {

@@ -10,7 +10,6 @@ class APIFeatures {
     if (this.queryString.sort) {
       let sortBy;
 
-      console.log("que e2", this.queryString.sort)
       if(Array.isArray(this.queryString.sort)) { 
       sortBy = this.queryString.sort.map(field => {
           return field.startsWith("-") ? [field.substring(1), "desc"] : [field, "asc"]
