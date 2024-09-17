@@ -53,11 +53,29 @@ exports.createTransaction = tryCatch(async (req, res) => {
 exports.getPendingTransactions = tryCatch(async (req, res) => {
     const userId = req.user._id; //userId (logged) = seller
 
-    const pendingTransactions = await Transactions.find({
+    let pendingTransactions = await Transactions.find({
         seller: userId,
         state: "Ordered"
-    }).populate("ad buyer", "");
+    }).populate("ad buyer");
+    pendingTransactions = pendingTransactions.map(transaction => {
+        const { ad, ...transactionDetails } = transaction;
+        let photoUrl = null;
+        if (ad.photo) {
 
+            photoUrl = process.env.NODE_ENV !== 'production'
+                ? `http://${req.headers.host}/${publicFolder}/${ad.photo}`
+                : `https://${req.headers.host}/api/${publicFolder}/${ad.photo}`;
+
+        }
+
+        return {
+            ...transactionDetails._doc,
+            ad: {
+                ...ad._doc,
+                photo: photoUrl
+            }
+        };
+    });
 
 
     if (pendingTransactions.length === 0) {
@@ -181,7 +199,17 @@ exports.getTransactionsBySeller = tryCatch(async (req, res) => {
         message: "Transactions by seller received"
     });
 });
-
+exports.getAllTransactionsBySeller = tryCatch(async (req, res) => {
+    const userId = req.user._id;
+    const transactionsCount = await Transactions.countDocuments({
+        seller: userId,
+    })
+    res.status(200).json({
+        state: "success",
+        data: transactionsCount,
+        message: "Transactions by seller received"
+    });
+})
 exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
     const userId = req.user._id;
     const transactions = await Transactions.find({
