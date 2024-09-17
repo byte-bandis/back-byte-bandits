@@ -5,7 +5,7 @@
     "sell": true,
     "price": 50,
     "photo": "joyería.jpg",
-    "tags": ["motor", "lifestyle"]
+    "tags": ["accessories", "fashion"]
   },
   {
     "adTitle": "Adornos de macramé",
@@ -13,7 +13,7 @@
     "sell": true,
     "price": 50,
     "photo": "macrame.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["decoration"]
   },
   {
     "adTitle": "Ilustraciones manga",
@@ -21,7 +21,7 @@
     "sell": true,
     "price": 300,
     "photo": "manga.jpg",
-    "tags": ["motor", "lifestyle"]
+    "tags": ["arts"]
   },
   {
     "adTitle": "La joven melancólica",
@@ -29,7 +29,7 @@
     "sell": true,
     "price": 320,
     "photo": "manga2.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["arts"]
   },
   {
     "adTitle": "Bicicleta fixie",
@@ -37,7 +37,7 @@
     "sell": true,
     "price": 2500,
     "photo": "deportes3.jpg",
-    "tags": ["lifestyle", "others"]
+    "tags": ["others"]
   },
   {
     "adTitle": "Muebles vintage",
@@ -45,7 +45,7 @@
     "sell": false,
     "price": 6000,
     "photo": "muebles.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["decoration"]
   },
   {
     "adTitle": "Pintura al óleo",
@@ -53,7 +53,7 @@
     "sell": true,
     "price": 300,
     "photo": "pintura.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["arts", "decoration"]
   },
   {
     "adTitle": "Chaqueta de lana",
@@ -61,7 +61,7 @@
     "sell": true,
     "price": 50,
     "photo": "ropa.jpg",
-    "tags": ["mobile", "lifestyle"]
+    "tags": ["fashion"]
   },
   {
     "adTitle": "Vestido otoño verde",
@@ -69,7 +69,7 @@
     "sell": true,
     "price": 70,
     "photo": "ropa2.jpg",
-    "tags": ["mobile", "lifestyle"]
+    "tags": ["fashion"]
   },
   {
     "adTitle": "Vestido otoño verde",
@@ -77,7 +77,7 @@
     "sell": true,
     "price": 80,
     "photo": "ropa3.jpg",
-    "tags": ["mobile", "lifestyle"]
+    "tags": ["fashion"]
   },
   {
     "adTitle": "Flexo",
@@ -85,7 +85,7 @@
     "sell": true,
     "price": 40,
     "photo": "lampara.jpg",
-    "tags": ["mobile", "lifestyle"]
+    "tags": ["decoration"]
   },
   {
     "adTitle": "Osito de peluche",
@@ -93,7 +93,7 @@
     "sell": false,
     "price": 2000,
     "photo": "peluche.jpg",
-    "tags": ["others", "lifestyle"]
+    "tags": ["others"]
   },
   {
     "adTitle": "Papelería personalizada",
@@ -101,7 +101,7 @@
     "sell": true,
     "price": 10,
     "photo": "papelería.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["others", "accessories"]
   },
   {
     "adTitle": "Balón antiguo",
@@ -109,7 +109,7 @@
     "sell": true,
     "price": 35,
     "photo": "deportes2.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["others", "decoration"]
   },
   {
     "adTitle": "Sandalias de esparto",
@@ -117,7 +117,7 @@
     "sell": true,
     "price": 30,
     "photo": "calzado.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["accessories", "fashion"]
   },
   {
     "adTitle": "Guantes de boxeo",
@@ -125,7 +125,7 @@
     "sell": true,
     "price": 55,
     "photo": "deportes.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["others", "decoration"]
   },
   {
     "adTitle": "Vestido de otoño",
@@ -133,7 +133,7 @@
     "sell": true,
     "price": 85,
     "photo": "ropa4.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["fashion"]
   },
   {
     "adTitle": "Lámpara antigua",
@@ -141,7 +141,7 @@
     "sell": false,
     "price": 1000,
     "photo": "iluminacion.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["decoration"]
   },
   {
     "adTitle": "Lámpara de mesa",
@@ -149,7 +149,7 @@
     "sell": true,
     "price": 60,
     "photo": "iluminacion2.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["decoration"]
   },
   {
     "adTitle": "Muñecos de trapo",
@@ -157,7 +157,7 @@
     "sell": true,
     "price": 65,
     "photo": "peluche2.jpg",
-    "tags": ["lifestyle"]
+    "tags": ["others", "decoration"]
   },
   {
     "adTitle": "Yoda escanciador",
@@ -165,7 +165,7 @@
     "sell": true,
     "price": 20,
     "photo": "yoda1.jpg",
-    "tags": ["work"]
+    "tags": ["others"]
   },
   {
     "adTitle": "La merienda de Vader",
@@ -173,7 +173,7 @@
     "sell": true,
     "price": 20,
     "photo": "vader.jpg",
-    "tags": ["work"]
+    "tags": ["others"]
   },
   {
     "adTitle": "Pendientes de bayas",
@@ -181,7 +181,7 @@
     "sell": true,
     "price": 120,
     "photo": "pendientes.jpg",
-    "tags": ["mobile", "work"]
+    "tags": ["accessories", "fashion"]
   },
   {
     "adTitle": "Apolo esperando el milagro",
@@ -189,7 +189,7 @@
     "sell": true,
     "price": 6500,
     "photo": "figurita.jpg",
-    "tags": ["lifestyle", "motor"]
+    "tags": ["arts"]
   },
   {
     "adTitle": "Apolo DJ",
@@ -197,7 +197,7 @@
     "sell": true,
     "price": 8500,
     "photo": "figurita2.jpg",
-    "tags": ["lifestyle", "motor"]
+    "tags": ["arts"]
   },
   {
     "adTitle": "Atenea backend",
@@ -205,7 +205,7 @@
     "sell": true,
     "price": 9000,
     "photo": "figurita3.jpg",
-    "tags": ["mobile"]
+    "tags": ["arts"]
   },
   {
     "adTitle": "Cazadora naranja",
@@ -213,7 +213,7 @@
     "sell": true,
     "price": 175,
     "photo": "conjuntonaranja.jpg",
-    "tags": ["mobile"]
+    "tags": ["fashion"]
   },
   {
     "adTitle": "Ajedrez",
@@ -221,7 +221,7 @@
     "sell": true,
     "price": 90,
     "photo": "ajedrez.jpg",
-    "tags": ["motor"]
+    "tags": ["others"]
   },
   {
     "adTitle": "Parchís raro",
@@ -229,7 +229,7 @@
     "sell": true,
     "price": 40,
     "photo": "juego.jpg",
-    "tags": ["work", "mobile"]
+    "tags": ["others"]
   },
   {
     "adTitle": "Butaca de terciopelo",
@@ -237,6 +237,6 @@
     "sell": true,
     "price": 240,
     "photo": "butaca.jpg",
-    "tags": ["work", "mobile"]
+    "tags": ["decoration"]
   }
 ]

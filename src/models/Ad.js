@@ -23,43 +23,43 @@ const AdSchema = Schema(
       index: true,
     },
     photo: {
-      type: String
+      type: String,
     },
     tags: {
       type: [String],
       required: true,
       enum: {
-        values: ["lifestyle", "mobile", "motor", "work", "others"],
+        values: ["accessories", "fashion", "decoration", "arts", "others"],
       },
       default: "others",
     },
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [true, 'Please add author id']
+      ref: "User",
+      required: [true, "Please add author id"],
     },
     reserverBy: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [false, 'Please add reserver id']
+      ref: "User",
+      required: [false, "Please add reserver id"],
     },
     buyer: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [false, 'Please add buyer id']
+      ref: "User",
+      required: [false, "Please add buyer id"],
     },
     duration: {
-      type: Number
+      type: Number,
     },
     available: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   { timestamps: true }
-)
+);
 
-AdSchema.index({ adTitle: 'text' });
+AdSchema.index({ adTitle: "text" });
 
 AdSchema.virtual("comments", {
   ref: "Comment",

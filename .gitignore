@@ -3,4 +3,4 @@ node_modules/
 dist/
 /.history
 logs/
-
+deletion_logs.txt
