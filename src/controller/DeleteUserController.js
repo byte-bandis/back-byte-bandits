@@ -162,7 +162,6 @@ exports.deleteUser = tryCatch(async (req, res) => {
 const userAds = await Ad.find({ user: account._id });
   for (const ad of userAds) {
     ad.available = false;
-    console.log(ad)
     await ad.save();
   }
   const newUsername = `deleted_${account._id}`;

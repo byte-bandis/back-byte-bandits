@@ -1,80 +1,78 @@
 const Transactions = require('../models/Transactions');
-const Ad = require("../models/Ad")
-const User = require("../models/User")
+const Ad = require("../models/Ad");
+const User = require("../models/User");
 const { tryCatch } = require('../utils/tryCatch');
 const mongoose = require('mongoose');
 const MyCreditCard = require('../models/myPersonalData/MyCreditCard');
+const APIFeatures = require('../utils/ApiFeature');
+const publicFolder = "public/images";
 
 //Create a new transaction
 exports.createTransaction = tryCatch(async (req, res) => {
-    console.log(req.body)
     const { id } = req.params;
     const buyerId = req.user._id;
-    const ad = await Ad.findById(id)
+    const ad = await Ad.findById(id);
 
-    if(!ad){
+    if (!ad) {
         return res.status(404).json({
             status: "error",
-            message: "Ad not found -createTransaction"})
+            message: "Ad not found -createTransaction"
+        });
     }
 
-    const buyer = await MyCreditCard.findOne({user: buyerId})
+    const buyer = await MyCreditCard.findOne({ user: buyerId });
 
- 
-    if(!buyer || buyer.last4Digits === "----" ){
-         return res.status(400).json({
+
+    if (!buyer || buyer.last4Digits === "----") {
+        return res.status(400).json({
             status: "error",
             message: "Buyer or credit card buyer not found -createTransaction"
-        })
+        });
     }
 
-     const transaction = await Transactions.create({
+    const transaction = await Transactions.create({
         buyer: buyerId,
         seller: ad.user._id,
         ad: ad._id,
         price: ad.price,
-    })
-    transaction.state= "Ordered";
-    await transaction.save()
-    
+    });
+    transaction.state = "Ordered";
+    await transaction.save();
 
-    console.log(transaction)
+
 
     res.status(201).json({
-        status: "success", 
+        status: "success",
         message: "Purchase transaction created correctly",
-        data: transaction})
-})
+        data: transaction
+    });
+});
 
 
 //Get pending transactions
-exports.getPendingTransactions = tryCatch(async(req,res) =>{
-    console.log("Request received")
+exports.getPendingTransactions = tryCatch(async (req, res) => {
     const userId = req.user._id; //userId (logged) = seller
-    console.log(userId)
-    
+
     const pendingTransactions = await Transactions.find({
         seller: userId,
         state: "Ordered"
-    }).populate("ad buyer", "")
-    
-    console.log(pendingTransactions)
+    }).populate("ad buyer", "");
 
-    console.log(pendingTransactions.length)
 
-    if(pendingTransactions.length===0){
+
+    if (pendingTransactions.length === 0) {
         return res.status(200).json({
             status: "others",
             message: "There is no pending transactions"
-        })
+        });
     }
 
     return res.status(200).json({
         status: "success",
         message: "All ordered ads pending for approval or reject",
         data: pendingTransactions,
-    })
-})
+    });
+});
 
 
 //Handle transactions
@@ -83,110 +81,138 @@ exports.handleTransactions = tryCatch(async (req, res) => {
     const userId = req.user._id; // userId (logged) = seller
 
     const transaction = await Transactions.findById(transactionId).populate("seller", "username _id");
-    console.log("transaction", transaction)
 
     if (!transaction || transaction.state !== "Ordered") {
         return res.status(404).json({
-          state: "error",
-          message: "Transaction not found or not in the correct state"
+            state: "error",
+            message: "Transaction not found or not in the correct state"
         });
-      }
+    }
 
-   if (transaction.seller._id.toString() !== userId.toString()) {
-    return res.status(403).json({ message: "Not authorized to handle this transaction" });
-  }
+    if (transaction.seller._id.toString() !== userId.toString()) {
+        return res.status(403).json({ message: "Not authorized to handle this transaction" });
+    }
 
-  if (action === "accept") {
-    transaction.state = "Sold";
-        console.log(transaction)
-        console.log(transaction.ad)
+    if (action === "accept") {
+        transaction.state = "Sold";
         const ad = await Ad.findById(transaction.ad);
-  
-    if (!ad) {
-      return res.status(404).json({
-        state: "error",
-        message: "Ad not found"
-      })};
 
-      ad.buyer = transaction.buyer;
-    await transaction.save();
-    await ad.save();
-    
-        console.log(transaction)
+        if (!ad) {
+            return res.status(404).json({
+                state: "error",
+                message: "Ad not found"
+            });
+        };
 
-        res.status(200).json({ 
-            state: "success", 
+        ad.buyer = transaction.buyer;
+        await transaction.save();
+        await ad.save();
+
+
+        res.status(200).json({
+            state: "success",
             message: "Transaction accepted succesfully",
             data: transaction,
-         })
-        } else if (action === "reject") {
-            transaction.state = "Cancelled";
-            await transaction.save();
+        });
+    } else if (action === "reject") {
+        transaction.state = "Cancelled";
+        await transaction.save();
 
-        console.log(transaction)
 
         return res.status(200).json({
             state: "success",
             message: "Transaction rejected successfully",
             data: transaction
-          });
-        } else {
-            return res.status(400).json({
-              state: "error",
-              message: "Invalid action. Use 'accept' or 'reject'."
-            });
-          }
         });
+    } else {
+        return res.status(400).json({
+            state: "error",
+            message: "Invalid action. Use 'accept' or 'reject'."
+        });
+    }
+});
 
 
 exports.getTransactionsBySeller = tryCatch(async (req, res) => {
     const userId = req.user._id;
-    console.log(userId);
-    const transactions = await Transactions.find({ 
-        seller: userId, 
-        state: {$in: ["Ordered", "Sold"]}
-    })
-    .populate({path: "seller", select: "_id username"})
-    .populate("ad", "");
+    req.query.state = { $in: ["Ordered", "Sold"] };
+    req.query.seller = userId;
+    console.log(req.query);
+    const advancedQuery = new APIFeatures(Transactions
+        .find({})
+        .populate("ad buyer seller")
+        .populate({ path: "buyer seller", select: "_id username" })
+        , req.query)
+        .sort()
+        .paginate()
+        .filterByUser()
+        .fields()
+        .filter()
+        .searchByTitle()
+        .filterByTags()
+        .filterByPriceRange()
+        .filterByIsBuy();
 
-    console.log(transactions);
+
+    let transactions = await advancedQuery.query;
+    transactions = transactions.map(transaction => {
+        const { ad, ...transactionDetails } = transaction;
+        let photoUrl = null;
+        if (ad.photo) {
+
+            photoUrl = process.env.NODE_ENV !== 'production'
+                ? `http://${req.headers.host}/${publicFolder}/${ad.photo}`
+                : `https://${req.headers.host}/api/${publicFolder}/${ad.photo}`;
+
+        }
+
+        return {
+            ...transactionDetails._doc,
+            ad: {
+                ...ad._doc,
+                photo: photoUrl
+            }
+        };
+    });
+
     res.status(200).json({
-        state: "success", 
+        state: "success",
         data: transactions,
-        message: "Transactions by seller received"});
+        message: "Transactions by seller received"
+    });
 });
 
 exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
     const userId = req.user._id;
-    console.log(userId)
     const transactions = await Transactions.find({
-         buyer: userId, 
-         state: {$in: ["Ordered", "Sold"] }
-        })
-    .populate({path: "buyer", select: "_id username"})
-    .populate("ad", "");;
+        buyer: userId,
+        state: { $in: ["Ordered", "Sold"] }
+    })
+        .populate({ path: "buyer", select: "_id username" })
+        .populate("ad", "");
 
-    console.log(transactions)
     res.status(200).json({
-        state: "success", 
+        state: "success",
         data: transactions,
-        message: "Transactions by buyer received"});
+        message: "Transactions by buyer received"
     });
+});
 
 
-exports.getTransactionsByUser = tryCatch(async (req, res)=>{
+exports.getTransactionsByUser = tryCatch(async (req, res) => {
     const userId = req.user._id;
     const transactions = await Transactions.find({
-        userid: userId, 
-        state: {$in: ["Ordered", "Sold"]}
+        userid: userId,
+        state: { $in: ["Ordered", "Sold"] }
     })
-    .populate({path: "buyer", select: "_id username"})
-    .populate({path: "seller", select: "_id username"})
-    .populate("ad", "");;
+        .populate({ path: "buyer", select: "_id username" })
+        .populate({ path: "seller", select: "_id username" })
+        .populate("ad", "");;
 
     res.status(200).json({
-        state:"success", 
-        data:transactions,
-        message: "Transactions by user received"});
-    })
+        state: "success",
+        data: transactions,
+        message: "Transactions by user received"
+    });
+})
 
