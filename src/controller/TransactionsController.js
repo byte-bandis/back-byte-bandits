@@ -139,50 +139,15 @@ exports.handleTransactions = tryCatch(async (req, res) => {
         });
 
 
-exports.getTransactionsBySeller = tryCatch(async (req, res) => {
-    const userId = req.user._id;
-    console.log(userId);
-    const transactions = await Transactions.find({ 
-        seller: userId, 
-        state: {$in: ["Ordered", "Sold"]}
-    })
-    .populate({path: "seller", select: "_id username"})
-    .populate("ad", "");
-
-    console.log(transactions);
-    res.status(200).json({
-        state: "success", 
-        data: transactions,
-        message: "Transactions by seller received"});
-});
-
-exports.getTransactionsByBuyer = tryCatch(async (req, res) => {
-    const userId = req.user._id;
-    console.log(userId)
-    const transactions = await Transactions.find({
-         buyer: userId, 
-         state: {$in: ["Ordered", "Sold"] }
-        })
-    .populate({path: "buyer", select: "_id username"})
-    .populate("ad", "");;
-
-    console.log(transactions)
-    res.status(200).json({
-        state: "success", 
-        data: transactions,
-        message: "Transactions by buyer received"});
-    });
-
-
 exports.getTransactionsByUser = tryCatch(async (req, res)=>{
     const userId = req.user._id;
     const transactions = await Transactions.find({
-        userid: userId, 
+        $or: [{buyer: userId}, {seller: userId} ],
         state: {$in: ["Ordered", "Sold"]}
     })
     .populate({path: "buyer", select: "_id username"})
     .populate({path: "seller", select: "_id username"})
-    .populate("ad", "");;
+    .populate("ad", "");
 
     res.status(200).json({
         state:"success", 
