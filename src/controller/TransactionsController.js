@@ -57,6 +57,7 @@ exports.getPendingTransactions = tryCatch(async (req, res) => {
         seller: userId,
         state: "Ordered"
     }).populate("ad buyer");
+
     pendingTransactions = pendingTransactions.map(transaction => {
         const { ad, ...transactionDetails } = transaction;
         let photoUrl = null;
@@ -202,14 +203,33 @@ exports.getTransactionsFilters = tryCatch(async (req, res) => {
 
 exports.getTransactionsByUser = tryCatch(async (req, res) => {
     const userId = req.user._id;
-    const transactions = await Transactions.find({
+    let transactions = await Transactions.find({
         $or: [{ buyer: userId }, { seller: userId }],
         state: { $in: ["Ordered", "Sold"] }
     })
         .populate({ path: "buyer", select: "_id username" })
         .populate({ path: "seller", select: "_id username" })
-        .populate("ad", "");;
-
+        .populate("ad", "");
+        
+        transactions = transactions.map(transaction => {
+            const { ad, ...transactionDetails } = transaction;
+            let photoUrl = null;
+            if (ad.photo) {
+    
+                photoUrl = process.env.NODE_ENV !== 'production'
+                    ? `http://${req.headers.host}/${publicFolder}/${ad.photo}`
+                    : `https://${req.headers.host}/api/${publicFolder}/${ad.photo}`;
+    
+            }
+    
+            return {
+                ...transactionDetails._doc,
+                ad: {
+                    ...ad._doc,
+                    photo: photoUrl
+                }
+            };
+        });
     res.status(200).json({
         state: "success",
         data: transactions,
