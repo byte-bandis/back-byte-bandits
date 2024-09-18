@@ -11,9 +11,15 @@ const publicFolder = "public/images";
 exports.adsAccount = tryCatch(async (req, res) => {
     let count = 0;
     if (req.query.hasOwnProperty('user')) {
-        const user =await User.find({username:req.query.user});
-
-         count = await Ad.countDocuments({user: user[0]._id.toString(), available: true});
+        try {
+            const user = await User.find({username:req.query.user});
+            req.query.user= user[0]._id.toString();
+        } catch (error) {
+            console.log(error);
+            
+            res.status(200).json({ count:0 });
+        
+    }
     } else {
          count = await Ad.countDocuments({ available: true});
     }
@@ -28,9 +34,16 @@ exports.getAds = tryCatch(async (req, res) => {
     }
 
     if (req.query.hasOwnProperty('user')) {
-        const user = await User.find({username:req.query.user});
+        try {
+            const user = await User.find({username:req.query.user});
+            req.query.user= user[0]._id.toString();
+        } catch (error) {
+            console.log(error);
+            
+            res.status(200).json({ ads:[] });
+        
+    }
 
-        req.query.user= user[0]._id.toString();
     }
     
     const advancedQuery = new APIFeatures(Ad.find({}).populate('user'), req.query)
