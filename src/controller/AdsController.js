@@ -13,7 +13,8 @@ exports.adsAccount = tryCatch(async (req, res) => {
     if (req.query.hasOwnProperty('user')) {
         try {
             const user = await User.find({username:req.query.user});
-            req.query.user= user[0]._id.toString();
+            count = await Ad.countDocuments({user: user[0]._id.toString(), available: true});
+
         } catch (error) {
             console.log(error);
             
