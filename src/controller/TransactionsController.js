@@ -1,8 +1,6 @@
 const Transactions = require('../models/Transactions');
 const Ad = require("../models/Ad");
-const User = require("../models/User");
 const { tryCatch } = require('../utils/tryCatch');
-const mongoose = require('mongoose');
 const MyCreditCard = require('../models/myPersonalData/MyCreditCard');
 const APIFeatures = require('../utils/ApiFeature');
 const publicFolder = "public/images";
@@ -203,6 +201,9 @@ exports.getTransactionsFilters = tryCatch(async (req, res) => {
 
 exports.getTransactionsByUser = tryCatch(async (req, res) => {
     const userId = req.user._id;
+
+
+    
     let transactions = await Transactions.find({
         $or: [{ buyer: userId }, { seller: userId }],
         state: { $in: ["Ordered", "Sold"] }
@@ -237,3 +238,26 @@ exports.getTransactionsByUser = tryCatch(async (req, res) => {
     });
 })
 
+exports.getCountTransactionsBySeller = tryCatch(async (req, res) => {
+    const userId = req.user._id;
+    const transactionsCount = await Transactions.countDocuments({
+        seller: userId,
+    })
+    res.status(200).json({
+        state: "getAllTransactionsBySeller",
+        data: transactionsCount,
+        message: "Transactions by seller received"
+    });
+})
+
+exports.getCountTransactionsByBuyer = tryCatch(async (req, res) => {
+    const userId = req.user._id;
+    const transactionsCount = await Transactions.countDocuments({
+        buyer: userId,
+    })
+    res.status(200).json({
+        state: "getCountTransactionsByBuyer",
+        data: transactionsCount,
+        message: "Transactions by seller received"
+    });
+})
