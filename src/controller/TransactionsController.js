@@ -38,7 +38,6 @@ exports.createTransaction = tryCatch(async (req, res) => {
     await transaction.save();
 
 
-
     res.status(201).json({
         status: "success",
         message: "Purchase transaction created correctly",
@@ -134,7 +133,6 @@ exports.handleTransactions = tryCatch(async (req, res) => {
     } else if (action === "reject") {
         transaction.state = "Cancelled";
         await transaction.save();
-
 
         return res.status(200).json({
             state: "success",
