@@ -19,7 +19,9 @@ exports.setLike = tryCatch(async (req, res) => {
         await Like.findByIdAndDelete(likeId);
         res.status(204).json({ message: 'Like removed', ad: adId, user: userId });
     } else {
-        const like = await Like.create({ ad: adId, user: userId });
+        let like = (await Like.create({ ad: adId, user: userId }));
+        like = await like.populate('ad')
+
         res.status(201).json({ like });
     }
 });
