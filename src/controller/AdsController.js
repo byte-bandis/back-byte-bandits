@@ -9,25 +9,44 @@ const mongoose = require("mongoose");
 const publicFolder = "public/images";
 /* Obtener anuncios */
 exports.adsAccount = tryCatch(async (req, res) => {
-    let count = 0;
     if (req.query.hasOwnProperty('user')) {
         try {
             const user = await User.find({username:req.query.user});
-            count = await Ad.countDocuments({user: user[0]._id.toString(), available: true});
-
+            req.query.user= user[0]._id.toString();
         } catch (error) {
             console.log(error);
             
-            res.status(200).json({ count:0 });
+            res.status(200).json({ ads:[] });
         
     }
-    } else {
-         count = await Ad.countDocuments({ available: true});
+
     }
+    let count = 0;
+    
+    if (req.query.hasOwnProperty('sell')) {
+        req.query.sell = req.query.sell === 'true';
+        
+    }
+    
+    const advancedQuery = new APIFeatures(Ad.countDocuments({}), req.query)
+        .sort()
+        .paginate()
+        .filterByUser()
+        .fields()
+        .filter()
+        .searchByTitle()
+        .filterByTags()
+        .filterByPriceRange()
+        .filterByIsBuy();
+    const ads = await advancedQuery.query;
+     count = ads.length
     res.status(200).json({ count });
 });
 exports.getAds = tryCatch(async (req, res) => {
-
+    if (req.query.hasOwnProperty('sell')) {
+        req.query.sell = req.query.sell === 'true';
+        
+    }
     if (req.query.hasOwnProperty('available')) {
         req.query.available = req.query.available === 'true';  
     } else {

@@ -197,15 +197,12 @@ exports.getTransactionsFilters = tryCatch(async (req, res) => {
 });
 
 exports.getTransactionsByUser = tryCatch(async (req, res) => {
-    console.log(req.query);
 
     const userId = req.user._id;
     if (req.query.hasOwnProperty('seller') && req.query.seller === 'true' ){
-        console.log('el vendedor', userId);
         req.query.seller = userId;
     }
     if (req.query.hasOwnProperty('buyer') && req.query.buyer === 'true' ){
-        console.log('el Comprador', userId);
         req.query.buyer = userId;
     }   
     const advancedQuery = new APIFeatures(Transactions
