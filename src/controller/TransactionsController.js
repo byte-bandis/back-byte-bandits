@@ -154,7 +154,6 @@ exports.getTransactionsFilters = tryCatch(async (req, res) => {
     const userId = req.user._id;
     req.query.state = { $in: ["Ordered", "Sold"] };
     req.query.seller = userId;
-    console.log(req.query);
     const advancedQuery = new APIFeatures(Transactions
         .find({})
         .populate("ad buyer seller")
@@ -200,18 +199,43 @@ exports.getTransactionsFilters = tryCatch(async (req, res) => {
 });
 
 exports.getTransactionsByUser = tryCatch(async (req, res) => {
+    console.log(req.query);
+
     const userId = req.user._id;
+    if (req.query.hasOwnProperty('seller') && req.query.seller === 'true' ){
+        console.log('el vendedor', userId);
+        req.query.seller = userId;
+    }
+    if (req.query.hasOwnProperty('buyer') && req.query.buyer === 'true' ){
+        console.log('el Comprador', userId);
+        req.query.buyer = userId;
+    }   
+    const advancedQuery = new APIFeatures(Transactions
+        .find({})
+        .populate("ad buyer seller")
+        .populate({ path: "buyer seller", select: "_id username" })
+        , req.query)
+        .sort()
+        .paginate()
+        .filterByUser()
+        .fields()
+        .filter()
+        .searchByTitle()
+        .filterByTags()
+        .filterByPriceRange()
+        .filterByIsBuy();
 
 
+    let transactions = await advancedQuery.query;
     
-    let transactions = await Transactions.find({
+    /* let transactions = await Transactions.find({
         $or: [{ buyer: userId }, { seller: userId }],
         state: { $in: ["Ordered", "Sold"] }
-    })
+    }) 
         .populate({ path: "buyer", select: "_id username" })
         .populate({ path: "seller", select: "_id username" })
         .populate("ad", "");
-        
+        */
         transactions = transactions.map(transaction => {
             const { ad, ...transactionDetails } = transaction;
             let photoUrl = null;
