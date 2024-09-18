@@ -262,7 +262,10 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
           ? updatedPublicProfile.userDescription
           : false,
     },
-    message: {
+
+    message: res.__("profile_updated_successfully", { username }),
+
+    /*     message: {
       message: res.__("profile_updated_successfully", { username }),
       assetUpdated: {
         userPhoto:
@@ -282,7 +285,7 @@ exports.updatePublicProfile = tryCatch(async (req, res) => {
             ? updatedPublicProfile.userDescription
             : false,
       },
-    },
+    }, */
   });
 });
 
